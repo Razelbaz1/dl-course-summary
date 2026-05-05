@@ -1,0 +1,3413 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#1e3a8a" />
+<title>סדנה בלמידה עמוקה – סיכום אינטראקטיבי</title>
+<style>
+  :root {
+    --c-primary: #1e3a8a;
+    --c-primary-2: #2563eb;
+    --c-accent: #3b82f6;
+    --c-accent-soft: #60a5fa;
+    --c-bg: #f8fbff;
+    --c-bg-2: #eef4ff;
+    --c-card: #ffffff;
+    --c-border: #c7dbf7;
+    --c-text: #0f172a;
+    --c-muted: #475569;
+    --c-chip: #dbeafe;
+    --c-shadow: 0 6px 22px rgba(30,58,138,.10);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", "Heebo", "Assistant", system-ui, -apple-system, sans-serif;
+    background: linear-gradient(180deg, var(--c-bg) 0%, #ecf2fc 100%);
+    color: var(--c-text);
+    line-height: 1.7;
+    min-height: 100vh;
+    -webkit-tap-highlight-color: rgba(59,130,246,.2);
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 50;
+    background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-primary-2) 100%);
+    color: #fff;
+    padding: 14px 24px;
+    box-shadow: 0 4px 20px rgba(30,58,138,.25);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  header.top h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: .2px; }
+  header.top .subtitle { font-size: 13px; opacity: .85; margin-right: 8px; }
+  .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn {
+    background: rgba(255,255,255,.16); color: #fff; border: 1px solid rgba(255,255,255,.35);
+    padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer;
+    transition: background .2s, transform .1s;
+  }
+  .btn:hover { background: rgba(255,255,255,.28); }
+  .btn:active { transform: scale(.97); }
+  .btn-primary { background: #fff; color: var(--c-primary); font-weight: 600; }
+  .btn-primary:hover { background: #f1f5ff; }
+
+  /* Tabs */
+  nav.tabs {
+    display: flex; gap: 6px; padding: 12px 24px; flex-wrap: wrap;
+    background: #fff; border-bottom: 1px solid var(--c-border);
+    position: sticky; top: 64px; z-index: 40;
+  }
+  nav.tabs button {
+    background: var(--c-bg-2); color: var(--c-primary);
+    border: 1px solid var(--c-border);
+    padding: 8px 14px; border-radius: 999px; font-size: 14px; cursor: pointer;
+    font-weight: 600; transition: all .2s;
+  }
+  nav.tabs button:hover { background: var(--c-chip); }
+  nav.tabs button.active {
+    background: var(--c-primary); color: #fff; border-color: var(--c-primary);
+    box-shadow: 0 4px 10px rgba(37,99,235,.3);
+  }
+
+  main { padding: 26px 24px 80px; max-width: 1180px; margin: 0 auto; }
+
+  .tab-panel { display: none; animation: fadeIn .25s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity: 1; transform: none;} }
+
+  h2.section { color: var(--c-primary); font-size: 26px; margin: 0 0 12px; border-right: 5px solid var(--c-accent); padding-right: 12px; }
+  h3 { color: var(--c-primary-2); margin: 22px 0 8px; font-size: 19px; }
+  h4 { color: #1d4ed8; margin: 14px 0 6px; font-size: 16px; }
+  p, li { color: var(--c-text); }
+
+  /* Card */
+  .card {
+    background: var(--c-card); border: 1px solid var(--c-border);
+    border-radius: 14px; padding: 18px 22px; margin: 14px 0;
+    box-shadow: var(--c-shadow);
+  }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip {
+    background: var(--c-chip); color: var(--c-primary);
+    padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+  }
+  .chip.outline { background: #fff; border: 1px solid var(--c-border); }
+
+  /* Expandable */
+  details.expand {
+    background: var(--c-bg-2); border: 1px solid var(--c-border);
+    border-radius: 10px; padding: 8px 14px; margin: 10px 0;
+    transition: background .2s;
+  }
+  details.expand[open] { background: #f0f6ff; box-shadow: 0 2px 10px rgba(37,99,235,.08); }
+  details.expand summary {
+    cursor: pointer; font-weight: 600; color: var(--c-primary);
+    padding: 6px 0; list-style: none; display: flex; align-items: center; gap: 8px;
+  }
+  details.expand summary::-webkit-details-marker { display: none; }
+  details.expand summary::before {
+    content: "▸"; color: var(--c-accent); transition: transform .2s; font-size: 14px;
+  }
+  details.expand[open] summary::before { transform: rotate(90deg); }
+  details.expand .body { margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--c-border); }
+
+  /* Formula */
+  .formula {
+    background: #fff; border-right: 4px solid var(--c-accent);
+    padding: 10px 14px; margin: 8px 0; font-family: "Cambria Math", "Times New Roman", serif;
+    font-style: italic; color: #1e293b; border-radius: 6px; direction: ltr; text-align: left;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  /* Quiz */
+  .quiz-q {
+    background: linear-gradient(90deg, #eaf2ff 0%, #f0f7ff 100%);
+    border-right: 4px solid var(--c-primary-2);
+    padding: 12px 16px; margin: 10px 0; border-radius: 8px;
+  }
+  .quiz-q .q { font-weight: 700; color: var(--c-primary); margin-bottom: 4px; }
+  .quiz-q .a {
+    margin-top: 6px; padding: 8px 10px; background: #fff; border: 1px dashed var(--c-border);
+    border-radius: 6px; color: var(--c-muted);
+  }
+
+  /* Glossary */
+  .glossary-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+  .glossary-controls input {
+    flex: 1; min-width: 220px; padding: 9px 14px;
+    border: 1.5px solid var(--c-border); border-radius: 999px; font-size: 14px;
+    background: #fff;
+  }
+  .glossary-controls input:focus { outline: 2px solid var(--c-accent); border-color: var(--c-accent); }
+  .cat-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .cat-filter {
+    padding: 5px 11px; border-radius: 999px; font-size: 12px; cursor: pointer;
+    background: #fff; border: 1px solid var(--c-border); color: var(--c-primary);
+    font-weight: 600; transition: .15s;
+  }
+  .cat-filter.active { background: var(--c-primary); color: #fff; border-color: var(--c-primary); }
+  .cat-filter:hover { background: var(--c-chip); }
+  .cat-filter.active:hover { background: var(--c-primary-2); color: #fff; }
+
+  .term-card {
+    background: #fff; border: 1px solid var(--c-border); border-radius: 12px;
+    padding: 14px 18px; margin: 10px 0; box-shadow: 0 2px 8px rgba(30,58,138,.05);
+    transition: box-shadow .2s, transform .15s;
+  }
+  .term-card:hover { box-shadow: 0 6px 18px rgba(30,58,138,.12); }
+  .term-head {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline;
+    cursor: pointer; user-select: none;
+  }
+  .term-en { font-weight: 700; font-size: 16px; color: var(--c-primary); direction: ltr; }
+  .term-he { color: var(--c-muted); font-size: 14px; }
+  .term-cat { background: var(--c-chip); color: var(--c-primary); padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 600; margin-right: auto; }
+  .term-short { margin-top: 6px; color: var(--c-text); }
+  .term-long { margin-top: 8px; padding: 10px 12px; background: var(--c-bg-2); border-radius: 8px; display: none; border-right: 3px solid var(--c-accent); }
+  .term-card.open .term-long { display: block; animation: fadeIn .2s ease; }
+  .term-card .toggle-hint { font-size: 12px; color: var(--c-accent); margin-top: 6px; cursor: pointer; }
+
+  /* TOC */
+  #toc-button {
+    position: fixed; bottom: 24px; left: 24px; z-index: 60;
+    background: var(--c-primary); color: #fff; border: none; cursor: pointer;
+    width: 52px; height: 52px; border-radius: 50%;
+    box-shadow: 0 6px 18px rgba(30,58,138,.35);
+    font-size: 20px; transition: transform .2s, background .2s;
+  }
+  #toc-button:hover { background: var(--c-primary-2); transform: scale(1.06); }
+  #toc-panel {
+    position: fixed; bottom: 88px; left: 24px; z-index: 60;
+    background: #fff; border: 1px solid var(--c-border); border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(30,58,138,.20);
+    padding: 14px 18px; min-width: 280px; max-width: 320px; max-height: 70vh; overflow-y: auto;
+    display: none;
+  }
+  #toc-panel.open { display: block; animation: fadeIn .2s; }
+  #toc-panel h4 { margin: 0 0 10px; color: var(--c-primary); font-size: 15px; border-bottom: 1px solid var(--c-border); padding-bottom: 6px; }
+  #toc-panel ul { list-style: none; padding: 0; margin: 0; }
+  #toc-panel li { margin: 4px 0; }
+  #toc-panel a { color: var(--c-primary-2); text-decoration: none; font-size: 13px; padding: 4px 8px; border-radius: 6px; display: block; }
+  #toc-panel a:hover { background: var(--c-chip); }
+
+  /* Top button */
+  #to-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 60;
+    background: #fff; color: var(--c-primary); border: 1px solid var(--c-border);
+    width: 46px; height: 46px; border-radius: 50%; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(30,58,138,.18); font-size: 18px;
+    display: none; transition: transform .15s;
+  }
+  #to-top.visible { display: block; }
+  #to-top:hover { transform: translateY(-2px); }
+
+  table.compare {
+    width: 100%; border-collapse: collapse; margin: 12px 0;
+    background: #fff; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(30,58,138,.06);
+  }
+  table.compare th, table.compare td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--c-border); vertical-align: top; }
+  table.compare th { background: var(--c-bg-2); color: var(--c-primary); font-weight: 700; }
+  table.compare tr:last-child td { border-bottom: none; }
+
+  ul.checklist { list-style: none; padding-right: 0; }
+  ul.checklist li { padding-right: 28px; position: relative; margin: 6px 0; }
+  ul.checklist li::before {
+    content: "✓"; position: absolute; right: 0; top: 0;
+    color: var(--c-accent); font-weight: 700;
+  }
+
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  .pill { background: #fff; border: 1px solid var(--c-border); padding: 6px 12px; border-radius: 8px; font-size: 13px; color: var(--c-primary); }
+
+  .callout {
+    background: #fff7ed; border-right: 4px solid #f59e0b;
+    padding: 10px 14px; margin: 10px 0; border-radius: 8px; color: #92400e;
+  }
+  .callout.info { background: #eff6ff; border-color: var(--c-accent); color: #1e40af; }
+
+  footer.bottom {
+    text-align: center; color: var(--c-muted); font-size: 13px;
+    padding: 18px; border-top: 1px solid var(--c-border); margin-top: 30px;
+    background: #fff;
+  }
+
+  /* ============================================================
+     רספונסיביות — שכבות מדורגות
+     ============================================================ */
+
+  /* iPad / טאבלטים גדולים (עד 1024px) */
+  @media (max-width: 1024px) {
+    main { padding: 22px 18px 80px; }
+    header.top { padding: 12px 20px; }
+    header.top h1 { font-size: 20px; }
+    header.top .subtitle { font-size: 12px; display: block; margin-right: 0; margin-top: 2px; }
+    nav.tabs { padding: 10px 18px; gap: 6px; }
+    nav.tabs button { padding: 9px 14px; font-size: 13.5px; min-height: 40px; }
+    .btn { padding: 9px 14px; min-height: 38px; }
+
+    table.compare th, table.compare td { font-size: 13.5px; }
+
+    /* קוד וקטעי-קוד עם פונט מעט קטן יותר */
+    .formula { font-size: 13.5px; }
+
+    /* Inputs ב-16px למניעת זום אוטומטי ב-iOS */
+    .glossary-controls input { font-size: 16px; padding: 11px 14px; }
+    .cat-filter { padding: 7px 12px; font-size: 12.5px; min-height: 34px; display: inline-flex; align-items: center; }
+
+    /* כפתורים צפים ידידותיים-מגע */
+    #toc-button { width: 56px; height: 56px; font-size: 22px; }
+    #to-top { width: 50px; height: 50px; font-size: 19px; }
+    #toc-panel { max-width: calc(100vw - 32px); }
+
+    /* Term cards פתוחות יותר למגע */
+    .term-card { padding: 15px 16px; }
+    .term-head { gap: 8px; }
+    .term-cat { margin-right: 0; }
+  }
+
+  /* אייפד אנכי / טאבלטים קטנים (עד 820px) */
+  @media (max-width: 820px) {
+    h2.section { font-size: 23px; }
+    h3 { font-size: 18px; }
+    h4 { font-size: 15.5px; }
+
+    .card { padding: 16px 16px; }
+    .card .meta-row { gap: 6px; }
+
+    /* טבלאות נגללות אופקית ברוחב צר — שומרת על מבנה הטבלה הפנימי */
+    table.compare {
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      white-space: normal;
+    }
+
+    /* פאנל ה-TOC ברוחב מלא כמעט */
+    #toc-panel { min-width: 0; max-width: calc(100vw - 28px); right: auto; }
+  }
+
+  /* טלפונים ומסכים צרים (עד 640px) */
+  @media (max-width: 640px) {
+    main { padding: 18px 14px 90px; }
+
+    /* מאפשרים ל-header לגלול החוצה ומשאירים רק את הטאבים sticky */
+    header.top {
+      position: relative;
+      padding: 12px 14px;
+    }
+    header.top h1 { font-size: 18px; }
+    header.top .subtitle { font-size: 11.5px; }
+
+    nav.tabs {
+      top: 0;
+      padding: 9px 12px;
+      gap: 5px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      flex-wrap: nowrap;        /* גלילה אופקית של הטאבים */
+      scrollbar-width: thin;
+    }
+    nav.tabs button {
+      flex: 0 0 auto;
+      padding: 9px 13px;
+      font-size: 12.5px;
+    }
+
+    h2.section { font-size: 21px; padding-right: 10px; border-right-width: 4px; }
+    h3 { font-size: 17px; }
+
+    /* כפתורי-מגע צפים — מתקרבים לקצוות */
+    #toc-button { left: 14px; bottom: 16px; width: 52px; height: 52px; }
+    #to-top { right: 14px; bottom: 16px; width: 48px; height: 48px; }
+    #toc-panel {
+      bottom: 78px; left: 14px; right: 14px;
+      min-width: 0; max-width: none; width: auto;
+    }
+
+    /* Glossary — שדה החיפוש בשורה משלו, סינון מתחת */
+    .glossary-controls { gap: 8px; }
+    .glossary-controls input { width: 100%; }
+
+    /* Term cards: כותרת בעברית/אנגלית בשורה אחת, קטגוריה למטה */
+    .term-head { gap: 6px; }
+    .term-cat { width: 100%; margin: 4px 0 0; text-align: center; }
+    .term-en { font-size: 15px; }
+    .term-he { font-size: 13px; }
+
+    /* פינות חכמות יותר */
+    .card { border-radius: 10px; padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <h1>סדנה בלמידה עמוקה — סיכום אינטראקטיבי</h1>
+    <span class="subtitle">ד"ר ענת גולדשטיין · אוניברסיטת אריאל · M.Sc הנדסת ידע ונתונים · תשפ"ו</span>
+  </div>
+  <div class="top-actions">
+    <button class="btn" onclick="expandAll()">פתח הכל</button>
+    <button class="btn" onclick="collapseAll()">סגור הכל</button>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="overview" class="active">סקירה</button>
+  <button data-tab="lect1">1 · מבוא ל-DL</button>
+  <button data-tab="lect2">2 · NN חלק א'</button>
+  <button data-tab="lect3">3 · NN חלק ב'</button>
+  <button data-tab="lect4">4 · אופטימיזציה</button>
+  <button data-tab="lect5">5 · Frameworks</button>
+  <button data-tab="lect6">6 · Keras בפועל</button>
+  <button data-tab="glossary">מילון מושגים</button>
+</nav>
+
+<main>
+
+<section id="overview" class="tab-panel active">
+  <h2 class="section">סקירה כוללת של הקורס</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">3 נקודות זכות</span>
+      <span class="chip">10% מטלות</span>
+      <span class="chip">30% פרויקט</span>
+      <span class="chip">60% מבחן</span>
+    </div>
+    <p><strong>מטרת הקורס:</strong> ללמוד את יסודות הלמידה העמוקה (Deep Learning) המהווה נדבך מרכזי בתחום הבינה המלאכותית. הקורס משלב לימוד תאורטי ויישום ב-Python באמצעות TensorFlow, Keras ו-PyTorch.</p>
+
+    <h3>מה תדע לעשות בסוף הקורס</h3>
+    <ul class="checklist">
+      <li>להסביר מושגי יסוד בלמידה עמוקה</li>
+      <li>לבנות ולאמן רשתות נוירונים (NN)</li>
+      <li>להשתמש בשיטות לאופטימיזציה של רשתות עמוקות</li>
+      <li>לתאר ארכיטקטורות מרכזיות ולהתאים את השימוש בהן לבעיות AI שונות</li>
+      <li>לפתור בעיות AI: סיווג תמונה, עיבוד שפה טבעית, עיבוד קול</li>
+    </ul>
+  </div>
+
+  <h3>מפת הלמידה — היכן אנחנו</h3>
+  <table class="compare">
+    <tr><th>#</th><th>נושא</th><th>סטטוס</th><th>מטלה / אבן דרך</th></tr>
+    <tr><td>1</td><td>מבוא לקורס וללמידה עמוקה</td><td><span class="chip">נלמד</span></td><td>מטלה 1 (סימון מושגים) ✓</td></tr>
+    <tr><td>2</td><td>רשת נוירונים: רדודה ועמוקה (חלק א')</td><td><span class="chip">נלמד</span></td><td>מטלה 2 (רשימת מושגים) ✓</td></tr>
+    <tr><td>3</td><td>רשת נוירונים: שכבות נסתרות (חלק ב')</td><td><span class="chip">נלמד</span></td><td>—</td></tr>
+    <tr><td>4</td><td>אופטימיזציה של NN</td><td><span class="chip">נלמד</span></td><td>—</td></tr>
+    <tr><td>5</td><td>סביבות פיתוח · Keras / TensorFlow</td><td><span class="chip">נלמד</span></td><td>מטלה 3 (פתוחה)</td></tr>
+    <tr><td>6</td><td>NN with Keras: סיווג ורגרסיה מלא</td><td><span class="chip">נלמד</span></td><td>הצעה לפרויקט</td></tr>
+    <tr><td>7</td><td>CNN — Computer Vision</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
+    <tr><td>8</td><td>Sequence Models · RNN · Time Series</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
+    <tr><td>9</td><td>DL for Text · Word Embeddings</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
+    <tr><td>10</td><td>Transformers · Attention</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
+    <tr><td>11</td><td>Hugging Face · הצגת פרויקטים</td><td><span class="chip outline">בקרוב</span></td><td>הגשת פרויקט</td></tr>
+  </table>
+
+  <h3>איך להשתמש בקובץ הזה</h3>
+  <div class="callout info">
+    <strong>טאבים</strong> בראש הדף מאפשרים מעבר בין הסקירה, ההרצאות ומילון המושגים.<br/>
+    <strong>תקצירים מקופלים</strong>: לחיצה על כל פסקה הנפתחת ב-▸ חושפת הסבר מורחב.<br/>
+    <strong>מילון מושגים</strong>: חיפוש חופשי וסינון לפי קטגוריה. כל כרטיס מתרחב בלחיצה.<br/>
+    <strong>תוכן עניינים</strong>: הכפתור הכחול בפינה שמאלית למטה פותח ניווט מהיר.
+  </div>
+</section>
+
+<section id="lect1" class="tab-panel">
+  <h2 class="section">הרצאה 1 — מבוא ללמידה עמוקה</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 1</span>
+      <span class="chip outline">37 שקפים</span>
+      <span class="chip outline">תאריך: 19.03.2026</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> לתת תמונת רקע — מהי בינה מלאכותית (AI), היכן יושבת בתוכה למידת מכונה (ML) ולמידה עמוקה (DL), אילו בעיות DL פותרת, ומדוע השדה התפוצץ בעשור האחרון. בנוסף, חזרה תמציתית על סוגי בעיות ב-ML לפני הצלילה ל-NN בשיעור הבא.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>הקשר היסטורי: AI → ML → DL — איך הגענו לכאן.</li>
+      <li>שני היתרונות הגדולים של DL ומדוע הן מהותיות.</li>
+      <li>למה דווקא ב-2010 — משולש החומרה, הנתונים והאלגוריתמים.</li>
+      <li>רענון מהיר של סוגי בעיות ב-ML (Supervised / Unsupervised, Classification / Regression).</li>
+      <li>שיטות פתרון מסורתיות אל מול NN — מתי כל אחת מתאימה.</li>
+      <li>הסביבה הטכנית: Python, Colab, GitHub, Frameworks.</li>
+    </ol>
+  </div>
+
+  <h3>1. הקשר היסטורי — AI, ML, DL</h3>
+
+  <div class="card">
+    <p>כשמדברים על "בינה מלאכותית" יש שלוש שכבות מקוננות שחשוב לא לבלבל ביניהן:</p>
+    <table class="compare">
+      <tr><th>תקופה</th><th>פרדיגמה</th><th>הרעיון המרכזי</th></tr>
+      <tr><td>שנות ה-50</td><td><strong>AI קלאסי</strong> (Symbolic AI)</td><td>אדם מנסח חוקים מפורשים, המחשב מבצע אותם. עובד היטב על משחקי לוח, נכשל על העולם האמיתי.</td></tr>
+      <tr><td>שנות ה-90</td><td><strong>Machine Learning</strong></td><td>פרדיגמה הפוכה: במקום לכתוב חוקים, נותנים למחשב דוגמאות (X, y) והוא לומד את החוקים. הופיעו עצי החלטה, SVM, Random Forest.</td></tr>
+      <tr><td>2010 ואילך</td><td><strong>Deep Learning</strong></td><td>שימוש ברשתות נוירונים עמוקות (רעיון משנות ה-80) — שעכשיו מסוגלות לעבוד מצוין הודות ל-GPU, אינטרנט (נתונים) ואלגוריתמים.</td></tr>
+    </table>
+
+    <details class="expand">
+      <summary>הרחבה: מבחן טיורינג והחזון המקורי של AI</summary>
+      <div class="body">
+        <p>אלן טיורינג ב-1950 הציע את "משחק החיקוי" — חוקר מנהל דיאלוג טקסטואלי עם שני גורמים סמויים, אדם ומכונה. אם החוקר אינו מסוגל לקבוע מי האדם — המכונה עברה את המבחן. החזון של טיורינג היה לא רק לבנות מערכות חוקים אלא <em>שמחשבים יוכלו ללמוד בעצמם</em> — חזון שלא היה אפשרי לממש בכליו של זמנו, ומומש בשלבים: ML בשנות ה-90, DL בשנות ה-2010.</p>
+        <p><strong>למה זה רלוונטי לקורס?</strong> כי שלוש הפרדיגמות עדיין חיות זו לצד זו: כשבונים מערכת אמיתית בארגון, חלקה תהיה חוקים מפורשים (Rule-based), חלקה ML קלאסי (כש"רץ קליל" מספיק), וחלקה DL (כשנדרשת הבנה של תמונה / טקסט / קול).</p>
+      </div>
+    </details>
+
+    <details class="expand">
+      <summary>הרחבה: הדוגמה של "חתול או כלב" — למה הגישה הקלאסית קרסה</summary>
+      <div class="body">
+        <p>גישה קלאסית: <code style="direction:ltr;display:inline-block">if shape == triangle and dist == X: return "cat"</code>. הבעיה — חתול יכול להיות עומד, יושב, מגב הפוך, חצי מוסתר, בתאורה גרועה, גזע פרסי, חתלתול וכו'. אי אפשר לכתוב חוקים שיכסו את כל המקרים.</p>
+        <p>גישת ML: נותנים למודל אלפי תמונות מתויגות (label), והמודל לומד מהן את ה"חוקים" הסטטיסטיים. ב-DL — הרשת לומדת בעצמה גם <em>מה הם המאפיינים</em> שכדאי להסתכל עליהם (Feature Learning), בלי שאנחנו נדרשים להגדיר אותם — וזה היתרון העצום של DL על פני ML הקלאסי.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>2. שני היתרונות הגדולים של DL</h3>
+
+  <div class="card">
+    <p>כשהקורס מדבר על "מהפכת ה-DL" החל מ-2010, היא נשענת על שני יתרונות מובחנים:</p>
+
+    <h4>(א) ביצועים פורצי דרך בבעיות שהיו "בלתי פתירות"</h4>
+    <p>הדוגמה הקלאסית — <strong>ImageNet challenge</strong>. ב-2011 הביצועים הטובים ביותר בסיווג תמונות עמדו על 74% דיוק. ב-2012 הופיעה <em>AlexNet</em> (רשת CNN עמוקה) ושברה את השיא. עד 2015 הביצועים הגיעו ל-96.4%, ועברו את הביצועים האנושיים. אותה קפיצה התרחשה ב:</p>
+    <ul>
+      <li><strong>תמונה:</strong> סיווג, זיהוי אובייקטים, סגמנטציה, תיאור תמונה במילים.</li>
+      <li><strong>טקסט:</strong> תרגום מכונה, מענה על שאלות (Q&amp;A), דמיון בין מסמכים, סיכום.</li>
+      <li><strong>קול:</strong> Speech-to-Text, סינתזת קול.</li>
+      <li><strong>גנרציה:</strong> Deep Fakes, יצירת תמונות וסרטונים, מודלי שפה.</li>
+      <li><strong>קבלת החלטות:</strong> רכבים אוטונומיים (Reinforcement Learning + DL).</li>
+    </ul>
+
+    <h4>(ב) ביטול הצורך ב-Feature Engineering</h4>
+    <p>ב-ML קלאסי, רוב העבודה היא להגדיר ידנית מאפיינים (Features) טובים: "כמה זוויות חדות יש בתמונה", "כמה אדום יש", "כמה פעמים מופיעה המילה X". זה דורש מומחיות בתחום (domain expertise) וזמן רב. ב-DL — שכבות הרשת לומדות את המאפיינים הרלוונטיים בעצמן: השכבות הראשונות לומדות מאפיינים פשוטים (קצוות, צבעים), השכבות הבאות לומדות הרכבות (פינות, צורות), והעמוקות לומדות מושגים סמנטיים (אוזן, עין, פנים).</p>
+
+    <details class="expand">
+      <summary>החיסרון: למה DL היא "קופסה שחורה"</summary>
+      <div class="body">
+        <p>ביכולת ללמוד מאפיינים בעצמה יש מחיר: <strong>קושי להסביר את ההחלטה של המודל</strong>. כשעץ החלטה מחליט "המחיר גבוה כי כן בית מעל 4 חדרים בשכונה X" — קל להבין. כשרשת עם 50 שכבות ו-100 מיליון פרמטרים מחליטה "זו תמונת חתול" — קשה מאוד לדעת בדיוק <em>מה</em> בתמונה הוביל לכך. תחום שלם בשם <em>Explainable AI (XAI)</em> מתעסק בכך, ובארגונים מסוימים (רפואה, ביטוח, פיננסים) חוסר השקיפות חוסם את אימוץ DL לטובת מודלים פשוטים יותר.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>3. למה DL פרצה דווקא ב-2010?</h3>
+  <div class="card">
+    <p>הרעיונות התאורטיים של רשתות נוירונים קיימים כבר מ-1958 (Rosenblatt) ושל Backpropagation מ-1986 (Rumelhart, Hinton, Williams). אז למה רק עכשיו? משולש סיבות:</p>
+    <table class="compare">
+      <tr><th>גורם</th><th>מה השתנה</th></tr>
+      <tr><td><strong>חומרה</strong></td><td>GPUs במקור פותחו לעיבוד גרפיקה במשחקים, אבל מתאימים בדיוק לפעולות מטריצה — בדיוק מה שרשת נוירונים זקוקה לו. NVIDIA CUDA (2007) הפכה את ה-GPU לזמין למחקר. CPU לוקח שעות, GPU מבצע אותו אימון בדקות.</td></tr>
+      <tr><td><strong>נתונים</strong></td><td>האינטרנט פתח ברז של נתונים מתויגים. ImageNet (Fei-Fei Li, 2009) הביא 14 מיליון תמונות מתויגות ב-1000 קטגוריות — מה שאיפשר לאמן רשתות עמוקות באמת.</td></tr>
+      <tr><td><strong>אלגוריתמים</strong></td><td>שיפורים שייתרו את הבעיה של "Vanishing Gradients" — ReLU במקום sigmoid, אתחולים חכמים, נורמליזציה של batch, Dropout. כל אלה הפכו רשתות עמוקות מאומנות־בקושי לרשתות שמתאמנות בקלות.</td></tr>
+    </table>
+
+    <details class="expand">
+      <summary>הרחבה: "אבות ה-AI" וזוכי פרס טיורינג 2018</summary>
+      <div class="body">
+        <p>פרס טיורינג 2018 הוענק לשלושת המובילים שהביאו את DL לעולם:</p>
+        <ul>
+          <li><strong>Geoffrey Hinton</strong> — "סבא של ה-DL", פיתח Backpropagation, Boltzmann Machines, AlexNet.</li>
+          <li><strong>Yann LeCun</strong> — אבי ה-CNN (LeNet), כיום ראש מחקר ב-Meta AI.</li>
+          <li><strong>Yoshua Bengio</strong> — מודלי שפה, RNN, Attention.</li>
+        </ul>
+        <p>שמות נוספים שנזכיר בהמשך: <em>François Chollet</em> (יוצר Keras, מחבר ספר הקורס), <em>Andrew Ng</em> (Coursera, Google Brain), <em>Ian Goodfellow</em> (יוצר GANs).</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>4. רענון: סוגי בעיות ב-ML</h3>
+  <div class="card">
+    <p>לפני שצוללים ל-NN, חשוב למקם אותן במפת ה-ML. רוב הבעיות שנפתור בקורס הן <strong>Supervised Learning</strong>, ובתוכן בעיקר Classification ו-Regression.</p>
+
+    <table class="compare">
+      <tr><th>קטגוריית-על</th><th>סוג בעיה</th><th>דוגמה</th><th>הפלט</th></tr>
+      <tr><td rowspan="2">Supervised<br/>(יש תיוג ידוע)</td><td>Classification</td><td>"האם הסטודנט יתקבל לאוניברסיטה?" / "חתול / כלב / דג"</td><td>קטגוריה דיסקרטית</td></tr>
+      <tr><td>Regression</td><td>"מה מחיר הדירה?"</td><td>מספר רציף</td></tr>
+      <tr><td rowspan="2">Unsupervised<br/>(אין תיוג)</td><td>Clustering</td><td>"חלק את הלקוחות ל-5 קבוצות התנהגותיות"</td><td>קבוצות</td></tr>
+      <tr><td>Association Rules</td><td>"לקוחות שקנו A קונים גם B"</td><td>חוקים</td></tr>
+    </table>
+
+    <h4>הבעיה הקלאסית של סיווג שלובה ברחבי הקורס: הקבלה לאוניברסיטה</h4>
+    <p>נתונים: לכל סטודנט שני ערכי קלט — ציון בגרות, ציון מבחן קבלה. תיוג: התקבל / נדחה. מטרה: למצוא <em>קו מפריד</em> במישור הדו-ממדי שיפריד בצורה הטובה ביותר בין נקודות "התקבל" לנקודות "נדחה".</p>
+    <div class="formula">Prediction:  ŷ = 1 if Wx + b ≥ 0,  else 0</div>
+    <p>זוהי בדיוק הצורה של פרספטרון — אבן הבניין של רשתות נוירונים שנלמד בהרצאה הבאה.</p>
+
+    <h4>הבעיה הקלאסית של רגרסיה: מחיר נכס</h4>
+    <p>נתונים: מספר חדרים, אזור, שטח, גיל הבניין. תיוג: מחיר. מטרה: למצוא פונקציה ƒ(x) → price שתחזה הכי טוב את המחיר. ב-DL הפלט הוא מספר רציף, ולעיתים נכפה אותו להיות אי-שלילי על ידי <strong>ReLU</strong> בפלט.</p>
+
+    <details class="expand">
+      <summary>למה צריך <em>קו ישר</em> למחיר ולא קו עקום?</summary>
+      <div class="body">
+        <p>קו ישר הוא הנחה (assumption) בעיית רגרסיה <em>לינארית</em>. בפועל היחסים בעולם לא תמיד לינאריים — ולכן ב-DL נשתמש ברצף שכבות עם <strong>פונקציות אקטיבציה לא-לינאריות</strong> (כפי שנראה בהרצאות 2-3) שמסוגלות לקרב כל פונקציה רציפה (Universal Approximation Theorem).</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>5. שיטות פתרון מסורתיות לעומת NN</h3>
+  <div class="card">
+    <p>ל-Classification ו-Regression יש משפחות של פותרים — ולמעשה כל קורס ML עובר עליהם. לכל אחת חוזקות וחולשות שונות:</p>
+    <ul>
+      <li><strong>עץ החלטה</strong> — מפצל את הנתונים על סף ערך בכל שלב. שקוף וקריא; אבל overfit אם לא מגוזם.</li>
+      <li><strong>Random Forest</strong> — אנסמבל של עצים. חזק ויציב על נתונים טבלאיים.</li>
+      <li><strong>SVM</strong> — מוצא את הקו עם השוליים הרחבים ביותר בין המחלקות. עובד טוב במימדים גבוהים.</li>
+      <li><strong>KNN</strong> — מסווג נקודה לפי k השכנים הקרובים אליה. אינטואיטיבי, אבל איטי בזמן חיזוי.</li>
+      <li><strong>רגרסיה לוגיסטית</strong> — סיגמואיד על קומבינציה לינארית של הקלטים. אבן הבניין של פרספטרון יחיד.</li>
+      <li><strong>רשת נוירונים</strong> — מסוגלת ללמוד פונקציות מורכבות מאוד; דורשת הרבה נתונים ומשאבי חישוב.</li>
+    </ul>
+    <div class="callout">
+      <strong>תובנה חשובה:</strong> רשת נוירונים <em>אינה</em> תמיד הכלי הנכון. על נתונים טבלאיים מובנים עם פחות מ-10K דגימות — Random Forest / XGBoost לרוב מנצחים DL. DL מנצחת כאשר הקלט הוא <em>תמונה / טקסט / קול / רצף</em> ויש מספיק נתונים.
+    </div>
+  </div>
+
+  <h3>6. הסביבה הטכנית של הקורס</h3>
+  <div class="card">
+    <table class="compare">
+      <tr><th>כלי</th><th>תפקיד</th></tr>
+      <tr><td>Python 3</td><td>שפת התכנות. כל ה-frameworks הגדולים תומכים בה.</td></tr>
+      <tr><td>Anaconda</td><td>מנהל סביבות. מתקין Python + ספריות מדעיות בקליק.</td></tr>
+      <tr><td>Google Colab</td><td>סביבת Jupyter בענן, חינמית, עם גישה ל-GPU. <em>הסביבה המומלצת לכל הקורס.</em></td></tr>
+      <tr><td>GitHub</td><td>גרסאות וניהול קוד.</td></tr>
+      <tr><td>TensorFlow / Keras / PyTorch</td><td>ה-frameworks. נלמד אותם החל מהרצאה 5.</td></tr>
+    </table>
+    <p><strong>ספר הקורס:</strong> <em>Deep Learning with Python</em> מאת François Chollet — נכתב על ידי יוצר Keras עצמו. הקוד של הספר זמין ב-<span style="direction:ltr;display:inline-block">github.com/fchollet/deep-learning-with-python-notebooks</span>.</p>
+  </div>
+
+  <h3>7. שאלות חזרה למבחן — הרצאה 1</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. הסבר את ההבדל בין AI, ML ו-DL.</div>
+    <details><summary>הצג תשובה</summary><div class="a">AI הוא קטגוריית-על (כל מערכת שמחקה אינטליגנציה אנושית, גם מבוססת חוקים). ML היא תת-קבוצה של AI שלומדת חוקים <em>מנתונים</em> במקום שיתכנתו אותם ידנית. DL היא תת-קבוצה של ML שמשתמשת ברשתות נוירונים <em>עמוקות</em> (מספר שכבות נסתרות) ולומדת בעצמה גם את המאפיינים (Features) הרלוונטיים, מה שמייתר Feature Engineering ידני.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. מנה שלושה גורמים שאיפשרו את פריצת DL ב-2010.</div>
+    <details><summary>הצג תשובה</summary><div class="a">(1) חומרה — GPUs מאפשרים אימון מהיר פי עשרות מ-CPU. (2) נתונים — האינטרנט ו-ImageNet סיפקו מאות מיליוני דגימות מתויגות. (3) אלגוריתמים — ReLU, Dropout, אתחולים חכמים ושיטות נורמליזציה פתרו את בעיית ה-Vanishing Gradient.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. נתון: סטודנט עם בגרות 70 ומבחן 60. הקו המפריד הוא 2x₁ + x₂ – 18 = 0 כאשר x₁=ציון מבחן, x₂=ציון בגרות. האם יתקבל?</div>
+    <details><summary>הצג תשובה</summary><div class="a">2·60 + 70 – 18 = 120 + 70 – 18 = 172 ≥ 0 → ŷ = 1, מתקבל. (זו דוגמת הפרספטרון הקלאסית של הקורס.)</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. למה DL נחשבת "קופסה שחורה" וב-אילו תחומים זה מהווה בעיה?</div>
+    <details><summary>הצג תשובה</summary><div class="a">קשה להסביר את ההחלטה של רשת עמוקה כי היא מבוססת על מיליוני פרמטרים שאינטראקציות ביניהם אינן ניתנות לפרשנות פשוטה. זה מהווה בעיה ברפואה (חובת הסבר), פיננסים וביטוח (חוק GDPR מחייב הסבר על החלטה אוטומטית), ובמערכות בטיחות קריטיות.</div></details>
+  </div>
+
+  <h3>8. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תדע למקם DL במפת ה-AI ולהסביר את ההיררכיה <strong>AI ⊃ ML ⊃ DL</strong>.</li>
+      <li>תוכל להסביר את שני היתרונות של DL: ביצועים פורצי דרך + ביטול Feature Engineering.</li>
+      <li>תזהה אילו בעיות מתאימות ל-DL (תמונה, טקסט, קול, רצף) ואילו לא (טבלאי קטן).</li>
+      <li>תכיר את מפת ה-ML: Classification, Regression, Clustering, Association.</li>
+      <li>תהיה מוכן להבין את שני הסיפורים הרצים בקורס: <em>הקבלה לאוניברסיטה</em> (סיווג) ו-<em>מחיר נכס</em> (רגרסיה).</li>
+      <li>תהיה מסוגל להסביר במשפט אחד את משולש החומרה / הנתונים / האלגוריתמים.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> בהרצאה 2 נלמד את אבן הבניין הבסיסית — <em>Perceptron</em>, איך הוא מחשב את הסיווג שלו (Wx+b), אילו פונקציות אקטיבציה אפשר להפעיל עליו, ואיך מאמנים אותו באמצעות Gradient Descent על פונקציית Loss רציפה.
+  </div>
+</section>
+
+<section id="lect2" class="tab-panel">
+  <h2 class="section">הרצאה 2 — רשת נוירונים, חלק א'</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 2</span>
+      <span class="chip outline">57 שקפים</span>
+      <span class="chip outline">תאריך: 26.03.2026</span>
+      <span class="chip">ליבת הקורס</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> להוריד את רשת הנוירונים ליסודותיה — <em>הפרספטרון</em>. נראה איך פרספטרון בודד מקבל החלטות, איך מייצגים שערים לוגיים, מה הבעיות שלו, ואיך עוברים מהחלטה דיסקרטית לפלט הסתברותי שאפשר לאמן באמצעות גרדיאנט.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>פרספטרון: ההגדרה, הקשר לנוירון ביולוגי, חישוב פלט.</li>
+      <li>פונקציית Step ושערים לוגיים (AND, OR, NOT, XOR).</li>
+      <li>אלגוריתם הפרספטרון לעדכון משקלות (Perceptron Learning Algorithm).</li>
+      <li>הצורך בפונקציית Loss רציפה — Sigmoid במקום Step.</li>
+      <li>סיווג רב-מחלקתי עם Softmax ו-One-Hot Encoding.</li>
+      <li>Maximum Likelihood, Log-Likelihood, Cross Entropy.</li>
+      <li>Gradient Descent: האלגוריתם, החישוב, ועדכון המשקלות.</li>
+      <li>השוואה בין Perceptron Algorithm ל-Gradient Descent.</li>
+    </ol>
+  </div>
+
+  <h3>1. הפרספטרון — אבן הבניין</h3>
+  <div class="card">
+    <p>פרספטרון הוא הצורה הפשוטה ביותר של רשת נוירונים: <strong>נוירון יחיד</strong>. הוא מקבל וקטור קלט x = (x₁, x₂, ..., xₙ), מכפיל כל קלט במשקל w, מסכם, מוסיף הטיה b, ומחזיר 0 או 1 לפי הסימן.</p>
+
+    <div class="formula">z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b  =  Wx + b</div>
+    <div class="formula">ŷ = 1  if z ≥ 0,  else 0   (Step function)</div>
+
+    <h4>הקשר לנוירון ביולוגי</h4>
+    <p>הקלטים x — דומים לדנדריטים שקולטים אותות חשמליים. המשקלות W — חוזק החיבור הסינפטי. הסכום והפלט — הפעולה של גוף התא והאקסון: אם ההצטברות החשמלית עברה סף, התא "יורה" אות.</p>
+
+    <details class="expand">
+      <summary>חזרה לדוגמת הקבלה לאוניברסיטה כפרספטרון</summary>
+      <div class="body">
+        <p>קלטים: x₁ = ציון מבחן, x₂ = ציון בגרות. משקלות: w₁ = 2, w₂ = 1, b = –18. החלטה:</p>
+        <div class="formula">ציון קבלה = 2·(ציון מבחן) + 1·(ציון בגרות) – 18</div>
+        <p>אם הציון חיובי → התקבל. הקו <strong>2x₁ + x₂ – 18 = 0</strong> הוא הקו המפריד בין מתקבלים ללא מתקבלים. <em>אימון</em> פירושו לשנות את w₁, w₂, b כך שהקו יפריד טוב יותר.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>2. שערים לוגיים כפרספטרונים</h3>
+  <div class="card">
+    <p>אפשר לחשוב על שערים לוגיים (AND, OR, NOT) כעל פרספטרונים פשוטים. למשל:</p>
+    <table class="compare">
+      <tr><th>שער</th><th>w₁</th><th>w₂</th><th>b</th><th>הסבר</th></tr>
+      <tr><td>AND</td><td>1</td><td>1</td><td>–1.5</td><td>שני הקלטים חייבים להיות 1 כדי שהסכום יעבור 1.5</td></tr>
+      <tr><td>OR</td><td>1</td><td>1</td><td>–0.5</td><td>מספיק שאחד מהם 1</td></tr>
+      <tr><td>NOT</td><td>–1</td><td>—</td><td>0.5</td><td>היפוך של קלט יחיד</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>הבעיה הגדולה:</strong> שער <strong>XOR</strong> אינו ניתן לפתרון בפרספטרון יחיד! הנקודות (0,0), (1,1) צריכות לתת 0, ו-(0,1), (1,0) צריכות לתת 1 — אין שום קו ישר שמפריד ביניהן. זו הסיבה שצריך <em>שכבות נסתרות</em> ורשתות עמוקות יותר. הסיפור הזה הוא בדיוק מה שעצר את מחקר ה-NN בשנות ה-70 (Minsky &amp; Papert, 1969) ופתח את הדרך לרשתות רב-שכבתיות.
+    </div>
+
+    <details class="expand">
+      <summary>למה צריך שני נוירונים כדי לפתור XOR?</summary>
+      <div class="body">
+        <p>אפשר להרכיב XOR משני קווים: קו של (OR) AND קו של (NOT AND). כלומר: "לפחות אחד מהם 1 וגם לא שניהם". זו בדיוק הדוגמה שמראה את הצורך בשכבה נסתרת — שכבה אחת מחשבת "ביניים" (OR ו-NAND), והשכבה השנייה מחברת אותם (AND).</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>3. אלגוריתם הפרספטרון</h3>
+  <div class="card">
+    <p>איך לומדים את המשקלות W? האלגוריתם המקורי של Rosenblatt (1958) הוא איטרטיבי:</p>
+    <ol>
+      <li>אתחל את W ו-b באקראי.</li>
+      <li>לכל נקודה (xᵢ, yᵢ): חשב ŷ = step(Wxᵢ + b).</li>
+      <li>אם הסיווג נכון → אל תשנה דבר.</li>
+      <li>אם הנקודה סווגה כ"חיובית" אך באמת "שלילית": <em>הפחת</em> α·xᵢ מ-W ו-α מ-b.</li>
+      <li>אם הנקודה סווגה כ"שלילית" אך באמת "חיובית": <em>הוסף</em> α·xᵢ ל-W ו-α ל-b.</li>
+      <li>חזור עד שאין שגיאות (או עד שעברת מספר epochs קבוע).</li>
+    </ol>
+    <p>α (אלפא) הוא <strong>קצב הלמידה</strong> (learning rate) — קובע כמה גדול כל צעד תיקון.</p>
+
+    <h4>הבעיה של האלגוריתם הזה</h4>
+    <p>הוא עובד רק כש<em>הנתונים ניתנים להפרדה לינארית</em>. אם הנתונים לא לינאריים — האלגוריתם לא מתכנס. בנוסף, פונקציית Step אינה גזירה (יש "קפיצה" מ-0 ל-1) ולכן לא ניתן להחיל עליה כלים גנריים יותר של אופטימיזציה. לכן עוברים לפונקציה רציפה — Sigmoid.</p>
+  </div>
+
+  <h3>4. מ-Step ל-Sigmoid: מהחלטה דיסקרטית להסתברות רציפה</h3>
+  <div class="card">
+    <p>במקום שהפרספטרון יחזיר 0/1, נרצה שיחזיר <strong>הסתברות</strong> בין 0 ל-1. הפונקציה שהופכת מספר אמיתי כלשהו להסתברות היא <em>Sigmoid</em>:</p>
+    <div class="formula">σ(z) = 1 / (1 + e^(–z))</div>
+    <ul>
+      <li>z גדול וחיובי → σ ≈ 1</li>
+      <li>z = 0 → σ = 0.5</li>
+      <li>z גדול ושלילי → σ ≈ 0</li>
+    </ul>
+
+    <p>למה זה כל כך חשוב?</p>
+    <ol>
+      <li><strong>גזירות</strong> — סיגמואיד גזירה בכל מקום, ולכן ניתן לחשב גרדיאנטים ולעדכן משקלות בצורה הדרגתית.</li>
+      <li><strong>פרשנות</strong> — הפלט הופך להסתברות. במקום "התקבל / נדחה" אפשר להגיד "סיכוי 73% להתקבל".</li>
+      <li><strong>נגזרת נחמדה</strong> — σ′(z) = σ(z)·(1 – σ(z)), חישוב יעיל מאוד כשמבצעים backpropagation.</li>
+    </ol>
+  </div>
+
+  <h3>5. סיווג רב-מחלקתי: Softmax ו-One-Hot</h3>
+  <div class="card">
+    <p>Sigmoid מתאימה לסיווג בינארי (כן/לא). מה אם יש 3 מחלקות (חתול / כלב / דג)? משתמשים ב-<strong>Softmax</strong>:</p>
+    <div class="formula">P(class i) = e^(zᵢ) / Σⱼ e^(zⱼ)</div>
+    <p>למשל: אם הפלטים הלינאריים הם 2, 1, 0 לחתול / כלב / דג בהתאמה:</p>
+    <ul>
+      <li>P(חתול) = e²/(e²+e¹+e⁰) ≈ 7.39/11.11 ≈ 0.67</li>
+      <li>P(כלב) = e¹/11.11 ≈ 0.24</li>
+      <li>P(דג) = e⁰/11.11 ≈ 0.09</li>
+    </ul>
+    <p>המכנה של softmax מבטיח שהסכום הוא 1, והאקספוננט מבטיח ערכים חיוביים גם כש-z שלילי (פתרון לבעיה של מנה שלילית/אפס).</p>
+
+    <h4>One-Hot Encoding לתיוגים</h4>
+    <p>איך מייצגים את התשובה הנכונה? במקום מספר (חתול=0, כלב=1, דג=2) — וקטור של 0 ו-1 בלבד:</p>
+    <div class="formula">חתול → [1, 0, 0],  כלב → [0, 1, 0],  דג → [0, 0, 1]</div>
+    <p>ככה אפשר להשוות וקטור-לוקטור (החזוי מול האמיתי) באמצעות פונקציית Loss כמו Cross Entropy.</p>
+
+    <details class="expand">
+      <summary>למה לא לקודד "כלב=1, חתול=2, דג=3" כמספרים רגילים?</summary>
+      <div class="body">
+        <p>כי המודל "ילמד" שדג (3) רחוק מחתול (2) קצת יותר מכלב (1) — וזו <em>שגיאה</em>: אין סדר אמיתי בין המחלקות. One-Hot מבטיח ש"מרחק" בין כל זוג מחלקות זהה.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>6. מ-Maximum Likelihood ל-Cross Entropy</h3>
+  <div class="card">
+    <p>איך מודדים "כמה טוב" המודל שלנו? הרעיון: אם המודל אומר ש-Pᵢ הוא הסיכוי שדגימה i תגיע מהמחלקה הנכונה, אז הסיכוי הכולל שכל הדגימות יקבלו את התיוגים הנכונים הוא:</p>
+    <div class="formula">Likelihood = P₁ · P₂ · ... · Pₘ</div>
+    <p>"מודל טוב" = מודל שממקסם את ה-Likelihood (Maximum Likelihood Estimation).</p>
+
+    <h4>הבעיה: מכפלות של מספרים קטנים</h4>
+    <p>במציאות יש אלפי דגימות, ומכפלת אלפי הסתברויות (כל אחת בין 0 ל-1) מתכנסת מהר ל-0.000...001 — מספר שאפילו המחשב לא מצליח לייצג. הפתרון: <strong>לוקח לוגריתם</strong>. תכונה של log:</p>
+    <div class="formula">log(α · β) = log(α) + log(β)</div>
+    <p>וכך מכפלות הופכות לסכומים, וסכומים מנוהלים בקלות.</p>
+
+    <h4>Cross Entropy</h4>
+    <p>אם נכפיל את ה-log-likelihood ב-(–1) (כדי שיהיה מספר חיובי שאפשר להמזער), נקבל את <strong>Cross Entropy</strong>:</p>
+    <div class="formula">CE = –Σᵢ [yᵢ · ln(ŷᵢ) + (1–yᵢ) · ln(1–ŷᵢ)]</div>
+    <p><strong>איך לקרוא את הנוסחה (סיווג בינארי):</strong> אם הדגימה האמיתית היא חיובית (yᵢ=1), הביטוי השני מתאפס ונשאר רק –ln(ŷᵢ) — שמודד עד כמה ŷ קרוב ל-1. אם הדגימה היא שלילית (yᵢ=0), נשאר רק –ln(1–ŷᵢ) — שמודד עד כמה ŷ קרוב ל-0.</p>
+    <p><strong>אינטואיציה:</strong> CE קטן ⇔ מודל טוב. CE גדול ⇔ המודל אומר הסתברויות "בטוחות" שגויות.</p>
+
+    <details class="expand">
+      <summary>דוגמה מספרית של CE</summary>
+      <div class="body">
+        <p>אם התיוג האמיתי הוא [1,1,0,1] והמודל חזה [0.9, 0.7, 0.1, 0.8]:</p>
+        <div class="formula">CE = –[ln(0.9) + ln(0.7) + ln(1–0.1) + ln(0.8)] ≈ 0.79</div>
+        <p>אם המודל חזה הסתברויות גרועות יותר [0.1, 0.7, 0.9, 0.2] (הוא בטוח בהפך):</p>
+        <div class="formula">CE = –[ln(0.1) + ln(0.7) + ln(1–0.9) + ln(0.2)] ≈ 6.65</div>
+        <p>שגיאה גבוהה משקפת חיזוי גרוע יותר.</p>
+      </div>
+    </details>
+
+    <h4>Cross Entropy למשתנה קטגוריאלי</h4>
+    <div class="formula">CE = –Σᵢ Σⱼ yᵢⱼ · ln(pᵢⱼ)</div>
+    <p>כאשר i רץ על המחלקות, j על הדגימות. בגלל ה-One-Hot, רק איבר אחד מ-yᵢⱼ הוא 1 לכל דגימה — ולכן זה מתפשט ל"ln של ההסתברות שהמודל נתן למחלקה הנכונה".</p>
+  </div>
+
+  <h3>7. Gradient Descent — האימון בפועל</h3>
+  <div class="card">
+    <p>יש לנו מודל (Wx+b → סיגמואיד → ŷ) ופונקציית שגיאה E(W, b). המטרה: למצוא את ה-W וה-b שממזערים את E. השיטה: <strong>Gradient Descent</strong>.</p>
+
+    <h4>האינטואיציה</h4>
+    <p>דמיין את E כמשטח תלת-ממדי: צירי X = w₁ ו-w₂, וציר Z = ערך השגיאה. אנחנו עומדים על המשטח באקראי, ורוצים לרדת לעמק (המינימום). בכל צעד מסתכלים על השיפוע (גרדיאנט) ויורדים בכיוון ההפוך לו.</p>
+
+    <h4>הנוסחה לעדכון</h4>
+    <div class="formula">wᵢ ← wᵢ – α · ∂E/∂wᵢ</div>
+    <div class="formula">b ← b – α · ∂E/∂b</div>
+    <p>כאשר ∂E/∂wᵢ הוא הנגזרת החלקית של השגיאה ביחס ל-wᵢ (מחושבת באמצעות <em>כלל השרשרת</em>, נראה בהרחבה בהרצאה 3), ו-α הוא קצב הלמידה.</p>
+
+    <h4>חישוב הגרדיאנט (פרספטרון יחיד עם sigmoid + cross entropy)</h4>
+    <p>אחרי שימוש בכלל השרשרת, מתקבל ביטוי יפה ופשוט במיוחד:</p>
+    <div class="formula">∂E/∂wᵢ = –(y – ŷ) · xᵢ</div>
+    <p>ומכאן עדכון המשקל:</p>
+    <div class="formula">wᵢ ← wᵢ + α · (y – ŷ) · xᵢ</div>
+    <p><strong>הסבר:</strong> הפרש (y – ŷ) הוא "כמה טעינו" בכיוון. אם המודל אמר 0.3 ובאמת y=1 → ההפרש 0.7 → תיקון בגדל xᵢ. אם המודל אמר 0.95 ובאמת y=1 → ההפרש 0.05 → תיקון זעיר. ככל שהמודל קרוב לאמת — התיקון קטן יותר.</p>
+
+    <h4>האלגוריתם המלא</h4>
+    <ol>
+      <li>אתחל את W, b באקראי.</li>
+      <li>לכל epoch: לכל נקודה (xᵢ, yᵢ) — חשב ŷᵢ = σ(Wxᵢ + b).</li>
+      <li>חשב את השגיאה ואת הגרדיאנטים.</li>
+      <li>עדכן: wᵢ ← wᵢ + α(y – ŷ)xᵢ, b ← b + α(y – ŷ).</li>
+      <li>חזור עד שהשגיאה קטנה מספיק או שהגעת למספר epochs מקסימלי.</li>
+    </ol>
+  </div>
+
+  <h3>8. השוואה: Perceptron Algorithm vs. Gradient Descent</h3>
+  <div class="card">
+    <table class="compare">
+      <tr><th></th><th>Perceptron Algorithm</th><th>Gradient Descent על Sigmoid</th></tr>
+      <tr><td>אקטיבציה</td><td>Step (דיסקרטית)</td><td>Sigmoid (רציפה)</td></tr>
+      <tr><td>על אילו נקודות מעדכן</td><td>רק על נקודות שגויות</td><td>על <em>כל</em> הנקודות</td></tr>
+      <tr><td>גודל העדכון</td><td>α·xᵢ קבוע (אם שגויה)</td><td>α·(y–ŷ)·xᵢ — פרופורציוני לטעות</td></tr>
+      <tr><td>מתכנס תמיד?</td><td>רק על נתונים ניתנים-להפרדה לינארית</td><td>מתכנס למינימום (לוקלי או גלובלי)</td></tr>
+      <tr><td>הכללה לרשתות עמוקות</td><td>לא ניתנת להכללה</td><td>בסיס ל-Backpropagation</td></tr>
+    </table>
+
+    <p><strong>תובנה:</strong> Gradient Descent עם sigmoid הוא בעצם <em>רגרסיה לוגיסטית</em>. כך שפרספטרון אחד עם sigmoid + cross entropy + GD = רגרסיה לוגיסטית קלאסית. רשת נוירונים = הרבה רגרסיות לוגיסטיות מקושרות זו לזו.</p>
+  </div>
+
+  <h3>9. שאלות חזרה למבחן — הרצאה 2</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. למה לא ניתן ללמוד XOR בעזרת פרספטרון יחיד?</div>
+    <details><summary>הצג תשובה</summary><div class="a">פרספטרון יחיד יכול לייצג רק <em>קו ישר</em> כקו מפריד. הנקודות של XOR אינן ניתנות להפרדה על ידי שום קו ישר במישור. הפתרון הוא להשתמש בלפחות שכבה נסתרת אחת — שיוצרת מרחב חדש שבו הנתונים <em>כן</em> ניתנים להפרדה.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. למה משתמשים ב-Cross Entropy ולא בסכום ריבועי השגיאות (MSE) בסיווג?</div>
+    <details><summary>הצג תשובה</summary><div class="a">MSE על פלט סיגמואיד יוצרת משטח שגיאה לא קמור עם מינימה מקומיות והגרדיאנטים שלה הופכים קטנים מאוד כשהמודל בטוח־ושוגה (saturation). Cross Entropy "מענישה" בחומרה רבה יותר חיזוי שגוי בעוצמה גבוהה (המספר ln(0) שואף לאינסוף), והיא נותנת גרדיאנטים גדולים יותר במצבים האלה — מה שמאפשר לאלגוריתם להתאושש מהר יותר.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. מודל חזה ŷ=0.2 עבור דגימה שתיוגה האמיתי y=1. אם x₁=3, α=0.1 — מהו עדכון המשקל w₁?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Δw₁ = α·(y–ŷ)·x₁ = 0.1 · (1–0.2) · 3 = 0.1·0.8·3 = 0.24. משמעות: w₁ עולה ב-0.24, מה שיגדיל את z בפעם הבאה ויקרב את ŷ ל-1.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. מתי נשתמש ב-Sigmoid בשכבת הפלט ומתי ב-Softmax?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Sigmoid — בסיווג בינארי (פלט יחיד שהוא הסתברות בין 0 ל-1). Softmax — בסיווג רב-מחלקתי כשרוצים <em>חלוקת הסתברות</em> על פני n מחלקות (סכום = 1).</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש5. למה מתחילים אימון עם משקלות אקראיים ולא עם אפסים?</div>
+    <details><summary>הצג תשובה</summary><div class="a">אם כל המשקלות שווים (במיוחד אפסים), כל הנוירונים בשכבה יחשבו אותו הדבר ויתעדכנו באותה צורה — ולכן הרשת תאבד את היכולת ללמוד תכונות שונות (Symmetry Breaking). אתחול אקראי מבטיח שכל נוירון יתחיל ממקום שונה ויפתח התמחות שונה.</div></details>
+  </div>
+
+  <h3>10. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תוכל לצייר פרספטרון, לסמן עליו x, w, b, ולחשב את הפלט שלו על דוגמה מספרית.</li>
+      <li>תזהה ארבע פונקציות אקטיבציה ראשיות: Step, Sigmoid, Softmax, ReLU.</li>
+      <li>תסביר מתי משתמשים ב-Sigmoid (בינארי) ומתי ב-Softmax (רב-מחלקתי).</li>
+      <li>תכתוב את נוסחת Cross Entropy ותסביר למה היא מתאימה לסיווג.</li>
+      <li>תוכל לבצע צעד אחד של Gradient Descent ידנית: מחיזוי, דרך שגיאה, לעדכון משקלות.</li>
+      <li>תבחין בין Perceptron Algorithm ל-Gradient Descent ותסביר את היתרון של GD.</li>
+      <li>תזהה את החיבור בין רגרסיה לוגיסטית קלאסית ל-NN: רגרסיה לוגיסטית = פרספטרון אחד עם sigmoid + CE.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> ראינו שפרספטרון יחיד מוגבל למודלים לינאריים. בהרצאה 3 נוסיף שכבות נסתרות וניצור <em>רשת עמוקה</em> שמסוגלת ללמוד פונקציות מורכבות. נכיר את שני שלבי האימון — Feedforward ו-Backpropagation — והאופן שבו כלל השרשרת מאפשר חישוב גרדיאנטים גם ברשת בעלת עשרות שכבות.
+  </div>
+</section>
+
+<section id="lect3" class="tab-panel">
+  <h2 class="section">הרצאה 3 — רשת נוירונים, חלק ב' (שכבות נסתרות)</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 3</span>
+      <span class="chip outline">32 שקפים</span>
+      <span class="chip outline">תאריך: 26.03.2026</span>
+      <span class="chip">ליבת הקורס</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> לעבור מפרספטרון יחיד לרשת נוירונים <em>עמוקה</em> — עם שכבות נסתרות. נראה איך שכבות מאפשרות פתרון בעיות לא-לינאריות, איך עובד מעבר הקלט (Feedforward), ואיך מתעדכנים משקלות בכל שכבה (Backpropagation) באמצעות כלל השרשרת.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>למה צריך שכבות נסתרות — שילוב מודלים לינאריים ליצירת מודל לא-לינארי.</li>
+      <li>ארכיטקטורת רשת: שכבת קלט, שכבות נסתרות, שכבת פלט.</li>
+      <li>Feedforward — חישוב הפלט שכבה אחרי שכבה.</li>
+      <li>Backpropagation — האינטואיציה ואז המתמטיקה.</li>
+      <li>כלל השרשרת ככלי מרכזי לחישוב גרדיאנטים.</li>
+      <li>לולאת האימון השלמה: FF → Loss → BP → עדכון משקלות.</li>
+      <li>סיבות אפשריות לכישלון מודל ומבט קדימה לאופטימיזציה.</li>
+    </ol>
+  </div>
+
+  <h3>1. שילוב פרספטרונים — למה זה עובד?</h3>
+  <div class="card">
+    <p>פרספטרון יחיד מציע <em>קו ישר</em> כגבול החלטה. אם נחבר שני פרספטרונים, כל אחד עם קו משלו, ונחבר את הפלטים שלהם — נקבל אזור לא-לינארי. דוגמה:</p>
+
+    <p>נניח פרספטרון 1 נותן ŷ₁ = σ(7x₁ – 3x₂ – 1), פרספטרון 2 נותן ŷ₂ = σ(4x₁ – 2x₂ + 6). שילוב לינארי שלהם בשכבה הבאה: z = 7·ŷ₁ + 5·ŷ₂ – 6, ואז סיגמואיד.</p>
+
+    <div class="formula">ŷ = σ( 7·σ(7x₁ – 3x₂ – 1) + 5·σ(4x₁ – 2x₂ + 6) – 6 )</div>
+
+    <p>החלק הזה — <em>הרכבה של פונקציות לא-לינאריות</em> — הוא הסוד של עומק. בלי האקטיבציה הלא-לינארית, רצף שכבות היה מתפרק לכפל מטריצות אחד גדול ומתפקד כפרספטרון לינארי יחיד.</p>
+
+    <details class="expand">
+      <summary>תאוריה: Universal Approximation Theorem</summary>
+      <div class="body">
+        <p>תוצאה תיאורטית מפורסמת (Cybenko 1989, Hornik 1991): רשת נוירונים <em>בעלת שכבה נסתרת אחת בלבד</em> ופונקציית אקטיבציה לא-לינארית מתאימה — מסוגלת לקרב <em>כל פונקציה רציפה</em> בכל דיוק רצוי, בהינתן מספיק נוירונים. בפועל, רשתות עמוקות (הרבה שכבות, פחות נוירונים בכל שכבה) יעילות הרבה יותר בלמידה מאשר רשת רחבה ושטוחה.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>2. ארכיטקטורת רשת נוירונים</h3>
+  <div class="card">
+    <p>מבנה כללי של NN מורכב משלושה סוגי שכבות:</p>
+    <table class="compare">
+      <tr><th>שכבה</th><th>תפקיד</th><th>גודל אופייני</th></tr>
+      <tr><td><strong>Input Layer</strong></td><td>קולטת את הקלט הגולמי. אין בה חישוב — רק מעבירה את ערכי x הלאה.</td><td>כמספר התכונות (features) של הקלט</td></tr>
+      <tr><td><strong>Hidden Layers</strong></td><td>השכבות שבהן מתבצע הלימוד. כל נוירון מחבר את הפלטים מהשכבה הקודמת ומפעיל אקטיבציה.</td><td>היפר-פרמטר — בוחרים בניסוי</td></tr>
+      <tr><td><strong>Output Layer</strong></td><td>מפיקה את התחזית הסופית. מספר היחידות תלוי בבעיה.</td><td>סיווג בינארי: 1 (sigmoid). רב-מחלקתי: n (softmax). רגרסיה: 1 (ללא אקטיבציה).</td></tr>
+    </table>
+
+    <h4>סימון מוסכם</h4>
+    <p>נסמן ב-W<sub>ij</sub><sup>(k)</sup> את המשקל של חיבור מהנוירון ה-i בשכבה k–1 לנוירון ה-j בשכבה k. למשל ברשת עם שכבה נסתרת אחת ושני קלטים, יש לנו מטריצות W⁽¹⁾ (קלט → נסתרת) ו-W⁽²⁾ (נסתרת → פלט).</p>
+
+    <h4>סוגי ארכיטקטורות</h4>
+    <ul>
+      <li><strong>שכבה נסתרת אחת + פלט יחיד:</strong> סיווג בינארי לא-לינארי במישור.</li>
+      <li><strong>שכבה נסתרת + פלט מרובה (multi-class):</strong> סיווג ל-3 קטגוריות ומעלה.</li>
+      <li><strong>2+ שכבות נסתרות:</strong> Deep Network — לומדת ייצוגים היררכיים.</li>
+      <li><strong>קלטים רבים (3D, 4D):</strong> תמונה / רצף — ידרוש שכבות מיוחדות (CNN, RNN) שנלמד בהמשך.</li>
+    </ul>
+  </div>
+
+  <h3>3. Feedforward — מעבר קדימה ברשת</h3>
+  <div class="card">
+    <p>Feedforward הוא תהליך החישוב של הפלט בהינתן קלט. <strong>שכבה אחרי שכבה</strong>:</p>
+    <ol>
+      <li>קלט x נכנס לשכבה הראשונה.</li>
+      <li>בכל נוירון בשכבה הנסתרת: מחשבים z = Wx + b, מפעילים אקטיבציה σ(z).</li>
+      <li>הפלט של כל נוירון הופך לקלט של השכבה הבאה.</li>
+      <li>בשכבה האחרונה — מקבלים את התחזית ŷ.</li>
+    </ol>
+
+    <h4>בכתיב מטריציוני</h4>
+    <p>עבור רשת עם שכבה נסתרת אחת:</p>
+    <div class="formula">h = σ(W⁽¹⁾x + b⁽¹⁾)</div>
+    <div class="formula">ŷ = σ(W⁽²⁾h + b⁽²⁾)</div>
+
+    <p>אפשר לרכז את כל החישוב בביטוי אחד מקונן:</p>
+    <div class="formula">ŷ = σ( W⁽²⁾ · σ( W⁽¹⁾x + b⁽¹⁾ ) + b⁽²⁾ )</div>
+
+    <p><strong>חשוב להבין:</strong> Feedforward הוא <em>חישוב</em> של פונקציה — אין פה למידה. הלמידה תתרחש ב-Backpropagation, שיעדכן את W ו-b על סמך מידת השגיאה של ŷ ביחס ל-y.</p>
+  </div>
+
+  <h3>4. Backpropagation — איך לומדים</h3>
+  <div class="card">
+    <h4>האינטואיציה</h4>
+    <p>נניח שהרצנו Feedforward ויצא ŷ שגוי. נשאלות שתי שאלות:</p>
+    <ol>
+      <li>מי "אשם" בשגיאה — איזו משקלת תרמה לה הכי הרבה?</li>
+      <li>לאיזה כיוון לשנות כל משקלת כדי לשפר?</li>
+    </ol>
+
+    <p><strong>האינטואיציה החזותית:</strong> אם השכבה התחתונה תרמה יותר לחיזוי הנכון, ניתן לה משקל גדול יותר; אם השכבה העליונה תרמה לטעות, נחליש אותה. עבור כל משקל פנימי w<sub>ij</sub><sup>(k)</sup> — נשאל: "איך השגיאה תשתנה אם נזיז את המשקל הזה במעט?". זו <em>הנגזרת החלקית</em> ∂E/∂w<sub>ij</sub><sup>(k)</sup>.</p>
+
+    <h4>למה זה נקרא "לאחור"?</h4>
+    <p>חישוב הגרדיאנט עבור משקל בשכבה האחרונה <em>פשוט</em>. עבור משקלות בשכבה הקודמת — צריך לעבור דרך החישובים שכבר נעשו בשכבה האחרונה. ולכן מתחילים מהפלט והולכים <em>אחורה</em> שכבה אחר שכבה. השגיאה "מתפזרת" אחורה דרך הרשת.</p>
+  </div>
+
+  <h3>5. כלל השרשרת — הכלי המתמטי</h3>
+  <div class="card">
+    <p>אם h(x) = f(g(x)), אז הנגזרת:</p>
+    <div class="formula">dh/dx = (df/dg) · (dg/dx)</div>
+
+    <p>בהקשר שלנו, הקשר בין משקל w<sub>11</sub><sup>(1)</sup> בשכבה הראשונה לבין השגיאה E עובר דרך שרשרת:</p>
+    <div class="formula">w<sub>11</sub><sup>(1)</sup> → h₁ → h → ŷ → E</div>
+
+    <p>וכלל השרשרת נותן:</p>
+    <div class="formula">∂E/∂w₁₁⁽¹⁾ = (∂E/∂ŷ) · (∂ŷ/∂h) · (∂h/∂h₁) · (∂h₁/∂w₁₁⁽¹⁾)</div>
+
+    <p>כל אחד מהגורמים הוא נגזרת "מקומית" שאנחנו יודעים לחשב:</p>
+    <ul>
+      <li><strong>∂E/∂ŷ</strong> — נגזרת של Cross Entropy ביחס ל-ŷ (פשוטה).</li>
+      <li><strong>∂ŷ/∂h</strong> — נגזרת של sigmoid: σ(h)·(1–σ(h)).</li>
+      <li><strong>∂h/∂h₁</strong> — המשקל בשכבה השנייה W₁₁⁽²⁾ כפול נגזרת sigmoid אם הופעלה.</li>
+      <li><strong>∂h₁/∂w₁₁⁽¹⁾</strong> — פשוט x₁ (כי h₁ = w₁₁⁽¹⁾·x₁ + ...).</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>החדשות הטובות:</strong> אנחנו לא נחשב את זה ידנית. כל ה-Frameworks (TensorFlow, PyTorch, JAX) עושים <em>גזירה אוטומטית</em> (Automatic Differentiation): נותנים להם רק את ה-Forward pass, והם בונים גרף חישובי וגוזרים אוטומטית. זה אחד הכלים החזקים ביותר ב-DL וזה מה שמאפשר ארכיטקטורות עמוקות ומורכבות.
+    </div>
+  </div>
+
+  <h3>6. עדכון המשקלות</h3>
+  <div class="card">
+    <p>אחרי שיש לנו את הגרדיאנט ∂E/∂w<sub>ij</sub><sup>(k)</sup> — מעדכנים בדיוק כמו ב-Gradient Descent הרגיל:</p>
+    <div class="formula">w<sub>ij</sub><sup>(k)</sup> ← w<sub>ij</sub><sup>(k)</sup> – α · ∂E/∂w<sub>ij</sub><sup>(k)</sup></div>
+    <p>זה קורה לכל משקל בכל שכבה. ברשת עם 100 מיליון משקלות — נעשה 100 מיליון עדכונים במקביל בכל epoch. כאן ה-GPU נכנס לתמונה: כפל מטריצות מקבילי הוא בדיוק החוזק שלו.</p>
+  </div>
+
+  <h3>7. לולאת האימון השלמה</h3>
+  <div class="card">
+    <p>כך נראה איטרציה אחת של אימון ב-NN:</p>
+    <ol>
+      <li><strong>Forward pass:</strong> הזנת x → חישוב ŷ דרך כל השכבות.</li>
+      <li><strong>Loss:</strong> השוואת ŷ ל-y באמצעות Cross Entropy או MSE.</li>
+      <li><strong>Backward pass:</strong> חישוב הגרדיאנטים של Loss ביחס לכל w.</li>
+      <li><strong>Update:</strong> w ← w – α·gradient.</li>
+      <li><strong>חזרה:</strong> כל הצעדים על דגימה הבאה (או batch הבא).</li>
+    </ol>
+
+    <h4>תרשים זרימה כללי</h4>
+    <p style="text-align:center; font-family: monospace; font-size: 13px; line-height: 1.9; background: #fff; padding: 14px; border-radius: 8px;">
+      קלט X → [Layer 1: Wx+b → σ] → [Layer 2: Wh+b → σ] → ŷ<br/>
+      ↓<br/>
+      Loss(ŷ, Y) ← השוואה לתיוג האמיתי<br/>
+      ↓<br/>
+      Backprop: חישוב ∂Loss/∂W לכל w<br/>
+      ↓<br/>
+      Optimizer: W ← W – α·∇W<br/>
+      ↑___________ חזרה לקלט הבא ___________↑
+    </p>
+  </div>
+
+  <h3>8. מתי המודל לא עובד?</h3>
+  <div class="card">
+    <p>אחרי כל זה, יכול לקרות שהמודל לא מצליח להגיע לדיוק טוב. הסיבות הנפוצות:</p>
+    <ul>
+      <li><strong>ארכיטקטורה לא מתאימה</strong> — מעט מדי שכבות (underfit) או יותר מדי (overfit).</li>
+      <li><strong>נתונים רועשים או חסרים</strong> — תיוגים שגויים, ערכים חסרים שלא טופלו.</li>
+      <li><strong>מעט נתונים</strong> — לא מספיק כדי ללמוד את הקשרים.</li>
+      <li><strong>מעט epochs</strong> — לא נתנו למודל מספיק זמן ללמוד.</li>
+      <li><strong>קצב למידה לא נכון</strong> — α גדול מדי קופץ מעל המינימום, קטן מדי לוקח לנצח.</li>
+      <li><strong>מינימום לוקלי</strong> — האופטימיזציה נתקעה במקום לא אופטימלי.</li>
+      <li><strong>Vanishing Gradients</strong> — הגרדיאנטים הופכים לזעירים בשכבות הראשונות.</li>
+    </ul>
+    <p>הרצאה 4 כולה מוקדשת לפתרונות לבעיות אלו — Early Stopping, Dropout, Regularization, Momentum, ReLU, Stochastic GD.</p>
+  </div>
+
+  <h3>9. שאלות חזרה למבחן — הרצאה 3</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. מה ההבדל בין רשת רדודה (1 שכבה נסתרת) לרשת עמוקה (3+ שכבות)?</div>
+    <details><summary>הצג תשובה</summary><div class="a">תיאורטית, רשת רדודה ברוחב מספיק יכולה להציג כל פונקציה. בפועל, רשת עמוקה לומדת <em>ייצוגים היררכיים</em> — כל שכבה מתמחה ברמת הפשטה גבוהה יותר. זה יעיל הרבה יותר במספר פרמטרים ובדיוק. למשל ברשת לזיהוי פנים: שכבות ראשונות לומדות קצוות, אמצעיות לומדות עיניים/אף/פה, אחרונות לומדות פנים שלמות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. למה אם נסיר את פונקציות האקטיבציה הלא-לינאריות מהרשת — היא תהפוך לפרספטרון יחיד?</div>
+    <details><summary>הצג תשובה</summary><div class="a">בלי אקטיבציה לא-לינארית, כל שכבה היא Wx+b. הרכבה של שכבות לינאריות = W₂(W₁x+b₁)+b₂ = (W₂W₁)x + (W₂b₁+b₂) = W'x + b' — פונקציה לינארית בודדת. כלומר אין יתרון לעומק כשהאקטיבציה לינארית.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. הסבר את כלל השרשרת בהקשר של רשת בעלת 3 שכבות. למה זה הופך את BP ליעיל?</div>
+    <details><summary>הצג תשובה</summary><div class="a">השגיאה E היא פונקציה של ŷ, ŷ של h₂, h₂ של h₁, h₁ של w⁽¹⁾. ∂E/∂w⁽¹⁾ = ∂E/∂ŷ · ∂ŷ/∂h₂ · ∂h₂/∂h₁ · ∂h₁/∂w⁽¹⁾. היעילות: כל גורם בשרשרת הוא נגזרת "מקומית" שכבר חושבה (אם תכננו את ה-BP נכון), ולכן עוברים על הרשת מהסוף להתחלה רק פעם אחת — סיבוכיות O(n) ולא O(n²).</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. למה Feedforward לבד לא מספיק? למה צריך Backpropagation?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Feedforward הוא רק חישוב — נותן את התחזית עם משקלות נוכחיים. הוא לא משנה דבר. Backpropagation הוא תהליך הלמידה: מחשב באיזה כיוון ובאיזו עוצמה לשנות כל משקל כדי להקטין את השגיאה. בלי BP, המשקלות יישארו לנצח על הערכים הראשוניים האקראיים שלהם.</div></details>
+  </div>
+
+  <h3>10. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תוכל לצייר רשת בעלת מספר שכבות ולסמן בה Input / Hidden / Output Layer.</li>
+      <li>תזכה לסמן את הסימון W<sub>ij</sub><sup>(k)</sup> ולהבין מה הוא מייצג.</li>
+      <li>תכתוב את הנוסחה של Feedforward עבור רשת עם שכבה נסתרת אחת.</li>
+      <li>תסביר את ההבדל בין FF (חישוב) ל-BP (למידה).</li>
+      <li>תיישם כלל שרשרת על דוגמה קטנה (3-4 גורמים).</li>
+      <li>תזכור שגזירה אוטומטית ב-frameworks חוסכת חישוב ידני של גרדיאנטים.</li>
+      <li>תזהה את החמש סיבות אפשריות לכישלון מודל ותדע לקשור אותן לפתרונות בהרצאה 4.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> בנינו רשת ולמדנו לאמן אותה. אבל בפועל היא לא תמיד עובדת — Overfitting, מינימה לוקליות, גרדיאנטים נעלמים, אימון איטי. הרצאה 4 היא ארגז כלים: Early Stopping, Regularization (L1/L2), Dropout, Momentum, ReLU, Stochastic GD ו-Learning Rate Decay.
+  </div>
+</section>
+
+<section id="lect4" class="tab-panel">
+  <h2 class="section">הרצאה 4 — אופטימיזציה של רשתות נוירונים</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 4</span>
+      <span class="chip outline">37 שקפים</span>
+      <span class="chip outline">תאריך: 09.04.2026</span>
+      <span class="chip">פרקטי במיוחד</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> לתת ארגז כלים שלם להפיכת מודל "לא עובד" למודל "עובד טוב". אנחנו לא נשנה את הארכיטקטורה הבסיסית, אלא נוסיף שכבות של חכמה: כיצד למנוע overfit, איך לצאת ממינימום לוקלי, איך להאיץ אימון, ואיך להתמודד עם vanishing gradients.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>הבעיה: Overfitting vs. Underfitting.</li>
+      <li><strong>Early Stopping</strong> — לעצור לפני שמודל "משנן".</li>
+      <li><strong>Regularization L1 / L2</strong> — קנס על משקלות גדולים.</li>
+      <li><strong>Dropout</strong> — "כיבוי" אקראי של נוירונים.</li>
+      <li>בעיית מינימה לוקליות: <strong>Random Restarts</strong> ו-<strong>Momentum</strong>.</li>
+      <li>בעיית <strong>Vanishing Gradients</strong> והפתרון: tanh ו-<strong>ReLU</strong>.</li>
+      <li><strong>Stochastic Gradient Descent</strong> ו-Mini-batches.</li>
+      <li><strong>Learning Rate Decay</strong> — קצב למידה דינמי.</li>
+    </ol>
+  </div>
+
+  <h3>1. Overfit vs. Underfit — הקיר שצריך לרקוד עליו</h3>
+  <div class="card">
+    <p>הציר המרכזי שבו אנחנו נעים בכל המודלים:</p>
+    <table class="compare">
+      <tr><th>תופעה</th><th>אופי המודל</th><th>ביצועים על Train</th><th>ביצועים על Test</th><th>סיבה</th></tr>
+      <tr><td>Underfit</td><td>פשוט מדי</td><td>נמוכים</td><td>נמוכים</td><td>חסרה לרשת קיבולת ללמוד את הקשר</td></tr>
+      <tr><td>Just right</td><td>מאוזן</td><td>גבוהים</td><td>גבוהים</td><td>הכלל הזהוב — בא מניסוי</td></tr>
+      <tr><td>Overfit</td><td>מורכב מדי</td><td>גבוהים מאוד</td><td>נמוכים</td><td>הרשת "שיננה" את האימון, לא הכלילה</td></tr>
+    </table>
+
+    <h4>אסטרטגיה כללית</h4>
+    <p>הגישה המקובלת היא להתחיל עם מודל מורכב יחסית (סיכון ל-overfit) ולהפעיל עליו <em>טכניקות הגנה</em>. זה עדיף על להתחיל קטן ולהגדיל — כי קל יותר לרסן רשת מורכבת מאשר להגדיל את הקיבולת של רשת חלשה.</p>
+
+    <details class="expand">
+      <summary>איך מזהים overfit בפועל</summary>
+      <div class="body">
+        <p>מציירים גרף של Loss על Train ו-Loss על Validation לאורך epochs. ב-overfit:</p>
+        <ul>
+          <li>Loss על Train — ממשיך לרדת.</li>
+          <li>Loss על Validation — מתחיל לעלות אחרי נקודה מסוימת.</li>
+        </ul>
+        <p>הנקודה הזו (שבה Validation מתחיל לעלות) — היא הסימן ששכלת לעצור. זה בדיוק הבסיס ל-Early Stopping שנדבר עליו מיד.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>2. Early Stopping</h3>
+  <div class="card">
+    <p>טכניקה פשוטה ועוצמתית: <strong>לעצור את האימון ברגע שהביצועים על נתוני הולידציה מפסיקים להשתפר</strong>. במקום לאמן 100 epochs, אם אחרי 25 ה-validation loss עולה — עוצרים שם.</p>
+
+    <h4>איך זה עובד טכנית</h4>
+    <ol>
+      <li>אחרי כל epoch, מודדים את ה-Loss על מערך הולידציה.</li>
+      <li>שומרים את <em>הגרסה הטובה ביותר עד כה</em> של המשקלות.</li>
+      <li>אם עברו N epochs ברצף בלי שיפור (ה-patience) — עוצרים את האימון ומחזירים את הגרסה השמורה.</li>
+    </ol>
+
+    <p>ב-Keras: <code style="direction:ltr;display:inline-block">callback = EarlyStopping(patience=5, restore_best_weights=True)</code></p>
+
+    <div class="callout">
+      <strong>חשוב:</strong> Early Stopping דורש <em>סט ולידציה נפרד</em>. אסור להשתמש בסט הטסט להחלטה הזאת — זה ידלוף מידע מהטסט לתוך תהליך האימון ויהפוך את ה-test score ללא אמין.
+    </div>
+  </div>
+
+  <h3>3. Regularization — קנס על מורכבות</h3>
+  <div class="card">
+    <p>הרעיון: להוסיף לפונקציית השגיאה איבר שמעניש משקלות גדולים. רשת עם משקלות "מתונים" פחות מסוגלת לזכור את האימון בעל פה ולכן מכלילה טוב יותר.</p>
+
+    <h4>L2 — Ridge Regression</h4>
+    <p>הקנס הוא סכום ריבועי המשקלות:</p>
+    <div class="formula">E = CE(y, ŷ) + λ · Σ wᵢ²</div>
+    <p>אפקט: כל המשקלות נדחפים לכיוון אפס, אבל אף אחד לא מתאפס לגמרי. מתאים כשרוצים <em>לרסן</em> את כל הרשת.</p>
+
+    <h4>L1 — Lasso Regression</h4>
+    <p>הקנס הוא סכום הערכים האבסולוטיים:</p>
+    <div class="formula">E = CE(y, ŷ) + λ · Σ |wᵢ|</div>
+    <p>אפקט: משקלות שאינם חשובים — מתאפסים לחלוטין. זה מכניס "דלילות" (sparsity) ברשת ושימושי כש-<em>אנחנו רוצים לדעת אילו תכונות חשובות</em> (Feature Selection אוטומטי).</p>
+
+    <h4>L1 vs. L2 — מתי כל אחד</h4>
+    <table class="compare">
+      <tr><th>קריטריון</th><th>L1 (Lasso)</th><th>L2 (Ridge)</th></tr>
+      <tr><td>אפקט על משקלות שוליים</td><td>מאפס לגמרי</td><td>מקטין אך לא מאפס</td></tr>
+      <tr><td>שימוש</td><td>Feature Selection</td><td>ריסון כללי, ההגנה הסטנדרטית</td></tr>
+      <tr><td>גזירות באפס</td><td>לא גזיר באפס (תת-גרדיאנט)</td><td>גזיר בכל מקום</td></tr>
+      <tr><td>נפוץ ברשתות עמוקות</td><td>פחות</td><td>הסטנדרט (weight decay)</td></tr>
+    </table>
+
+    <p>λ הוא היפר-פרמטר. λ גדול = ריסון חזק יותר. צריך לכוון אותו על ולידציה.</p>
+  </div>
+
+  <h3>4. Dropout — אנלוגיית "אימון בחדר כושר"</h3>
+  <div class="card">
+    <p>הרעיון: בכל epoch, "כבה" באקראי חלק מהנוירונים בשכבות הנסתרות (למשל 20%). הרשת לא תוכל להסתמך על נוירון יחיד — תהיה מאולצת לפזר את הידע.</p>
+
+    <p><strong>אנלוגיה של ההרצאה:</strong> כמו אימון בחדר כושר — בכל פעם מתמקדים בקבוצת שרירים אחרת, וכל הגוף מתחזק יותר מאשר אם רק קבוצה אחת התאמנה.</p>
+
+    <h4>איך זה עובד טכנית</h4>
+    <ul>
+      <li>בכל epoch, לכל נוירון בשכבת dropout: בהסתברות p ה-output שלו נכפל ב-0.</li>
+      <li>בתהליך ה-Backprop של אותו epoch, אותם נוירונים לא מתעדכנים.</li>
+      <li><strong>בזמן Inference</strong> (חיזוי על נתונים חדשים) — כל הנוירונים פעילים, אבל הפלט נכפל ב-(1–p) כדי לפצות.</li>
+    </ul>
+
+    <p>ב-Keras: <code style="direction:ltr;display:inline-block">model.add(layers.Dropout(0.2))</code> אחרי שכבה Dense.</p>
+
+    <div class="callout info">
+      <strong>למה זה עובד?</strong> כל epoch מאמן <em>תת-רשת</em> שונה. כשבזמן Inference מפעילים את כל הנוירונים, מקבלים אנסמבל של אלפי תת-רשתות שונות שאומנו במקביל. זה אחד המשערכים הזולים ביותר ל-ensemble באמת.
+    </div>
+  </div>
+
+  <h3>5. בעיית מינימה לוקליות</h3>
+  <div class="card">
+    <p>פונקציית השגיאה אינה תמיד בעלת מינימום גלובלי יחיד. ב-NN עמוקות יש <em>הרבה</em> מינימה לוקליות. Gradient Descent יוביל אותנו ל"בור" הראשון שנפגש בו — אבל לא בהכרח לעמוק ביותר.</p>
+
+    <h4>פתרון 1: Random Restarts</h4>
+    <p>פשוט להריץ את האימון <em>מספר פעמים</em> ממקומות אתחול שונים, ולקחת את התוצאה הטובה ביותר. רעיון פשוט אבל מוגבל ביעילות (יקר חישובית).</p>
+
+    <h4>פתרון 2: Momentum</h4>
+    <p>הרעיון: <em>צוברים מהירות</em> בכיוון של גרדיאנטים אחרונים. זה מאפשר "להתגלגל" מעל מינימה רדודות.</p>
+
+    <p>במקום עדכון פשוט w ← w – α·∇E, מוסיפים מומנט:</p>
+    <div class="formula">v ← β·v + ∇E   (וקטור המהירות)</div>
+    <div class="formula">w ← w – α·v</div>
+    <p>β מקדם המומנטום (טיפוסית 0.9). אינטואיציה מורחבת:</p>
+    <div class="formula">step_n = grad_n + β·grad_{n–1} + β²·grad_{n–2} + ...</div>
+    <p>הצעדים האחרונים משפיעים פחות (β² < β < 1). אם הגרדיאנטים בכיוון עקבי — המהירות צוברת. אם הם מתחלפים — המהירות מתבטלת. זה בדיוק "כדור שמתגלגל בחיכוך".</p>
+
+    <details class="expand">
+      <summary>מומנטום במונחים פיזיקליים</summary>
+      <div class="body">
+        <p>חשוב על הכדור שגלגלת על משטח: יש לו אינרציה. כשמגיע למינימה רדודה, הוא לא נעצר מיד — ממשיך מעט בכיוון התנועה ויכול "לטפס" מעט מעלה ולהמשיך. אם המינימה הגלובלית עמוקה יותר — הוא יסתיים בה. זה בדיוק האפקט של מומנטום על Gradient Descent.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>6. Vanishing Gradients והפתרון</h3>
+  <div class="card">
+    <p>בעיה מתמטית עמוקה ברשתות בעלות הרבה שכבות עם sigmoid:</p>
+    <ul>
+      <li>נגזרת של sigmoid מקסימלית ב-z=0 — שווה ל-0.25.</li>
+      <li>בכלל השרשרת מכפילים נגזרות בשכבות.</li>
+      <li>0.25 × 0.25 × 0.25 × ... = מהר מאוד מספר זעיר לחלוטין.</li>
+      <li>תוצאה: ב<em>שכבות הראשונות של הרשת</em> הגרדיאנטים זעירים והמשקלות כמעט לא מתעדכנים.</li>
+    </ul>
+
+    <h4>פתרון 1: tanh</h4>
+    <div class="formula">tanh(z) = (eᶻ – e⁻ᶻ) / (eᶻ + e⁻ᶻ)</div>
+    <p>הטווח של tanh הוא [–1, 1] (לעומת [0, 1] של sigmoid), והנגזרת המקסימלית שלה היא 1. זה מקטין את "הגרדיאנט הנעלם" אבל לא מבטל אותו.</p>
+
+    <h4>פתרון 2: ReLU (Rectified Linear Unit)</h4>
+    <div class="formula">ReLU(z) = max(0, z)</div>
+    <p>פונקציה פשוטה במיוחד — אם z חיובי, מחזיר את z; אחרת, אפס. הנגזרת:</p>
+    <div class="formula">ReLU′(z) = 1 if z > 0, else 0</div>
+    <p>היתרונות:</p>
+    <ul>
+      <li>נגזרת קבועה 1 לכל z חיובי — אין הקטנה בשרשרת ⇒ אין vanishing gradient!</li>
+      <li>חישוב מהיר במיוחד (max פשוט).</li>
+      <li>"מאפסת" אוטומטית נוירונים ש-z שלילי (סוג של dropout מובנה — sparsity).</li>
+    </ul>
+
+    <p>חיסרון אפשרי: "Dying ReLU" — אם אקטיבציה מתקבעת ב-0 (כל הקלטים שלילים), הנגזרת תמיד 0 והנוירון מת. פתרונות: Leaky ReLU, ELU, PReLU.</p>
+
+    <div class="callout info">
+      <strong>תרגול חשוב:</strong> בכל הרצאות הקורס מכאן ואילך, ברירת המחדל לאקטיבציה בשכבות נסתרות היא <strong>ReLU</strong>. בשכבת הפלט: sigmoid (בינארי) / softmax (multiclass) / ללא אקטיבציה (רגרסיה).
+    </div>
+  </div>
+
+  <h3>7. Stochastic Gradient Descent (SGD) ו-Mini-batches</h3>
+  <div class="card">
+    <h4>הבעיה עם Batch GD</h4>
+    <p>ב-Gradient Descent הקלאסי (Batch GD), בכל epoch:</p>
+    <ol>
+      <li>מריצים את כל ה-Train (אולי מיליוני דגימות) דרך הרשת.</li>
+      <li>מחשבים את הגרדיאנטים הממוצעים.</li>
+      <li>מבצעים <em>צעד אחד</em> של עדכון.</li>
+    </ol>
+    <p>בעיות: צריך זיכרון ענק כדי להחזיק הכל; כל epoch לוקח שעות; הגרדיאנט "המושלם" לא יכול לקפוץ ממינימה לוקליות.</p>
+
+    <h4>SGD: צעד עבור כל דגימה</h4>
+    <p>במקום לחכות עד סוף ה-batch, מבצעים עדכון <em>אחרי כל דגימה בודדת</em>. הצעדים פחות מדויקים אבל הרבה יותר מהירים, והרעש מועיל ליציאה ממינימה לוקליות.</p>
+
+    <h4>Mini-batch GD: הפתרון בפועל</h4>
+    <p>הפשרה — בכל פעם לוקחים batch של 32, 64, 128 או 256 דגימות:</p>
+    <ol>
+      <li>מחלקים את ה-train ל-mini-batches.</li>
+      <li>בכל mini-batch: FF + BP + עדכון משקלות.</li>
+      <li>epoch אחד = מעבר על כל ה-mini-batches.</li>
+    </ol>
+    <p>זה מנצל את ה-GPU (כפל מטריצות מקבילי), פחות "רועש" מ-SGD טהור, ועדיין מהיר משמעותית מ-Batch GD.</p>
+
+    <table class="compare">
+      <tr><th>שיטה</th><th>גודל batch</th><th>זיכרון</th><th>יציבות</th><th>מהירות</th></tr>
+      <tr><td>Batch GD</td><td>כל ה-train</td><td>גבוה מאוד</td><td>מאוד יציב</td><td>איטי מאוד</td></tr>
+      <tr><td>Mini-batch GD</td><td>32–256</td><td>סביר</td><td>יציב</td><td>מהיר ⇐ <strong>הסטנדרט</strong></td></tr>
+      <tr><td>SGD (true)</td><td>1</td><td>מינימלי</td><td>רועש</td><td>איטי במונחי convergence</td></tr>
+    </table>
+  </div>
+
+  <h3>8. Learning Rate Decay</h3>
+  <div class="card">
+    <p>כלל אצבע לבחירת α:</p>
+    <ul>
+      <li><strong>α גדול מדי:</strong> צעדים ענקיים, "מקפצים" מעל המינימום, אימון מתפזר.</li>
+      <li><strong>α קטן מדי:</strong> צעדים זעירים, אימון איטי, סיכון להיתקע במינימום מקומי.</li>
+    </ul>
+
+    <p>הגישה האידיאלית: <strong>קצב למידה שיורד עם הזמן</strong>:</p>
+    <ul>
+      <li>בתחילת האימון — α גדול, צעדים גדולים, התקדמות מהירה.</li>
+      <li>בסוף האימון — α קטן, התעדנות לעבר המינימום המדויק.</li>
+    </ul>
+
+    <p>שיטות נפוצות לדעיכת LR:</p>
+    <ul>
+      <li><strong>Step decay</strong> — חלוקת α בקבוע (למשל 0.5) כל N epochs.</li>
+      <li><strong>Exponential decay</strong> — α = α₀ · γᵗ.</li>
+      <li><strong>Cosine annealing</strong> — α נע בקצב גל קוסינוס.</li>
+      <li><strong>Adaptive optimizers</strong> — Adam, RMSprop — מתאימים α עבור <em>כל פרמטר בנפרד</em>.</li>
+    </ul>
+  </div>
+
+  <h3>9. סיכום ארגז הכלים</h3>
+  <div class="card">
+    <table class="compare">
+      <tr><th>בעיה</th><th>פתרון</th></tr>
+      <tr><td>Overfitting</td><td>Early Stopping, Regularization (L1/L2), Dropout</td></tr>
+      <tr><td>Underfitting</td><td>הוסף שכבות / נוירונים, אמן יותר epochs</td></tr>
+      <tr><td>מינימום מקומי</td><td>Random Restarts, Momentum</td></tr>
+      <tr><td>Vanishing Gradient</td><td>החלף sigmoid ב-ReLU בשכבות נסתרות</td></tr>
+      <tr><td>אימון איטי / זיכרון</td><td>Mini-batch GD, GPU</td></tr>
+      <tr><td>קצב למידה לא יציב</td><td>Learning Rate Decay, Adam optimizer</td></tr>
+    </table>
+  </div>
+
+  <h3>10. שאלות חזרה למבחן — הרצאה 4</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. הסבר את ההבדל המהותי בין L1 ל-L2 regularization וכיצד זה משפיע על המשקלות.</div>
+    <details><summary>הצג תשובה</summary><div class="a">L1 משתמש בערך אבסולוטי |w|. הנגזרת שלו קבועה (±1) בכל מקום, ולכן הוא "דוחף" משקלות לאפס באותה עוצמה — מה שמייצר sparsity (חלק מהמשקלות יתאפסו לגמרי). L2 משתמש בריבוע w². הנגזרת שלו פרופורציונית ל-w עצמו, אז משקלות גדולים נדחפים יותר ממשקלות קטנים — אבל אף אחד לא מתאפס לגמרי. L1 שימושי ל-Feature Selection, L2 הוא הסטנדרט לריסון כללי.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. למה Dropout שקול בקירוב ל-Ensemble?</div>
+    <details><summary>הצג תשובה</summary><div class="a">בכל epoch, Dropout בוחר באקראי תת-רשת מתוך הרשת המלאה ומאמן אותה. אחרי N epochs, אומנו N תת-רשתות שונות (כולן חולקות משקלות). בזמן Inference מפעילים את כל הנוירונים (ומכפילים בערך הפלט), מה שאקוויוולנטי בקירוב לממוצע על תת-הרשתות. אז זה ensemble כמעט בחינם.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. למה ReLU פותר את Vanishing Gradient?</div>
+    <details><summary>הצג תשובה</summary><div class="a">הנגזרת של ReLU עבור z>0 שווה ל-1 קבוע. בכלל השרשרת בעת BP, מכפילים נגזרות. עם sigmoid (מקסימום 0.25), השרשרת מתכווצת מהר; עם ReLU (1), היא לא מתכווצת בכלל לכיוון החיובי. כך הגרדיאנט מגיע גם לשכבות הראשונות בעוצמה משמעותית.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. למה Mini-batch GD הוא הסטנדרט ולא Batch GD או SGD טהור?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Mini-batch מאזן בין שני קצוות: (1) הוא מנצל את ה-GPU (כפל מטריצות מקבילי) — מהיר. (2) הוא מספיק יציב כדי שהאימון יתכנס. (3) הוא מספיק "רועש" כדי לעזור לצאת ממינימה לוקליות. (4) הוא חוסך זיכרון לעומת Batch GD שמחייב את כל הנתונים בזיכרון בו-זמנית.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש5. הסבר במשפט אחד מה Momentum עושה.</div>
+    <details><summary>הצג תשובה</summary><div class="a">Momentum צובר מהירות בכיוון של הגרדיאנטים האחרונים, מה שמאפשר ל-Gradient Descent "להמשיך" מעל מינימה רדודות ולהאיץ בכיוון עקבי — בדיוק כמו כדור שמתגלגל בכיוון מסוים בחיכוך.</div></details>
+  </div>
+
+  <h3>11. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תזהה Overfit / Underfit על פי גרפי Loss ל-Train ול-Validation.</li>
+      <li>תכיר ארבע טכניקות מרכזיות נגד Overfit: Early Stopping, L1, L2, Dropout — ותדע מתי כל אחת.</li>
+      <li>תוכל להסביר את Vanishing Gradient ולמה ReLU פותר אותה.</li>
+      <li>תבחין בין Batch / Mini-batch / Stochastic GD ותדע למה Mini-batch הוא הסטנדרט.</li>
+      <li>תסביר את Momentum כמטאפורה (כדור עם אינרציה) ובמתמטיקה (סכום נשקל של גרדיאנטים).</li>
+      <li>תזכור את כללי האצבע: ReLU בנסתרות, Dropout 0.2–0.5, אצא מ-batch=32, התחל עם α=0.001 + Adam.</li>
+      <li>תוכל לבנות "מתכון אופטימיזציה" עבור מודל שלא עובד טוב.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> ראינו את התאוריה ואת ארגז הכלים — אבל לממש את כל זה ידנית מאפס היה לוקח חודשים. הרצאה 5 מציגה את ה-DL Frameworks (TensorFlow, Keras, PyTorch) שמספקים אבני בניין מוכנות, גזירה אוטומטית, ניצול GPU שקוף, ואת השפה שבה ייכתבו כל המודלים שלנו מכאן.
+  </div>
+</section>
+
+<section id="lect5" class="tab-panel">
+  <h2 class="section">הרצאה 5 — סביבות פיתוח ו-Keras API</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 5</span>
+      <span class="chip outline">57 שקפים</span>
+      <span class="chip outline">תאריך: 16.04.2026</span>
+      <span class="chip">מעבר לכלים מעשיים</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> להציג את הסביבה שבה נעבוד מכאן ועד סוף הקורס. נכיר את ה-DL Frameworks המובילים, נצלול לתוך Keras (שכובש גם את ה-pipeline של TensorFlow), נלמד על Tensors כיחידת המידע ב-NN, נצלול לפעולות עליהם, ונבנה את המודל הראשון שלנו על MNIST.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>סקירת DL Frameworks — TensorFlow, Keras, PyTorch ואחרים.</li>
+      <li>סביבת עבודה — Anaconda, Jupyter, Google Colab, GPU.</li>
+      <li>Hello World של DL — סיווג ספרות בכתב יד (MNIST).</li>
+      <li>שלבי העבודה הסטנדרטיים: Architecture → Compile → Fit → Evaluate.</li>
+      <li>Tensors — מבנה הנתונים המרכזי, מימדים, פעולות.</li>
+      <li>Broadcasting ו-Tensor Product (dot).</li>
+      <li>הפרשנות הגאומטרית של פעולות על Tensors.</li>
+      <li>Keras Sequential vs. Functional API.</li>
+    </ol>
+  </div>
+
+  <h3>1. סקירת ה-Frameworks</h3>
+  <div class="card">
+    <table class="compare">
+      <tr><th>Framework</th><th>בעלים</th><th>מיוצב מ-</th><th>אופי</th><th>שימוש טיפוסי</th></tr>
+      <tr><td><strong>TensorFlow</strong></td><td>Google</td><td>2015</td><td>Low-level + Keras (high-level)</td><td>פרודקשן, מובייל (TF Lite), Web (TF.js)</td></tr>
+      <tr><td><strong>Keras</strong></td><td>Chollet (כיום ב-Google)</td><td>2015</td><td>High-level API</td><td>פיתוח מהיר, חינוך, prototyping. <em>זה מה שנעבוד איתו בקורס.</em></td></tr>
+      <tr><td><strong>PyTorch</strong></td><td>Meta (Facebook)</td><td>2016</td><td>Pythonic, dynamic graphs</td><td>מחקר אקדמי, NLP, מודלי שפה גדולים. כיום הסטנדרט בעולם המחקר.</td></tr>
+      <tr><td>JAX</td><td>Google</td><td>2018</td><td>NumPy-like + autodiff + XLA</td><td>מחקר high-performance, גוגל פנימית</td></tr>
+      <tr><td>MXNet, DL4J, Sonnet</td><td>שונים</td><td>—</td><td>פחות נפוצים</td><td>שימושים ספציפיים</td></tr>
+    </table>
+
+    <p><strong>נקודת מבט פרקטית:</strong> Keras הוא ה-API שיושב מעל TensorFlow. שני סוגריים נחים: כותב Keras = כותב TF (עם ההפשטות החזקות). PyTorch הוא אופציה אחרת לחלוטין, יותר "פייתוני" ופחות קסם — מתאים למחקר.</p>
+
+    <details class="expand">
+      <summary>למה הקורס בחר ב-Keras?</summary>
+      <div class="body">
+        <p>Keras נכתב במפורש כ-API חינוכי — המבנה שלו תואם בדיוק את הצורה שבה חושבים על רשתות (שכבות, הפעלות, optimizer). תוך 5-10 שורות קוד אפשר לבנות מודל מלא, לאמן ולהעריך אותו. זה מאפשר להתמקד <em>בארכיטקטורות וברעיונות</em> ולא בפלאמברינג. לקריירה: גם PyTorch כדאי להכיר, אבל אם הבנת Keras — המעבר ל-PyTorch יקח שבוע.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>2. סביבת עבודה</h3>
+  <div class="card">
+    <ul>
+      <li><strong>GPU מומלץ.</strong> CPU עובד, אבל פי 5–10 איטי יותר. לעבודה עם תמונות / רצפים — חיוני.</li>
+      <li><strong>Google Colab</strong> — סביבה בענן בחינם, נותנת GPU בכיף. <em>כל הקוד של הקורס יעבוד שם בלי התקנות.</em></li>
+      <li><strong>Anaconda</strong> — מנהל סביבות מקומי. מתקין Python + ספריות מדעיות בקליק.</li>
+      <li><strong>Jupyter Notebooks</strong> — סביבת עבודה אינטראקטיבית. כל ה-notebooks של הספר זמינים ב-GitHub של Chollet.</li>
+      <li><strong>UNIX מומלץ</strong> להתקנה מקומית. ב-Windows אפשר להשתמש ב-WSL.</li>
+    </ul>
+  </div>
+
+  <h3>3. Hello World של DL — MNIST</h3>
+  <div class="card">
+    <p>MNIST = 70,000 תמונות שחור-לבן בגודל 28×28 של ספרות בכתב יד. 60K לאימון, 10K לטסט. הבעיה הקלאסית של DL והדוגמה של "Hello World".</p>
+
+    <p>מה המחשב רואה? מטריצת 28×28 של ערכים 0 (שחור) עד 255 (לבן), כשגווני אפור באמצע. 784 פיקסלים בסך הכל לכל תמונה.</p>
+
+    <h4>שלבי בניית המודל ב-Keras</h4>
+    <ol>
+      <li><strong>טעינת הנתונים</strong> — <code style="direction:ltr;display:inline-block">(x_train, y_train), (x_test, y_test) = mnist.load_data()</code></li>
+      <li><strong>הכנת הנתונים</strong> — Reshape ל-(samples, 784), נורמליזציה ל-[0,1] (חלוקה ב-255).</li>
+      <li><strong>הגדרת הרשת</strong> — Sequential עם 3 שכבות Dense.</li>
+      <li><strong>Compile</strong> — בחירת optimizer, loss, metrics.</li>
+      <li><strong>Fit</strong> — אימון בפועל, X epochs, batch size.</li>
+      <li><strong>Evaluate</strong> — הערכה על ה-test.</li>
+      <li><strong>Predict</strong> — חיזוי על דוגמה חדשה.</li>
+    </ol>
+
+    <h4>קוד מינימלי</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential([
+    Dense(512, activation='relu', input_shape=(784,)),
+    Dense(256, activation='relu'),
+    Dense(10, activation='softmax')
+])
+model.compile(optimizer='rmsprop',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=5, batch_size=128)
+model.evaluate(x_test, y_test)</div>
+
+    <p>זהו. רשת עם ~668K פרמטרים, מתאמנת תוך דקות, ומשיגה ~98% דיוק על MNIST. השכבות הצפופות (Dense) הן בדיוק כמו הרצאה 3 — Wx+b ואקטיבציה. ההבדל היחיד מהמימוש שעשינו ידנית: Keras דואג ל-Backprop, ל-GPU, ולכל הסטנדרט.</p>
+  </div>
+
+  <h3>4. Tensors — מבנה הנתונים המרכזי</h3>
+  <div class="card">
+    <p>"Tensor" הוא לא יותר מ-<em>מערך מספרים בכמות מימדים כלשהי</em>. הסיווג:</p>
+    <table class="compare">
+      <tr><th>שם</th><th>מימדים</th><th>דוגמה</th></tr>
+      <tr><td>Scalar</td><td>0D</td><td>טמפרטורה: 23.5</td></tr>
+      <tr><td>Vector</td><td>1D</td><td>פרופיל לקוח: [גיל, גובה, משקל] = [25, 175, 70]</td></tr>
+      <tr><td>Matrix</td><td>2D</td><td>טבלה (samples × features) למשל 1000 × 50</td></tr>
+      <tr><td>3D Tensor</td><td>3D</td><td>סדרת זמן (samples × time × features) או טקסט (samples × words × embedding)</td></tr>
+      <tr><td>4D Tensor</td><td>4D</td><td>תמונות צבעוניות (samples × height × width × channels)</td></tr>
+      <tr><td>5D Tensor</td><td>5D</td><td>וידאו (samples × frames × height × width × channels)</td></tr>
+    </table>
+
+    <h4>תכונות חשובות</h4>
+    <ul>
+      <li><strong>arr.ndim</strong> — מספר המימדים.</li>
+      <li><strong>arr.shape</strong> — האורך של כל מימד. למשל לתמונת RGB 28×28: shape = (28, 28, 3).</li>
+      <li><strong>arr.dtype</strong> — טיפוס הנתונים (float32, uint8 וכו').</li>
+      <li><strong>Slicing</strong> — בדיוק כמו NumPy: <code style="direction:ltr;display:inline-block">arr[10:100, :, :]</code>.</li>
+    </ul>
+
+    <details class="expand">
+      <summary>פורמט ייצוג תמונות — TensorFlow vs Theano</summary>
+      <div class="body">
+        <p>TensorFlow (channels-last): (samples, height, width, channels). Theano / PyTorch (channels-first): (samples, channels, height, width). חשוב לדעת באיזה פורמט הקלט שלך בנוי כשעוברים בין כלים.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>5. פעולות מרכזיות על Tensors</h3>
+  <div class="card">
+    <p>שכבת Dense בעצם מריצה:</p>
+    <div class="formula">output = relu(dot(input, W) + b)</div>
+    <p>שלוש פעולות שמרכיבות את החישוב:</p>
+
+    <h4>(א) Element-wise — פעולה איבר-איבר</h4>
+    <p>פעולות פשוטות שמופעלות על כל ערך בנפרד: חיבור, חיסור, ReLU, sigmoid. ב-NumPy זה כתוב כמו פעולה רגילה (a + b, np.maximum(0, x)).</p>
+
+    <h4>(ב) Broadcasting</h4>
+    <p>מה קורה כשמחברים מטריצה (32, 10) עם וקטור (10,)? NumPy / TF "מותחים" את הוקטור לאורך המימד הראשון:</p>
+    <ol>
+      <li>מוסיפים מימדים חסרים ל-tensor הקטן (10,) → (1, 10).</li>
+      <li>משכפלים אותו לאורך המימד החדש: (1,10) → (32, 10).</li>
+      <li>מבצעים את הפעולה איבר-איבר.</li>
+    </ol>
+    <p>זה לא משכפל בזיכרון בפועל — רק לוגית. שימושי במיוחד להוספת bias לכל דגימה ב-batch.</p>
+
+    <h4>(ג) Tensor Product (dot operation)</h4>
+    <p>הפעולה השכיחה ביותר. שונה מ-element-wise (שמסומן ב-*).</p>
+    <ul>
+      <li><strong>וקטור · וקטור</strong> = סקלר. סכום מכפלות איבר-איבר. צריכים להיות באותו אורך.</li>
+      <li><strong>מטריצה · וקטור</strong> = וקטור. הממד האחרון של המטריצה צריך להיות שווה לאורך הוקטור.</li>
+      <li><strong>מטריצה · מטריצה</strong> = מטריצה. הממד האחרון של הראשונה = הממד הראשון של השנייה.</li>
+    </ul>
+
+    <p>דוגמה: x.shape = (1, 784), W.shape = (784, 16) → dot.shape = (1, 16).</p>
+  </div>
+
+  <h3>6. הפרשנות הגאומטרית</h3>
+  <div class="card">
+    <p>ניתן לחשוב על Tensor כעל נקודה (או חץ מראשית הצירים) במרחב n-מימדי. פעולות על Tensors הן <em>טרנספורמציות גאומטריות</em>:</p>
+    <ul>
+      <li><strong>חיבור וקטורים</strong> — תזוזה (translation).</li>
+      <li><strong>סיבוב</strong> — כפל במטריצת סיבוב.</li>
+      <li><strong>שינוי קנה מידה (scaling)</strong> — כפל במטריצה אלכסונית.</li>
+      <li><strong>טרנספורמציה אפינית</strong> — כפל במטריצה + הוספת וקטור (בדיוק Wx+b!).</li>
+    </ul>
+
+    <h4>למה צריך פונקציית אקטיבציה</h4>
+    <p>בלי אקטיבציה לא-לינארית, רצף שכבות = רצף טרנספורמציות אפיניות = טרנספורמציה אפינית אחת. כלומר רשת עמוקה תהפוך לפרספטרון יחיד! האקטיבציה היא ה"שובר" של הלינאריות.</p>
+
+    <h4>מטאפורת "דפי הנייר המגולגלים"</h4>
+    <p>דמיין שני דפי נייר — כחול ואדום — שלקחו וגלגלו אותם יחד לכדור מעוך. רשת נוירונים מנסה לצייר קו שמפריד בין הכחול לאדום. בלי אקטיבציה היא תוכל לצייר רק קו ישר, מה שלא יספיק. <em>כל שכבה לא-לינארית בעצם "מפרקת" קצת את הכדור</em>, פותחת אותו, ובסוף הרשת הצליחה לפתוח את שני הדפים — מה שמאפשר הפרדה בקו ישר. זוהי האנלוגיה המרכזית להבין עומק וייצוגים היררכיים.</p>
+  </div>
+
+  <h3>7. גזירה אוטומטית — היתרון הגדול של Frameworks</h3>
+  <div class="card">
+    <p>בהרצאה 3 ראינו שכלל השרשרת הוא הכלי לחישוב גרדיאנטים. ב-Keras / TF / PyTorch — <em>אנחנו לא צריכים לחשב אותו ידנית</em>.</p>
+
+    <p><strong>Symbolic Differentiation:</strong> הספריה בונה גרף חישובי תוך כדי ה-Forward pass, וגוזרת אותו אוטומטית. משמעות: כל פעולה שאתה מבצע ב-Forward, הספריה יודעת לחשב את הנגזרת של ה-Loss ביחס לכל פרמטר ברשת. אתה כותב רק את הקדימות — Backprop בא חינם.</p>
+
+    <p>זה הסוד שמאפשר ארכיטקטורות מורכבות — Transformers, ResNets, GANs — בלי לכתוב Backprop ידנית לכל אחת.</p>
+  </div>
+
+  <h3>8. Keras: שני סגנונות לבנות מודל</h3>
+  <div class="card">
+    <h4>(א) Sequential API — פשוט וליניארי</h4>
+    <p>מתאים כשהמודל הוא <em>ערימה של שכבות בזו אחר זו</em>: input → layer1 → layer2 → ... → output.</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential([
+    Dense(64, activation='relu', input_shape=(784,)),
+    Dense(64, activation='relu'),
+    Dense(10, activation='softmax')
+])</div>
+
+    <p>או לחילופין באופן אינקרמנטלי:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential()
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(10, activation='softmax'))
+model.build(input_shape=(None, 784))</div>
+
+    <h4>(ב) Functional API — גמיש</h4>
+    <p>מתאים כשיש מספר קלטים, מספר פלטים, או חיבורים מורכבים (skip connections, branching).</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">inputs = Input(shape=(784,))
+x = Dense(64, activation='relu')(inputs)
+x = Dense(64, activation='relu')(x)
+outputs = Dense(10, activation='softmax')(x)
+model = Model(inputs, outputs)</div>
+
+    <h4>דוגמה לכוח של Functional API: Multi-input</h4>
+    <p>בעיה: סיווג תקלות שירות לקוחות. קלט: כותרת (טקסט) + תיאור (טקסט) + תיוג קטגוריה. פלט: ציון דחיפות + מחלקה לטיפול.</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">title_in = Input(shape=(None,), name='title')
+body_in  = Input(shape=(None,), name='body')
+tags_in  = Input(shape=(num_tags,), name='tags')
+# ... עיבוד נפרד לכל קלט ...
+merged = concatenate([title_features, body_features, tags_in])
+priority   = Dense(1,  activation='sigmoid', name='priority')(merged)
+department = Dense(N,  activation='softmax', name='department')(merged)
+model = Model([title_in, body_in, tags_in], [priority, department])</div>
+
+    <h4>(ג) Model Subclassing</h4>
+    <p>בנייה מאפס בסגנון PyTorch — יורשים מ-tf.keras.Model ומגדירים בעצמכם call(). מתאים למומחים, ולמודלים אקזוטיים. רוב הקורס לא יזדקק לזה.</p>
+
+    <table class="compare">
+      <tr><th>API</th><th>מתי להשתמש</th></tr>
+      <tr><td>Sequential</td><td>רוב המודלים הבסיסיים — חכמה אינטואיטיבית</td></tr>
+      <tr><td>Functional</td><td>קלט/פלט מרובה, חיבורים מורכבים — <em>הברירת מחדל הפרקטית</em></td></tr>
+      <tr><td>Subclassing</td><td>ארכיטקטורות מותאמות אישית, כתיבת research papers</td></tr>
+    </table>
+  </div>
+
+  <h3>9. שלבי העבודה הסטנדרטיים ב-Keras</h3>
+  <div class="card">
+    <ol>
+      <li><strong>הגדרת נתוני האימון</strong> — Tensors של קלט ופלט.</li>
+      <li><strong>הגדרת הרשת</strong> — Sequential / Functional API.</li>
+      <li><strong>Compile</strong> — בחירת optimizer (Adam / RMSprop / SGD), loss function (CE / MSE), metrics (accuracy / precision).</li>
+      <li><strong>Fit</strong> — model.fit(x_train, y_train, epochs, batch_size, validation_split).</li>
+      <li><strong>Evaluate</strong> — model.evaluate(x_test, y_test) → מקבלים loss + metrics.</li>
+      <li><strong>Predict</strong> — model.predict(x_new) על נתונים חדשים.</li>
+    </ol>
+  </div>
+
+  <h3>10. תוספות מקובץ הקוד שהוצג בהרצאה</h3>
+  <div class="card">
+    <p>הסעיף הזה מתבסס על ה-notebook <code style="direction:ltr;display:inline-block">5.MNIST_Tensors.ipynb</code> שמלווה את ההרצאה. הוא לוקח את התאוריה שלמדנו ומראה איך היא נראית בקוד אמיתי, עם דוגמאות מספריות ופרטים שמעמיקים את ההבנה.</p>
+
+    <h4>10.1 חקירת tensor בשלוש שורות</h4>
+    <p>אחרי טעינת MNIST, אפשר לדבר עם הנתונים ישירות:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">train_images.ndim    # 3
+train_images.shape   # (60000, 28, 28)
+train_images.dtype   # uint8
+len(train_labels)    # 60000
+train_labels         # array([5, 0, 4, ..., 5, 6, 8], dtype=uint8)</div>
+    <p><strong>תרגול:</strong> בכל פעם שאתה נתקל ב-tensor חדש — הריץ <code style="direction:ltr;display:inline-block">.ndim</code>, <code style="direction:ltr;display:inline-block">.shape</code>, <code style="direction:ltr;display:inline-block">.dtype</code> כצעד ראשון. זה עוצר טעויות ב-90% מהמקרים שבהם משהו לא עובד.</p>
+
+    <h4>10.2 הצגת תמונה אחת מ-MNIST</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import matplotlib.pyplot as plt
+digit = train_images[4]            # התמונה החמישית
+plt.imshow(digit, cmap=plt.cm.binary)
+plt.show()
+print(train_labels[4])             # 9</div>
+    <p>שימושי לדיבוג: לוודא שהתמונה והתיוג באמת תואמים, שהנורמליזציה לא הרסה תמונה.</p>
+
+    <h4>10.3 חיתוכים (slicing) — קווי הגנה לפיצולים</h4>
+    <p>Slicing הוא דרך לדגום חלקים מ-tensor בלי להעתיק זיכרון. דוגמאות מהקוד:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">train_images[10:100]            # shape (90, 28, 28) — תמונות 10-99
+train_images[10:100, :, :]      # זהה — שלושת השורות הבאות פירוש מפורש
+train_images[:, 14:, 14:]       # רק הרבע התחתון-ימני של כל תמונה (14×14)
+train_images[:, 7:-7, 7:-7]     # מרכז כל תמונה — חלון 14×14</div>
+    <p><strong>חיתוך ל-batches:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">batch = train_images[:128]                    # ה-batch הראשון
+batch = train_images[128:256]                 # ה-batch השני
+n = 3
+batch = train_images[128*n : 128*(n+1)]       # ה-batch ה-n</div>
+    <p>זה בדיוק מה ש-Keras עושה מאחורי הקלעים כש-batch_size=128.</p>
+
+    <h4>10.4 פעולות tensor: גרסה תמימה לעומת גרסה וקטורית</h4>
+    <p>מימוש "תמים" של ReLU על מטריצה — Python loop כפול:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">def naive_relu(x):
+    assert len(x.shape) == 2
+    x = x.copy()
+    for i in range(x.shape[0]):
+        for j in range(x.shape[1]):
+            x[i, j] = max(x[i, j], 0)   # מאפס שליליים
+    return x</div>
+    <p>וגרסה וקטורית של NumPy:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">z = np.maximum(z, 0.)   # שורה אחת, מקבילי בפנים</div>
+    <p>בדיקת זמנים על מטריצות 20×100, 1000 חזרות:</p>
+    <table class="compare">
+      <tr><th>מימוש</th><th>זמן ריצה אופייני</th></tr>
+      <tr><td>NumPy וקטורי</td><td>~0.02 שניות</td></tr>
+      <tr><td>Python loop תמים</td><td>~2-5 שניות (פי 100-200 איטי)</td></tr>
+    </table>
+    <div class="callout info">
+      <strong>למה ההבדל כל כך גדול:</strong> NumPy מריץ את הלולאה הפנימית ב-C קומפילד עם SIMD. כל פעולת tensor שאתה כותב עם <code style="direction:ltr;display:inline-block">+ - * / @ np.maximum</code> רצה במהירות C. זו הסיבה שאף פעם לא כותבים לולאות Python על נתונים גדולים ב-DL.
+    </div>
+
+    <h4>10.5 GradientTape — גזירה אוטומטית חיה ב-TensorFlow</h4>
+    <p>בפרק 7 דיברנו על "Symbolic Differentiation" של ה-Frameworks. ככה זה נראה בפועל ב-TF:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import tensorflow as tf
+x = tf.Variable(0.)
+with tf.GradientTape() as tape:
+    y = 2 * x + 3
+grad_of_y_wrt_x = tape.gradient(y, x)   # 2.0</div>
+    <p>הקוד שמתבצע <em>בתוך</em> ה-<code style="direction:ltr;display:inline-block">with</code>-block נרשם על "סרט" (tape). אחר כך <code style="direction:ltr;display:inline-block">tape.gradient(y, x)</code> מבקש מהסרט לחשב ∂y/∂x.</p>
+
+    <p>דוגמה ריאליסטית יותר עם משקלות W ובאיאס b:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">W = tf.Variable(tf.random.uniform((2, 2)))
+b = tf.Variable(tf.zeros((2,)))
+x = tf.random.uniform((2, 2))
+with tf.GradientTape() as tape:
+    y = tf.matmul(x, W) + b
+grads = tape.gradient(y, [W, b])   # נגזרת של y לפי W ולפי b</div>
+    <p>זהו בדיוק מה ש-<code style="direction:ltr;display:inline-block">model.fit()</code> עושה מאחורי הקלעים, אלפי פעמים בכל epoch.</p>
+
+    <h4>10.6 חשבון מהיר: כמה עדכוני משקלות בכל אימון?</h4>
+    <p>נניח אימון על MNIST: 60,000 דגימות, batch_size=128, epochs=5.</p>
+    <ul>
+      <li>Batches per epoch: 60,000 / 128 ≈ <strong>469</strong> (עיגול כלפי מעלה).</li>
+      <li>Updates per epoch: 469 (עדכון אחד לכל batch).</li>
+      <li>Total updates: 469 × 5 ≈ <strong>2,345 עדכוני משקלות</strong>.</li>
+    </ul>
+    <p>זה כמות הצעדים של Gradient Descent שהמודל עושה לאורך כל האימון. אם תכתוב את לולאת האימון בעצמך, זה מה שתראה.</p>
+
+    <h4>10.7 RMSprop — מה הוא עושה למעשה</h4>
+    <p>בקוד הופיעה ההערה: "RMSprop מבוסס על אותו רעיון של ממוצע משוקלל אקספוננציאלי של גרדיאנטים כמו Gradient Descent עם Momentum, אך ההבדל הוא ב<em>אופן עדכון הפרמטר</em>".</p>
+    <p>הפרשנות המורחבת:</p>
+    <ul>
+      <li><strong>Momentum:</strong> שומר ממוצע נע של <em>הגרדיאנטים</em> ומוסיף אותו לעדכון.</li>
+      <li><strong>RMSprop:</strong> שומר ממוצע נע של <em>ריבועי</em> הגרדיאנטים, ומחלק את הגרדיאנט הנוכחי בשורש שלו. כך LR מתאים את עצמו לכל פרמטר בנפרד — פרמטרים עם גרדיאנטים גדולים מקבלים LR אפקטיבי קטן, ולהפך.</li>
+      <li><strong>Adam:</strong> שילוב של שניהם — Momentum + RMSprop. <em>הברירת מחדל הפופולרית בעולם.</em></li>
+    </ul>
+
+    <h4>10.8 בנייה מאפס — NaiveDense ו-NaiveSequential</h4>
+    <p>ה-notebook מציג מימוש מאפס של שכבת Dense ושל Sequential, ב-~50 שורות Python. זוהי הוכחה אופרטיבית שכל מה ש-Keras עושה — ניתן לכתוב ידנית.</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">class NaiveDense:
+    def __init__(self, input_size, output_size, activation):
+        self.activation = activation
+        self.W = tf.Variable(tf.random.uniform((input_size, output_size),
+                                               minval=0, maxval=1e-1))
+        self.b = tf.Variable(tf.zeros((output_size,)))
+    def __call__(self, inputs):
+        return self.activation(tf.matmul(inputs, self.W) + self.b)
+    @property
+    def weights(self):
+        return [self.W, self.b]
+
+class NaiveSequential:
+    def __init__(self, layers): self.layers = layers
+    def __call__(self, inputs):
+        x = inputs
+        for layer in self.layers:
+            x = layer(x)
+        return x
+    @property
+    def weights(self):
+        return [w for layer in self.layers for w in layer.weights]</div>
+    <p>וצעד אימון מאפס:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">def one_training_step(model, images_batch, labels_batch):
+    with tf.GradientTape() as tape:
+        predictions = model(images_batch)
+        per_sample_losses = tf.keras.losses.sparse_categorical_crossentropy(
+            labels_batch, predictions)
+        average_loss = tf.reduce_mean(per_sample_losses)
+    gradients = tape.gradient(average_loss, model.weights)
+    optimizer.apply_gradients(zip(gradients, model.weights))
+    return average_loss</div>
+    <div class="callout">
+      <strong>תובנה ללקיחה:</strong> Keras = הכמיפסול הזה בעטיפה נוחה. ההבנה שכל אבן בניין ב-DL היא בסופו של דבר <em>matmul + activation + gradient + update</em> — זה הסוד להבין כל ארכיטקטורה חדשה שתפגוש.
+    </div>
+  </div>
+
+  <h3>11. שאלות חזרה למבחן — הרצאה 5</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. מה ההבדל בין TensorFlow ל-Keras?</div>
+    <details><summary>הצג תשובה</summary><div class="a">TensorFlow היא ספרייה low-level — נותנת שליטה מלאה על גרף החישוב, פעולות tensor, GPU וכו'. Keras היא API high-level שיושב מעל TensorFlow, מספק "אבני בניין" (שכבות, מודלים, optimizers) ומאפשר בניית רשתות בפחות שורות קוד. כיום Keras היא בעצם ה-API הרשמי של TensorFlow (tf.keras).</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. נתון Tensor בצורה (1000, 28, 28, 3). מה הוא מייצג?</div>
+    <details><summary>הצג תשובה</summary><div class="a">1000 תמונות, כל אחת בגודל 28×28 פיקסלים, 3 ערוצי צבע (RGB). בפורמט TensorFlow (channels-last). אם זה היה (1000, 3, 28, 28) זה היה פורמט PyTorch / Theano (channels-first).</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. למה Element-wise multiplication שונה מ-Tensor product (dot)?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Element-wise (סימון *): מכפיל איברים באותו מיקום, דורש shape זהה, מחזיר tensor באותו shape. Dot product: סכום של מכפלות לאורך מימד פנימי, דורש שהמימד האחרון של הראשון = המימד הראשון של השני, ומחזיר tensor חדש בעל shape שונה. Dot היא הפעולה המרכזית של שכבות Dense, * היא לפעולות נקודתיות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. מתי נשתמש ב-Functional API ולא ב-Sequential?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Functional נדרש כש: (1) למודל יש מספר קלטים (תמונה + מטה-נתונים), (2) מספר פלטים (multi-task learning), (3) חיבורים מקבילים (branches), (4) skip connections (כמו ב-ResNet). Sequential מספיק רק כשהרשת היא רצף ליניארי של שכבות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש5. למה Frameworks מספקים גזירה אוטומטית, ולמה זה חשוב?</div>
+    <details><summary>הצג תשובה</summary><div class="a">בלי גזירה אוטומטית, היינו צריכים לחשב ידנית את הנגזרת של ה-Loss ביחס לכל פרמטר ברשת — לכל ארכיטקטורה חדשה. עם autodiff, אנחנו כותבים רק את ה-Forward pass, והספרייה בונה גרף חישובי וגוזרת אותו אוטומטית באמצעות כלל השרשרת. זה מאפשר ארכיטקטורות מורכבות (Transformers, ResNets, GANs) בלי שגיאות חישוב ובמינימום קוד.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש6. נתון אימון על 60,000 דגימות, batch_size=64, 8 epochs. כמה עדכוני משקלות יבוצעו בכל האימון?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Batches per epoch = 60000 / 64 = 937.5 → 938 (עיגול כלפי מעלה). סה"כ עדכונים = 938 × 8 = 7,504. <em>הערה:</em> כל עדכון = צעד GD יחיד שמבוסס על Loss ממוצע של 64 דגימות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש7. מה ההבדל המרכזי בין Momentum ל-RMSprop?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Momentum צובר ממוצע נע של <em>הגרדיאנטים עצמם</em> — מאפשר "אינרציה" בכיוון עקבי. RMSprop צובר ממוצע נע של <em>ריבועי הגרדיאנטים</em> ומחלק את הגרדיאנט הנוכחי בשורש שלו — כך הוא מתאים LR לכל פרמטר בנפרד (פרמטרים עם גרדיאנטים גדולים מקבלים LR אפקטיבי קטן). Adam מאחד בין שניהם.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש8. הסבר במילים שלך מה <code style="direction:ltr;display:inline-block">tf.GradientTape()</code> עושה.</div>
+    <details><summary>הצג תשובה</summary><div class="a">זה context manager שמקליט את כל הפעולות שקורות בתוכו (Forward pass) על "סרט" (tape). אחרי שיצאנו מה-with-block, אפשר לבקש מהסרט את הנגזרת של כל ערך שחושב, ביחס לכל משתנה <code style="direction:ltr;display:inline-block">tf.Variable</code> שהשתתף — באמצעות <code style="direction:ltr;display:inline-block">tape.gradient(y, x)</code>. זה הליבה של Backpropagation ב-TF, ומה ש-Keras משתמש בו בפנים.</div></details>
+  </div>
+
+  <h3>12. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תזהה את שלושת ה-Frameworks המובילים ותדע מתי כל אחד.</li>
+      <li>תוכל לקרוא ולכתוב סקריפט Keras בסיסי שמאמן רשת על MNIST תוך פחות מ-15 שורות.</li>
+      <li>תזהה את 6 שלבי עבודת Keras — Architecture → Compile → Prepare data → Fit → Evaluate → Predict.</li>
+      <li>תבחין בין Tensor 2D (טבלאי), 3D (רצף), 4D (תמונה), 5D (וידאו).</li>
+      <li>תיישם פעולות בסיסיות על Tensors: dot, broadcasting, reshape, slicing.</li>
+      <li>תכיר את הפרשנות הגאומטרית של פעולות tensor כטרנספורמציות במרחב.</li>
+      <li>תוכל להחליט בין Sequential API ל-Functional API לפי דרישות המודל.</li>
+      <li>תזהה את ההבדל בין מימוש תמים (Python loop) למימוש וקטורי, ותדע למה תמיד מעדיפים את השני.</li>
+      <li>תוכל לכתוב צעד אימון בסיסי באמצעות <code style="direction:ltr;display:inline-block">tf.GradientTape()</code> — מבלי להסתמך על Keras.</li>
+      <li>תחשב מהר את מספר עדכוני המשקלות באימון לפי גודל הנתונים, batch_size ו-epochs.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> יש לנו עכשיו את כל הכלים הטכניים. הרצאה 6 לוקחת אותנו ל-3 בעיות אמיתיות ושונות מהותית — סיווג בינארי (IMDB ביקורות), סיווג רב-מחלקתי (Reuters ידיעות) ורגרסיה (מחירי דירות בבוסטון). כל אחת תדגים אסטרטגיה אחרת לבנייה, נורמליזציה, בחירת loss ו-metrics, ומה לעשות כשיש מעט נתונים (K-fold).
+  </div>
+</section>
+
+<section id="lect6" class="tab-panel">
+  <h2 class="section">הרצאה 6 — NN with Keras: שלושה תרחישים מלאים</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 6</span>
+      <span class="chip outline">62 שקפים</span>
+      <span class="chip outline">תאריך: 30.04.2026</span>
+      <span class="chip">פרקטי במיוחד</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> לעבור משלוש בעיות מסוגים שונים — בינארי, רב-מחלקתי, רגרסיה — ולראות בכל אחת איך עוברים מנתונים גולמיים למודל מאומן. בנוסף, לסכם את <em>תהליך העבודה הסטנדרטי</em> של פרויקט DL בכל תחום שהוא.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>סיווג בינארי — IMDB (ביקורות סרטים: חיובי / שלילי).</li>
+      <li>הכנת נתוני טקסט: Multi-hot encoding ו-Vectorization.</li>
+      <li>נורמליזציה של ערכים ועקרונות הכנת נתונים ל-NN.</li>
+      <li>טיפול בערכים חסרים.</li>
+      <li>סיווג רב-מחלקתי — Reuters (ידיעות לקטגוריות).</li>
+      <li>רגרסיה — Boston Housing (חיזוי מחיר דירה).</li>
+      <li>K-fold cross validation — מתי ולמה.</li>
+      <li>סיכום: 8 שלבי עבודה של פרויקט DL.</li>
+    </ol>
+  </div>
+
+  <h3>1. בעיה ראשונה: סיווג בינארי — IMDB</h3>
+  <div class="card">
+    <p><strong>הנתונים:</strong> 50,000 ביקורות סרטים מ-IMDB. 25K לאימון, 25K לטסט. תיוג: 1 = חיובית, 0 = שלילית. כל ביקורת מיוצגת כרצף של מספרים שלמים — כל מספר מקודד מילה ספציפית במילון.</p>
+
+    <p>נטעין את 10,000 המילים השכיחות ביותר (מספיק כדי לתפוס את החשיבות, חוסך זיכרון):</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">from tensorflow.keras.datasets import imdb
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=10000)</div>
+
+    <h4>שלב הכנת הנתונים — Multi-hot Encoding</h4>
+    <p>הבעיה: לכל ביקורת אורך שונה. NN דורש קלט בגודל קבוע. הפתרון: <em>וקטור באורך 10,000</em> שבכל מקום i נסמן 1 אם המילה ה-i הופיעה בביקורת, ו-0 אחרת:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">def vectorize(sequences, dim=10000):
+    results = np.zeros((len(sequences), dim))
+    for i, seq in enumerate(sequences):
+        results[i, seq] = 1
+    return results
+
+x_train = vectorize(x_train)  # shape (25000, 10000)
+x_test  = vectorize(x_test)
+y_train = np.asarray(y_train).astype('float32')
+y_test  = np.asarray(y_test).astype('float32')</div>
+
+    <p>ב-One-hot המצב יותר חמור — מטריצה של (25000, num_words, 10000). Multi-hot היא פתרון גבולי: מתעלמת מסדר המילים ומחזרות, אבל פשוטה ועובדת מצוין למטרת sentiment analysis.</p>
+
+    <details class="expand">
+      <summary>חלופה — Embedding Layer (טעימה לקראת DL for Text)</summary>
+      <div class="body">
+        <p>במקום וקטור 10K-מימדי דליל, אפשר להשתמש בשכבת Embedding שלומדת ייצוג צפוף (למשל 50-מימדי) לכל מילה. זה גם שומר על סדר המילים. נראה את זה לעומק בהרצאות 8-9 (DL for Text).</p>
+      </div>
+    </details>
+
+    <h4>הגדרת הרשת</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential([
+    Dense(16, activation='relu', input_shape=(10000,)),
+    Dense(16, activation='relu'),
+    Dense(1,  activation='sigmoid')
+])</div>
+
+    <ul>
+      <li><strong>16 יחידות בשכבה נסתרת</strong> — מספיק קטן כדי לא לעבוד מדי, מספיק גדול כדי לתפוס את הקשר.</li>
+      <li><strong>2 שכבות נסתרות</strong> — נותן עומק בסיסי.</li>
+      <li><strong>פלט יחיד עם sigmoid</strong> — מחזיר הסתברות בין 0 ל-1.</li>
+    </ul>
+
+    <h4>Compile</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model.compile(optimizer='rmsprop',
+              loss='binary_crossentropy',
+              metrics=['accuracy'])</div>
+
+    <ul>
+      <li><strong>rmsprop</strong> — optimizer מתקדם הכולל מנגנון דומה ל-momentum.</li>
+      <li><strong>binary_crossentropy</strong> — Loss המתאימה לסיווג בינארי עם sigmoid.</li>
+      <li><strong>accuracy</strong> — מדד ביצועים לקריאה.</li>
+    </ul>
+
+    <h4>פיצול ל-Validation</h4>
+    <p>נשמור 10K דגימות מתוך ה-25K כ-validation:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">x_val = x_train[:10000]; partial_x = x_train[10000:]
+y_val = y_train[:10000]; partial_y = y_train[10000:]
+history = model.fit(partial_x, partial_y,
+                    epochs=20, batch_size=512,
+                    validation_data=(x_val, y_val))</div>
+
+    <h4>תוצאה אופיינית</h4>
+    <p>גרף Loss מראה תופעה קלאסית: ה-training loss ממשיך לרדת, אבל ה-validation loss מתחיל לעלות אחרי ~4 epochs — זה <strong>Overfitting</strong>. הפתרון: לאמן רק 4 epochs, או להשתמש ב-Early Stopping. אחרי תיקון: ~88% accuracy על הטסט.</p>
+  </div>
+
+  <h3>2. עקרונות הכנת נתונים ל-NN</h3>
+  <div class="card">
+    <h4>(א) Vectorization</h4>
+    <p>כל הקלטים ל-NN חייבים להיות tensors של מספרים עשרוניים (float32) או שלמים (int). תמונות → מטריצות פיקסלים. טקסט → סדרות אינדקסים או vectors. אודיו → ספקטוגרמות.</p>
+
+    <h4>(ב) Value Normalization</h4>
+    <p>לא בטוח להעביר לרשת מספרים ברמות גודל שונות. אם feature אחד בטווח 0-1 ואחר בטווח 200-500 — ה-feature הגדול ידכא את הקטן בחישובי הגרדיאנט. <strong>המלצה</strong>:</p>
+    <ul>
+      <li>נורמליזציה לטווח [0, 1] (חלוקה בערך מקסימלי) — מתאים לתמונות.</li>
+      <li>סטנדרטיזציה: ממוצע=0, סטיית תקן=1 — לכל פיצ'ר בנפרד. <em>זה הסטנדרט בנתונים טבלאיים.</em></li>
+    </ul>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">x = x - x.mean(axis=0)
+x = x / x.std(axis=0)</div>
+
+    <h4>(ג) ערכים חסרים</h4>
+    <p>אם יש ערכים חסרים (NaN) ב-data set:</p>
+    <ul>
+      <li>נעביר 0 לרשת (כל עוד 0 הוא לא ערך משמעותי).</li>
+      <li>הרשת תלמד ש"0 = ערך חסר" ותתחיל להתעלם ממנו.</li>
+      <li><strong>חשוב:</strong> אם בנתוני האימון אין חוסרים אבל ב-test יהיו — צריך באופן מלאכותי להוסיף missing samples ל-train, אחרת הרשת לא תוכל ללמוד להתמודד עם המצב הזה.</li>
+    </ul>
+
+    <h4>(ד) ייצוג טקסט במשפטים באורכים שונים</h4>
+    <p>שתי גישות:</p>
+    <ol>
+      <li><strong>Padding/Truncation</strong> — בוחרים אורך קבוע (למשל 200 מילים), ממלאים משפטים קצרים באפסים, חותכים ארוכים. נשתמש בשכבת Embedding בהמשך.</li>
+      <li><strong>Multi-hot encoding</strong> — וקטור באורך גודל המילון (כמו ב-IMDB). מאבדים סדר אבל פשוט.</li>
+    </ol>
+  </div>
+
+  <h3>3. בעיה שנייה: סיווג רב-מחלקתי — Reuters</h3>
+  <div class="card">
+    <p><strong>הנתונים:</strong> 11,228 ידיעות חדשותיות מ-Reuters משנת 1986, מסווגות ל-46 קטגוריות. 8,982 לאימון, 2,246 לטסט. כל ידיעה כבר מקודדת כרצף אינדקסים — כמו ב-IMDB.</p>
+
+    <p>זוהי בעיית <strong>Single label, Multi-class</strong> — לכל דגימה יש בדיוק תיוג אחד מתוך 46.</p>
+
+    <h4>הכנת התיוג — One-Hot vs. Sparse</h4>
+    <p>שתי דרכים אקוויוולנטיות:</p>
+    <ul>
+      <li><strong>One-hot</strong> — וקטור באורך 46, רק במקום של הקטגוריה הנכונה יש 1. מתאים לפונקציית Loss <em>categorical_crossentropy</em>.</li>
+      <li><strong>Sparse (integer)</strong> — מספר 0-45 מציין את הקטגוריה. מתאים לפונקציית Loss <em>sparse_categorical_crossentropy</em>.</li>
+    </ul>
+    <p>שתי הדרכים תיתן את אותן תוצאות; פשוט אל תערבבו ביניהן.</p>
+
+    <h4>הגדרת הרשת</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential([
+    Dense(64, activation='relu', input_shape=(10000,)),
+    Dense(64, activation='relu'),
+    Dense(46, activation='softmax')   # 46 קטגוריות
+])
+model.compile(optimizer='rmsprop',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])</div>
+
+    <p><strong>למה 64 ולא 16?</strong> בגלל שיש 46 מחלקות בפלט, שכבה רחבה מדי בקצה (16) תיצור צוואר בקבוק שלא תוכל לייצג את כל הניואנסים. אם השכבה האמצעית קטנה מהפלט — אנחנו "מפסידים מידע" שאי אפשר לשחזר.</p>
+
+    <h4>תוצאה אופיינית</h4>
+    <p>אחרי 9 epochs מקבלים ~78% accuracy. למה זה טוב? <strong>Baseline</strong> של ניחוש אקראי שווה ל-1/46 ≈ 2.2%, וניחוש לפי הקטגוריה השכיחה ביותר ≈ 18%. 78% משמעותית טוב מהשניים.</p>
+
+    <div class="callout info">
+      <strong>תובנה:</strong> בכל בעיה — תמיד תחליטו על baseline לפני שמסתכלים על תוצאות המודל. baseline טיפש (קטגוריה רוב, ממוצע) עוזר לדעת אם המודל באמת לומד משהו או מנחש.
+    </div>
+  </div>
+
+  <h3>4. בעיה שלישית: רגרסיה — Boston Housing</h3>
+  <div class="card">
+    <p><strong>הנתונים:</strong> 506 דגימות (404 train + 102 test) של דירות בבוסטון משנות ה-70. תכונות: אחוז פשיעה באזור, מספר חדרים ממוצע, שיעור מס נכסים, מרחק ממוקדי תעסוקה וכו'. <strong>מטרה:</strong> לחזות את מחיר הדירה (מספר רציף, באלפי דולרים).</p>
+
+    <h4>אתגר 1: מעט נתונים</h4>
+    <p>506 דגימות זה <em>מעט מאוד</em>. ההשלכות:</p>
+    <ul>
+      <li>אסור לבנות רשת גדולה (overfit מובטח).</li>
+      <li>פיצול train/test רגיל יוצר test קטן (102) שלא בהכרח מייצג.</li>
+      <li>צריך טכניקת ולידציה חזקה — נשתמש ב-K-fold.</li>
+    </ul>
+
+    <h4>אתגר 2: סקאלות שונות בכל feature</h4>
+    <p>אחוז פשיעה (0-100), שיעור מס (0.5-1.0), מספר חדרים (3-9). חובה לנרמל לפני הזנה לרשת:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">mean = x_train.mean(axis=0)
+std  = x_train.std(axis=0)
+x_train = (x_train - mean) / std
+x_test  = (x_test  - mean) / std   # שימו לב: משתמשים בממוצע של train!</div>
+
+    <p><strong>חשוב:</strong> את הנורמליזציה מחשבים על ה-train בלבד, ומחילים את <em>אותם הפרמטרים</em> על test. אסור להשתמש בערכי ממוצע/סטייה של ה-test — זה data leakage.</p>
+
+    <h4>הגדרת הרשת</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = Sequential([
+    Dense(64, activation='relu', input_shape=(13,)),
+    Dense(64, activation='relu'),
+    Dense(1)   # פלט יחיד, ללא אקטיבציה!
+])
+model.compile(optimizer='rmsprop',
+              loss='mse',
+              metrics=['mae'])</div>
+
+    <ul>
+      <li><strong>2 שכבות בלבד</strong> — מודל קטן בגלל מעט נתונים.</li>
+      <li><strong>שכבת פלט ללא אקטיבציה</strong> — כי זו רגרסיה: רוצים מספר רציף בכל טווח.</li>
+      <li><strong>Loss = MSE</strong> (Mean Squared Error) — הסטנדרט לרגרסיה.</li>
+      <li><strong>Metric = MAE</strong> (Mean Absolute Error) — קל לפרשנות (במקרה זה: $באלפים).</li>
+    </ul>
+  </div>
+
+  <h3>5. K-fold Cross Validation</h3>
+  <div class="card">
+    <p>הרעיון: מחלקים את ה-train ל-K חלקים שווים. ב-K איטרציות, בכל איטרציה:</p>
+    <ol>
+      <li>שומרים חלק אחד בצד כ-validation.</li>
+      <li>מאמנים את המודל על שאר K-1 החלקים.</li>
+      <li>מעריכים את הביצועים על החלק שנשמר.</li>
+    </ol>
+    <p>בסוף לוקחים את הממוצע של K המדדים. זה נותן הערכה הרבה יותר מדויקת ויציבה כשיש מעט נתונים.</p>
+
+    <table class="compare">
+      <tr><th>שיטה</th><th>מתי להשתמש</th></tr>
+      <tr><td>Holdout (train/val/test רגיל)</td><td>הרבה נתונים (10K+)</td></tr>
+      <tr><td>K-fold (K=4 או 5)</td><td>מעט נתונים, רוצים הערכה יציבה</td></tr>
+    </table>
+
+    <h4>הקוד הבסיסי</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">k = 4
+num_val = len(x_train) // k
+mae_scores = []
+for i in range(k):
+    val_x = x_train[i*num_val : (i+1)*num_val]
+    val_y = y_train[i*num_val : (i+1)*num_val]
+    train_x = np.concatenate([x_train[:i*num_val], x_train[(i+1)*num_val:]], axis=0)
+    train_y = np.concatenate([y_train[:i*num_val], y_train[(i+1)*num_val:]], axis=0)
+    model = build_model()
+    model.fit(train_x, train_y, epochs=80, batch_size=16, verbose=0)
+    val_mse, val_mae = model.evaluate(val_x, val_y, verbose=0)
+    mae_scores.append(val_mae)
+
+print(f"Average MAE: {np.mean(mae_scores)}")</div>
+
+    <p>תוצאה אופיינית בבוסטון: MAE ממוצע ~$2,400 — כלומר התחזית של המודל סוטה בממוצע ב-2,400$ ממחיר אמיתי. בהתחשב במחירי הדירות אז, זה דיוק יחסית סביר.</p>
+  </div>
+
+  <h3>6. תהליך העבודה הסטנדרטי של פרויקט DL — 8 שלבים</h3>
+  <div class="card">
+    <p>זוהי תזכורת קריטית למבחן ולפרויקט המסכם:</p>
+
+    <ol>
+      <li><strong>הגדרת הבעיה והנתונים</strong> — מה הקלט? מה הפלט? סוג הבעיה (סיווג / רגרסיה / clustering)? יש מספיק נתונים ואינפורמציה?</li>
+      <li><strong>בחירת מדדי הצלחה</strong> — Accuracy / Precision / Recall / F1 / ROC-AUC / MAE / MSE. תלוי בבעיה ובאיזון של הנתונים.</li>
+      <li><strong>בחירת שיטת הערכה</strong> — Holdout (יש נתונים) / K-fold (מעט נתונים) / Iterated K-fold (מעט מאוד).</li>
+      <li><strong>הכנת הנתונים</strong> — Vectorization → Normalization → טיפול בערכים חסרים → Feature engineering אם נדרש.</li>
+      <li><strong>בניית מודל טוב מ-Baseline</strong> — מודל בסיסי שמנצח ניחוש אקראי או ניחוש לפי קטגוריית הרוב.</li>
+      <li><strong>אימון מודל עם Overfit מכוון</strong> — להגדיל את המודל בכוונה עד שמגיעים ל-overfit. זה מראה שהקיבולת מספיקה.</li>
+      <li><strong>רגולריזציה והתאמת hyperparameters</strong> — Dropout, L2, מספר שכבות, יחידות, learning rate, batch size. <em>השלב הארוך ביותר</em>.</li>
+      <li><strong>הערכה סופית על Test Set</strong> — אחרי שכל ההיפר-פרמטרים נקבעו על ה-validation, מודדים פעם אחת על ה-test.</li>
+    </ol>
+
+    <div class="callout">
+      <strong>חוק זהב:</strong> אסור לכוון hyperparameters על בסיס ה-test. כל בחירה שעושים על סמך ביצועי הטסט = data leakage. ה-test הוא "פעם אחת בלבד" בסוף הפרויקט, לא במהלכו.
+    </div>
+  </div>
+
+  <h3>7. השוואת שלוש הבעיות — תזכיר</h3>
+  <div class="card">
+    <table class="compare">
+      <tr><th></th><th>IMDB (סיווג בינארי)</th><th>Reuters (רב-מחלקתי)</th><th>Boston (רגרסיה)</th></tr>
+      <tr><td>שכבת פלט</td><td>1 יחידה, sigmoid</td><td>46 יחידות, softmax</td><td>1 יחידה, ללא אקטיבציה</td></tr>
+      <tr><td>Loss</td><td>binary_crossentropy</td><td>categorical_crossentropy</td><td>mse</td></tr>
+      <tr><td>Metric</td><td>accuracy</td><td>accuracy</td><td>mae</td></tr>
+      <tr><td>גודל שכבת ביניים</td><td>16</td><td>64 (לא צוואר בקבוק)</td><td>64</td></tr>
+      <tr><td>אסטרטגיית ולידציה</td><td>Holdout (10K val)</td><td>Holdout</td><td>K-fold (K=4)</td></tr>
+      <tr><td>הכנת קלט</td><td>Multi-hot</td><td>Multi-hot</td><td>Z-score normalization</td></tr>
+    </table>
+  </div>
+
+  <h3>8. תוספות מקובץ הקוד שהוצג בהרצאה</h3>
+  <div class="card">
+    <p>הסעיף הזה מתבסס על ה-notebook <code style="direction:ltr;display:inline-block">6.Getting-started-with-NN.ipynb</code>. זה הקובץ הפרקטי המלא של ההרצאה — הוא מציג טכניקות שמשפיעות ישירות על איכות התוצאה, ניסויים אמפיריים שמוכיחים תאוריה, וקטעי קוד שיהיו שימושיים לכל פרויקט עתידי.</p>
+
+    <h4>8.1 פענוח ביקורת חזרה לטקסט קריא</h4>
+    <p>הביקורות ב-IMDB מגיעות כרצף של מספרים. כדי לראות את הטקסט המקורי:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">word_index = imdb.get_word_index()
+reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])
+decoded = " ".join([reverse_word_index.get(i - 3, "?") for i in train_data[0]])</div>
+    <div class="callout info">
+      <strong>למה <em>i - 3</em>?</strong> 3 האינדקסים הראשונים שמורים ב-Keras למשמעויות מיוחדות:
+      <ul style="margin-top:6px">
+        <li>אינדקס 0 → "padding" (ריפוד לרצפים קצרים)</li>
+        <li>אינדקס 1 → "start of sequence" (תחילת רצף)</li>
+        <li>אינדקס 2 → "unknown" (מילה שלא במילון)</li>
+      </ul>
+      לכן המילה הראשונה במילון היא באינדקס 3, ויש להחסיר 3 כדי לקבל את האינדקס במילון. ה-fallback ל-"?" מטפל באינדקסים שלא מצאנו.
+    </div>
+
+    <h4>8.2 הצגת עקומות אימון ב-matplotlib — הקוד המלא</h4>
+    <p>אחרי <code style="direction:ltr;display:inline-block">history = model.fit(...)</code>, האובייקט <code style="direction:ltr;display:inline-block">history.history</code> הוא dict עם המפתחות <code style="direction:ltr;display:inline-block">loss, val_loss, accuracy, val_accuracy</code>. ככה מציירים אותם:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import matplotlib.pyplot as plt
+hist = history.history
+loss = hist["loss"]
+val_loss = hist["val_loss"]
+epochs = range(1, len(loss) + 1)
+
+plt.plot(epochs, loss, "bo", label="Training loss")     # bo = נקודות כחולות
+plt.plot(epochs, val_loss, "b",  label="Validation loss") # b  = קו כחול
+plt.title("Training and validation loss")
+plt.xlabel("Epochs"); plt.ylabel("Loss"); plt.legend(); plt.show()</div>
+    <p><strong>הקראת הגרף:</strong></p>
+    <ul>
+      <li>שתי העקומות יורדות ביחד → המודל לומד טוב, אין overfit עדיין.</li>
+      <li>train יורד, val עולה → התחיל overfit. עוצרים בנקודת המינימום של val.</li>
+      <li>שתיהן לא יורדות → הבעיה במודל / הנתונים, לא במספר ה-epochs.</li>
+    </ul>
+
+    <h4>8.3 L2 Regularization — הסינטקס ב-Keras</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">from tensorflow.keras import regularizers
+
+model = keras.Sequential([
+    layers.Dense(16, kernel_regularizer=regularizers.l2(0.002), activation="relu"),
+    layers.Dense(16, kernel_regularizer=regularizers.l2(0.002), activation="relu"),
+    layers.Dense(1, activation="sigmoid")
+])</div>
+    <p><strong>אופציות נוספות שזמינות:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">regularizers.l1(0.001)               # רק L1
+regularizers.l2(0.002)               # רק L2 (הסטנדרט)
+regularizers.l1_l2(l1=0.001, l2=0.001)  # שילוב Elastic Net</div>
+    <p>הפרמטר (0.002 בדוגמה) הוא ה-λ — מקדם הקנס. גדול יותר = ריסון חזק יותר. טווח טיפוסי: 1e-4 עד 1e-2.</p>
+
+    <h4>8.4 Dropout ב-Keras</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = keras.Sequential([
+    layers.Dense(16, activation="relu"),
+    layers.Dropout(0.5),                  # 50% מהנוירונים מכובים בכל epoch
+    layers.Dense(16, activation="relu"),
+    layers.Dropout(0.5),
+    layers.Dense(1, activation="sigmoid")
+])</div>
+    <p><strong>סדר השכבות:</strong> Dropout באה <em>אחרי</em> שכבת Dense ואקטיבציה, לפני השכבה הבאה. ערך טיפוסי: 0.2-0.5. אסור להוסיף Dropout בשכבת הפלט.</p>
+
+    <h4>8.5 שני אופנים לקודד תיוגים רב-מחלקתיים</h4>
+    <p><strong>אפשרות א' — One-hot ידני:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">def to_one_hot(labels, dimension=46):
+    results = np.zeros((len(labels), dimension))
+    for i, label in enumerate(labels):
+        results[i, label] = 1.
+    return results
+y_train = to_one_hot(train_labels)</div>
+
+    <p><strong>אפשרות ב' — קיצור של Keras:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">from tensorflow.keras.utils import to_categorical
+y_train = to_categorical(train_labels)</div>
+
+    <p><strong>אפשרות ג' — בלי one-hot כלל:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">y_train = np.array(train_labels)   # מספרים שלמים 0-45
+model.compile(optimizer="rmsprop",
+              loss="sparse_categorical_crossentropy",   # שימו לב: sparse
+              metrics=["accuracy"])</div>
+    <p>שלוש האופציות נותנות <em>אותן תוצאות</em>. ההבדל הוא רק אופן הייצוג של y. שלישית חוסכת זיכרון אם יש הרבה מחלקות.</p>
+
+    <h4>8.6 חישוב baseline אקראי ב-Reuters</h4>
+    <p>איך יודעים אם 78% accuracy על Reuters זה "טוב"? בודקים מה היה קורה אם היינו מתייגים אקראית:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import copy
+test_labels_copy = copy.copy(test_labels)
+np.random.shuffle(test_labels_copy)              # מערבב את התיוגים
+hits_array = np.array(test_labels) == np.array(test_labels_copy)
+print(hits_array.mean())                         # ~0.18-0.20</div>
+    <p>הניחוש האקראי, כשהוא דוגם מהתפלגות התיוגים האמיתית, נותן ~18-20% (כי יש כמה קטגוריות שכיחות יותר). 78% של המודל הוא <strong>פי 4-5 טוב יותר</strong> מניחוש — אישור אמפירי שהמודל באמת לומד.</p>
+
+    <h4>8.7 ניסוי ה"צוואר בקבוק" — הוכחה אמפירית</h4>
+    <p>בפרק 3 דיברנו על למה שכבת ביניים קטנה ממימד הפלט מזיקה. ה-notebook מציג את הניסוי הזה ישירות:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = keras.Sequential([
+    layers.Dense(64, activation="relu"),
+    layers.Dense(4,  activation="relu"),     # ← צוואר בקבוק! 4 יחידות לפני 46 קטגוריות
+    layers.Dense(46, activation="softmax")
+])</div>
+    <p><strong>תוצאה:</strong> Accuracy צונח מ-~78% ל-~71%. המודל פיזית לא מצליח לדחוס מספיק מידע ב-4 ערכים כדי לאחר מכן לפצל ל-46 מחלקות. <em>זוהי הוכחה אמפירית של עקרון כללי שיפעל בכל פרויקט שלך.</em></p>
+    <div class="callout info">
+      <strong>כלל אצבע:</strong> אף שכבה בדרך לפלט אסור שתהיה קטנה ממימד הפלט. אם בעיית סיווג עם N קטגוריות, השכבה הנסתרת האחרונה צריכה להיות לפחות N (ובדרך כלל הרבה יותר).
+    </div>
+
+    <h4>8.8 K-fold מתקדם — בחירת מספר epochs מיטבי</h4>
+    <p>ה-notebook מראה שימוש מתוחכם של K-fold לא רק כדי לקבל ציון ממוצע — אלא כדי לבחור את מספר ה-epochs האופטימלי:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">k = 4
+num_epochs = 500       # מאמנים הרבה epochs כדי לראות את כל העקומה
+all_mae_histories = []
+for i in range(k):
+    val_data, val_targets = ...        # החלוקה הסטנדרטית של K-fold
+    partial_train_data, partial_train_targets = ...
+    model = build_model()
+    history = model.fit(partial_train_data, partial_train_targets,
+                        validation_data=(val_data, val_targets),
+                        epochs=num_epochs, batch_size=16, verbose=0)
+    all_mae_histories.append(history.history["val_mae"])
+
+# ממוצע MAE על כל ה-folds, לכל epoch
+average_mae_history = [
+    np.mean([x[i] for x in all_mae_histories]) for i in range(num_epochs)
+]</div>
+
+    <p><strong>טריק להצגה ברורה:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">truncated_mae_history = average_mae_history[10:]   # מתעלם מ-10 ה-epochs הראשונים
+plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
+    <p><strong>למה לחתוך את 10 הראשונים:</strong> בהתחלה ה-MAE צונח דרסטית (בעיקר התאוששות מהאתחול האקראי), וזה "דוחס" את שאר העקומה ומקשה לראות את המינימום האמיתי. חיתוך 10 הראשונים פותח את הציר.</p>
+
+    <p><strong>שלב סופי:</strong> מסתכלים על העקומה החתוכה, מזהים את ה-epoch שבו ה-val_mae מתחיל לעלות (overfit), ומאמנים מחדש על כל ה-train עד אותו epoch. דוגמה מהקוד: 130 epochs.</p>
+
+    <h4>8.9 שלמות וההפסד מול accuracy ב-Boston</h4>
+    <p>תוצאה אופיינית: <code style="direction:ltr;display:inline-block">test_mae_score ≈ 2.5</code>. תרגום: התחזית של המודל סוטה בממוצע ב-2,500$ ממחיר אמיתי. כשמחירי הבתים נעים בין 10K-50K — זו סטייה של ~5-10%, סביר לבעיה רגרסיבית עם 506 דגימות בלבד.</p>
+  </div>
+
+  <h3>9. שאלות חזרה למבחן — הרצאה 6</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. מה ההבדל בין binary_crossentropy ל-categorical_crossentropy ול-sparse_categorical_crossentropy?</div>
+    <details><summary>הצג תשובה</summary><div class="a">binary_crossentropy: סיווג בינארי, פלט יחיד עם sigmoid, תיוג 0/1. categorical_crossentropy: סיווג רב-מחלקתי, פלט עם softmax, תיוג one-hot. sparse_categorical_crossentropy: כמו הקודם אך התיוג כמספר שלם בלבד (לא one-hot) — חוסך זיכרון כשיש הרבה מחלקות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש2. למה בבעיית Reuters בחרנו 64 יחידות בשכבות הנסתרות ולא 16 כמו ב-IMDB?</div>
+    <details><summary>הצג תשובה</summary><div class="a">בגלל שב-Reuters יש 46 קטגוריות בפלט. שכבה רחבה מדי בקצה (16 יחידות) תהיה צוואר בקבוק — מידע ממדים גבוהים נדחס ל-16 ערכים, ואחר כך אי אפשר לפצל ל-46 קטגוריות בלי לאבד מידע. ב-IMDB יש רק 1 בקצה ולכן 16 מספיק.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש3. למה ב-Boston Housing משתמשים ב-K-fold ולא ב-train/val/test רגיל?</div>
+    <details><summary>הצג תשובה</summary><div class="a">יש רק 506 דגימות. אם נחלק אותן ל-train/val/test, ה-test יהיה ~100 דגימות — קטן מדי כדי שמדידת הביצועים תהיה יציבה (תלות גבוהה במזל של הפיצול). K-fold מאמן 4 (או 5) פעמים על פיצולים שונים, ומקבלים הערכה ממוצעת אמינה הרבה יותר.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש4. איך מנרמלים פיצ'רים ב-Boston Housing? למה לא משתמשים בממוצע של ה-test?</div>
+    <details><summary>הצג תשובה</summary><div class="a">לכל פיצ'ר: x = (x – mean) / std. את הממוצע והסטיית התקן מחשבים על ה-train ומחילים אותם גם על ה-test. אם נשתמש בממוצע של ה-test — זה data leakage: המודל "יראה" סטטיסטיקה של נתונים שאמורים להיות חבויים, ולא נוכל להעריך נכון את ביצועיו על נתונים אמיתיים בעתיד.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש5. מנה את 8 השלבים של פרויקט DL סטנדרטי.</div>
+    <details><summary>הצג תשובה</summary><div class="a">(1) הגדרת הבעיה והנתונים. (2) בחירת מדדי הצלחה. (3) בחירת שיטת הערכה (Holdout/K-fold). (4) הכנת הנתונים (vectorization, normalization). (5) בניית מודל טוב מ-baseline. (6) אימון מודל גדול שיוצר overfit. (7) רגולריזציה והתאמת hyperparameters. (8) הערכה סופית על test.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש6. למה כשמפענחים ביקורת IMDB חזרה לטקסט מחסירים 3 מהאינדקסים?</div>
+    <details><summary>הצג תשובה</summary><div class="a">3 האינדקסים הראשונים (0, 1, 2) שמורים ב-Keras למשמעויות מיוחדות: padding, start-of-sequence, ו-unknown. המילים האמיתיות במילון מתחילות מאינדקס 3, ולכן כדי למצוא את המילה האמיתית צריך i-3.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש7. בקוד <code style="direction:ltr;display:inline-block">layers.Dense(16, kernel_regularizer=regularizers.l2(0.002))</code> — מה הפרמטר 0.002 מסמל ומה קורה אם נגדיל אותו פי 100?</div>
+    <details><summary>הצג תשובה</summary><div class="a">0.002 הוא λ — מקדם הקנס בנוסחה Loss + λ·Σwᵢ². אם נכפיל פי 100 (ל-0.2), המודל יקבל קנס אדיר על משקלות גדולים, יתכנס למשקלות קטנים מאוד וייתכן שיהיה לו underfit (לא יוכל ללמוד את הקשר). ערך טיפוסי הוא 1e-4 עד 1e-2.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש8. ב-Reuters, כתיבת תוצאה אקראית מפיקה accuracy של ~18%. למה זה לא 1/46 ≈ 2.2%?</div>
+    <details><summary>הצג תשובה</summary><div class="a">בגלל שהתפלגות הקטגוריות ב-Reuters אינה אחידה — יש כמה קטגוריות שכיחות מאוד. הקוד <em>מערבב את התיוגים האמיתיים</em> (לא דוגם בהסתברות אחידה), ולכן כל "ניחוש" שומר על אותה התפלגות מקורית. ההסתברות לפגוע נכון = Σ p(category)² (סכום ריבועי השכיחויות) ≈ 18%.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש9. מה <code style="direction:ltr;display:inline-block">average_mae_history[10:]</code> עושה ולמה משתמשים בזה?</div>
+    <details><summary>הצג תשובה</summary><div class="a">מדלג על 10 ה-epochs הראשונים ומציג רק מ-epoch 11 ואילך. הסיבה: ב-10 הראשונים ה-MAE צונח דרסטית מהאתחול האקראי לערך סביר, וזה "דוחס" את ציר ה-y בגרף ומסתיר את העקומה האמיתית שמגלה את נקודת ה-overfit. החיתוך פותח את התצוגה ומאפשר לזהות בדיוק מתי ה-validation מתחיל לעלות.</div></details>
+  </div>
+
+  <h3>10. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תוכל לבנות מודל Keras מלא לסיווג בינארי, רב-מחלקתי, ורגרסיה — ולדעת מתי כל אחד.</li>
+      <li>תזכור את שלושת השילובים הקריטיים: <em>sigmoid+binary_CE</em>, <em>softmax+categorical_CE</em>, <em>linear+MSE</em>.</li>
+      <li>תיישם נורמליזציה (Z-score) ותדע למה משתמשים בערכי train גם בנורמליזציה של test.</li>
+      <li>תכיר את K-fold cross validation ומתי הוא נדרש (מעט נתונים).</li>
+      <li>תזהה את הסכנה של "צוואר בקבוק" ברשת — למה שכבת ביניים קטנה ממימד הפלט מזיקה.</li>
+      <li>תוכל לפרק כל פרויקט DL חדש ל-8 השלבים הסטנדרטיים.</li>
+      <li>תזהה Overfit על גרפי Loss והדרך הנכונה להחליט על מספר epochs.</li>
+      <li>תיישם את הסינטקס של Keras ל-L1 / L2 / L1+L2 ול-Dropout, ותדע איפה ובאיזה ערך טיפוסי.</li>
+      <li>תוכל לפענח טקסט מקודד ב-Keras (offset של 3 ו-padding/start/unknown).</li>
+      <li>תכיר את שלוש האפשרויות לקודד תיוגים רב-מחלקתיים ותבחר ביניהן לפי גודל הזיכרון.</li>
+      <li>תחשב baseline אקראי בעצמך ותוכל להעריך כמה המודל "באמת לומד".</li>
+      <li>תזהה ניסוי "צוואר בקבוק" ותימנע ממנו בארכיטקטורה.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה (לא מן ההרצאות שכיסינו):</strong> כל מה שלמדנו עד כאן הוא <em>Fully Connected Networks</em>. בהרצאה 7 — CNN — נכיר ארכיטקטורה מיוחדת לתמונות שמנצלת את העובדה שתמונה היא דו-מימדית עם תכונות מקומיות (קצוות, צורות). שכבות Convolution ו-Pooling יחליפו את ה-Dense הרגילות.
+  </div>
+</section>
+
+<section id="glossary" class="tab-panel">
+  <h2 class="section">מילון מושגים — חי ומתעדכן</h2>
+
+  <div class="card">
+    <p>המילון מבוסס על <strong>רשימת 45 המושגים</strong> שאוחדה במטלה 2 מתוך 11 הגשות סטודנטים, ב-8 קטגוריות. <em>זוהי "מפת העוגן" של המבחן.</em></p>
+
+    <p>לכל מושג יש שם באנגלית, תרגום מקובל לעברית, הסבר קצר ולחיצה לפתיחת הסבר מורחב עם דוגמה / המחשה. כל קטגוריה ניתן לסנן באמצעות הכפתורים, ואפשר לחפש חופשי בכל המושגים.</p>
+
+    <p><strong>מתעדכן:</strong> נוסיף מושגים בכל הרצאה חדשה — מתוך החומר ולא מבחוץ.</p>
+  </div>
+
+  <div class="glossary-controls">
+    <input id="gloss-search" type="text" placeholder="חיפוש במושגים (אנגלית או עברית)..." />
+    <div class="cat-filters" id="cat-filters">
+      <span class="cat-filter active" data-cat="all">הכל</span>
+      <span class="cat-filter" data-cat="net">רשת — מבנה ופעולה</span>
+      <span class="cat-filter" data-cat="act">פונקציות הפעלה</span>
+      <span class="cat-filter" data-cat="opt">למידה ואופטימיזציה</span>
+      <span class="cat-filter" data-cat="arch">ארכיטקטורות DL</span>
+      <span class="cat-filter" data-cat="nlp">NLP</span>
+      <span class="cat-filter" data-cat="cv">Computer Vision</span>
+      <span class="cat-filter" data-cat="ml">אלגוריתמי ML</span>
+      <span class="cat-filter" data-cat="tools">כלים וספריות</span>
+    </div>
+  </div>
+
+  <!-- Category: רשת — מבנה ופעולה -->
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Perceptron</span>
+      <span class="term-he">— יחידת בסיס</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">אבן הבניין הבסיסית של רשת נוירונים — נוירון מלאכותי בודד שמחשב סכום משוקלל ומחזיר 0 או 1.</div>
+    <div class="term-long">
+      <strong>הגדרה מלאה:</strong> פרספטרון מקבל וקטור קלט x, מכפיל ב-weights W, מוסיף bias b, ומפעיל פונקציית סף:
+      <div class="formula">ŷ = 1 if Wx + b ≥ 0 else 0</div>
+      <strong>היסטוריה:</strong> הוצג ע"י Frank Rosenblatt ב-1958 כמודל למוח ביולוגי. דוגמה: Wx+b מייצג את הסיכוי שסטודנט יתקבל לאוניברסיטה לפי ציון בגרות ומבחן.
+      <strong>מגבלה:</strong> פרספטרון יחיד מסוגל ללמוד רק קווים ישרים — לא יכול לפתור XOR. הפתרון: שכבות נסתרות.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה של הסבר מורחב</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Hidden Layers</span>
+      <span class="term-he">— שכבות נסתרות</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">השכבות שבין הקלט לפלט, שבהן הרשת לומדת לזהות דפוסים מורכבים בנתונים.</div>
+    <div class="term-long">
+      <strong>תפקיד:</strong> כל שכבה לוקחת את פלט השכבה הקודמת ומפעילה עליו טרנספורמציה לא-לינארית (Wx+b ואחריו אקטיבציה). היא לא רואה ישירות את הקלט הגולמי ולא ישירות את הפלט הסופי — ולכן "נסתרת".
+      <strong>למה צריך אותן:</strong> ללא שכבות נסתרות, הרשת היא רגרסיה לוגיסטית פשוטה. עם שכבה אחת — ניתן לקרב כל פונקציה רציפה (Universal Approximation). עם הרבה שכבות — לומדים ייצוגים היררכיים (קצוות → צורות → אובייקטים).
+      <strong>פרקטיקה:</strong> מספר השכבות (depth) ומספר היחידות בכל שכבה (width) הם hyperparameters שמכוונים בניסוי.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה של הסבר מורחב</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Multi-layer Network</span>
+      <span class="term-he">— רשת רב-שכבתית</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">רשת בעלת מספר שכבות המאפשרת למידה של קשרים מורכבים ולא-ליניאריים.</div>
+    <div class="term-long">
+      <strong>הקשר:</strong> "Multi-layer" = יותר משכבה אחת; "Deep" = הרבה שכבות (>2-3 בדרך כלל). DL התחיל כאשר הצליחו להתגבר על vanishing gradients ולאמן רשתות עם 5+, 50+, 100+ שכבות.
+      <strong>אינטואיציה:</strong> כל שכבה עוסקת ברמת הפשטה גבוהה יותר. ברשת לזיהוי תמונות: שכבות ראשונות מזהות קצוות, אמצעיות מזהות חלקי גוף (אוזניים, עיניים), אחרונות מזהות אובייקטים שלמים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Network Architecture</span>
+      <span class="term-he">— ארכיטקטורת הרשת</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">המבנה הכולל של הרשת: מספר השכבות, סוג השכבות (Dense / Conv / Recurrent), כמות הנוירונים בכל שכבה, וצורת החיבורים ביניהן.</div>
+    <div class="term-long">
+      <strong>החלטות מרכזיות:</strong>
+      <ol>
+        <li>מספר שכבות נסתרות.</li>
+        <li>גודל כל שכבה (16, 64, 256...).</li>
+        <li>אקטיבציות (ReLU בנסתרות, sigmoid/softmax/linear בפלט).</li>
+        <li>חיבורים מיוחדים: skip connections (ResNet), branches (Multi-task), recurrent (RNN).</li>
+      </ol>
+      <strong>גישת בחירה:</strong> אין פתרון אנליטי. מתחילים בארכיטקטורה פשוטה, מגדילים עד overfit, ואז מרסנים. מסתמכים על ארכיטקטורות ידועות לבעיות הנפוצות (CNN לתמונות, Transformer לטקסט).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Dendrites / Axon Terminals</span>
+      <span class="term-he">— מבנה נוירון ביולוגי</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">ההשראה הביולוגית לרשת: דנדריטים קולטים אותות (קלטים), קצות האקסון מעבירים את הפלט לתאים הבאים.</div>
+    <div class="term-long">
+      <strong>אנלוגיה לפרספטרון:</strong>
+      <ul>
+        <li>דנדריטים = קלטי x.</li>
+        <li>חוזק חיבור סינפטי = משקל w.</li>
+        <li>גוף התא = סכום משוקלל + הטיה.</li>
+        <li>אקסון = פלט (אם עובר סף, "יורה").</li>
+        <li>אקטיבציה = החלטה אם להעביר אות הלאה.</li>
+      </ul>
+      <strong>חשוב:</strong> זוהי השראה ולא מודל מדויק של המוח. הרשת המלאכותית מפושטת מאוד ביחס לרשת ביולוגית אמיתית.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Initialize Weights</span>
+      <span class="term-he">— אתחול משקולות</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">קביעת ערכי המשקלות בתחילת האימון; אתחול נכון עוזר לרשת ללמוד מהר ויציב יותר.</div>
+    <div class="term-long">
+      <strong>למה לא אפס?</strong> אם כל המשקלות שווים, כל הנוירונים ילמדו את אותו הדבר ויאבדו את היכולת ללמוד תכונות שונות (Symmetry Breaking).
+      <strong>שיטות נפוצות:</strong>
+      <ul>
+        <li><strong>Random uniform/normal</strong> — מספרים אקראיים קטנים (לדוגמה N(0, 0.01)).</li>
+        <li><strong>Xavier / Glorot</strong> — סטיית תקן תלויה בגודל השכבה: √(2/(fan_in+fan_out)). מתאים ל-tanh / sigmoid.</li>
+        <li><strong>He initialization</strong> — סטיית תקן √(2/fan_in). מתאים ל-ReLU. <em>הסטנדרט כיום.</em></li>
+      </ul>
+      <strong>פרקטיקה:</strong> Keras בוחר אתחול ברירת מחדל (Glorot) — לרוב לא צריך לחשוב על זה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Dropout</span>
+      <span class="term-he">— שכבת השמטה</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">שיטה למניעת התאמת יתר (Overfitting) על ידי "כיבוי" אקראי של נוירונים בזמן האימון.</div>
+    <div class="term-long">
+      <strong>איך זה עובד:</strong> בכל epoch, לכל נוירון בשכבת dropout, בהסתברות p (טיפוסית 0.2-0.5) — הפלט שלו נכפל באפס. בזמן Inference כל הנוירונים פעילים, אבל הפלט נכפל ב-(1-p) לפיצוי.
+      <strong>למה זה עובד:</strong> אקוויוולנטי לאימון <em>אנסמבל</em> של תת-רשתות שונות. הרשת לא יכולה להסתמך על נוירון יחיד — הידע מתפזר.
+      <strong>אנלוגיה:</strong> אימון בחדר כושר — בכל פעם מתמקדים בקבוצת שרירים אחרת, הגוף כולו מתחזק.
+      <strong>פרקטיקה ב-Keras:</strong> <code style="direction:ltr;display:inline-block">model.add(Dropout(0.3))</code> אחרי שכבת Dense.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Feature Vector</span>
+      <span class="term-he">— וקטור מאפיינים</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">ייצוג מספרי של קלט (תמונה, מילה, מסמך) המאפשר למודל להבין דמיון בין נתונים.</div>
+    <div class="term-long">
+      <strong>דוגמאות:</strong>
+      <ul>
+        <li>תמונה 28x28 → וקטור 784 מספרים (אחרי flatten).</li>
+        <li>מילה → embedding בגודל 50-300 (Word2Vec, GloVe).</li>
+        <li>מסמך → ממוצע של embeddings, או Doc2Vec, או embedding של [CLS] ב-BERT.</li>
+        <li>תמונה אחרי CNN → "feature vector" ב-end-of-CNN באורך 512 או 2048.</li>
+      </ul>
+      <strong>שימוש:</strong> מאפשר השוואת דמיון (Cosine Similarity), חיפוש קרובים, clustering, או הזנה לסיווג.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- Activation Functions -->
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">Activation Function</span>
+      <span class="term-he">— פונקציית הפעלה</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">פונקציה המוסיפה אי-לינאריות לרשת, ומאפשרת לה ללמוד דפוסים מורכבים.</div>
+    <div class="term-long">
+      <strong>למה צריך אותה:</strong> בלי אקטיבציה לא-לינארית, רצף שכבות שווה לרגרסיה לינארית בודדת. האקטיבציה היא ה"שובר" של הלינאריות.
+      <strong>אופציות נפוצות:</strong> Step (היסטורית, לא בשימוש), Sigmoid, tanh, ReLU, Leaky ReLU, ELU, GELU, Softmax (בעיקר בפלט).
+      <strong>איך לבחור:</strong>
+      <ul>
+        <li>שכבות נסתרות → ברירת מחדל ReLU.</li>
+        <li>פלט סיווג בינארי → sigmoid.</li>
+        <li>פלט סיווג רב-מחלקתי → softmax.</li>
+        <li>פלט רגרסיה → ללא אקטיבציה (linear).</li>
+      </ul>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">Step Function</span>
+      <span class="term-he">— פונקציית סף</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">פונקציית אקטיבציה בסיסית: 0 או 1 לפי סימן הקלט. פשוטה אך לא גזירה — לא מתאימה ל-Gradient Descent.</div>
+    <div class="term-long">
+      <div class="formula">step(z) = 1 if z ≥ 0 else 0</div>
+      <strong>שימוש היסטורי:</strong> הפרספטרון המקורי של Rosenblatt (1958).
+      <strong>חיסרון מכריע:</strong> הנגזרת היא 0 בכל מקום (פרט לנקודה בודדת שבה היא לא מוגדרת). זה הופך את Backpropagation לבלתי אפשרי. לכן בעידן ה-DL מחליפים אותה ב-Sigmoid (גזירה) או ReLU.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">Sigmoid Function</span>
+      <span class="term-he">— פונקציה סיגמואידית</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">פונקציה הממירה ערכים לטווח שבין 0 ל-1; נפוצה בסיווג בינארי בשכבת הפלט.</div>
+    <div class="term-long">
+      <div class="formula">σ(z) = 1 / (1 + e^(–z))</div>
+      <strong>תכונות:</strong>
+      <ul>
+        <li>חלקה (גזירה בכל מקום).</li>
+        <li>טווח (0,1) — ניתן לפרשנות כהסתברות.</li>
+        <li>נגזרת אלגנטית: σ′(z) = σ(z)·(1 – σ(z)).</li>
+      </ul>
+      <strong>חיסרון:</strong> "Vanishing Gradient" — בקצוות הנגזרת מתקרבת ל-0, ובשכבות עמוקות הגרדיאנטים נעלמים. לכן בשכבות נסתרות מעדיפים ReLU. נשארת כברירת מחדל בשכבת פלט בסיווג בינארי.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">Hyperbolic Tangent (tanh)</span>
+      <span class="term-he">— פונקציה היפרבולית</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">פונקציית אקטיבציה המנרמלת ערכים לטווח שבין -1 ל-1. בעלת נגזרות גדולות יותר מ-sigmoid.</div>
+    <div class="term-long">
+      <div class="formula">tanh(z) = (eᶻ – e⁻ᶻ) / (eᶻ + e⁻ᶻ)</div>
+      <strong>יחס ל-sigmoid:</strong> tanh(z) = 2·σ(2z) – 1. כלומר זו סיגמואיד מותאמת לטווח [-1, 1] עם מרכז ב-0.
+      <strong>יתרון על-פני sigmoid:</strong> מרכז ב-0 ⇒ הגרדיאנטים מאוזנים יותר (לא רק חיוביים), מתכנס מהר יותר.
+      <strong>חיסרון:</strong> עדיין סובלת מ-vanishing gradient בקצוות.
+      <strong>שימוש כיום:</strong> בעיקר ב-RNNים מסוימים (LSTM, GRU). ברשתות feed-forward — ReLU מועדף.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">ReLU (Rectified Linear Unit)</span>
+      <span class="term-he">— פונקציית רליו</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">פונקציית האקטיבציה הנפוצה ביותר ברשתות עמוקות; מחזירה את הקלט אם הוא חיובי ו-0 אחרת.</div>
+    <div class="term-long">
+      <div class="formula">ReLU(z) = max(0, z)</div>
+      <strong>יתרונות:</strong>
+      <ul>
+        <li>חישוב מאוד מהיר (max פשוט).</li>
+        <li>הנגזרת = 1 לחיוביים — אין vanishing gradient.</li>
+        <li>יוצרת sparsity (חצי מהפלטים אפס) — יעיל זיכרון וחישוב.</li>
+      </ul>
+      <strong>חיסרון: "Dying ReLU"</strong> — אם הקלטים שליליים בעקביות, הנגזרת תמיד 0 והנוירון לא לומד. פתרונות:
+      <ul>
+        <li><strong>Leaky ReLU</strong>: max(0.01z, z) — שיפוע קטן לשליליים.</li>
+        <li><strong>PReLU</strong>: השיפוע השלילי הוא פרמטר שנלמד.</li>
+        <li><strong>ELU</strong>: e^z – 1 לשליליים — חלקה.</li>
+      </ul>
+      <strong>פרקטיקה:</strong> ReLU = ברירת המחדל בשכבות נסתרות בכל מודל DL מודרני.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="act">
+    <div class="term-head">
+      <span class="term-en">Softmax</span>
+      <span class="term-he">— פונקציית סופטמקס</span>
+      <span class="term-cat">פונקציות הפעלה</span>
+    </div>
+    <div class="term-short">הופכת וקטור של ציונים לחלוקת הסתברות (סכום = 1). מתאימה לסיווג רב-מחלקתי בשכבת הפלט.</div>
+    <div class="term-long">
+      <div class="formula">P(class i) = e^(zᵢ) / Σⱼ e^(zⱼ)</div>
+      <strong>למה אקספוננט:</strong> מבטיח ערכים חיוביים גם ל-z שלילי, ומגביר הבדלים — ציון מעט גבוה יותר → הסתברות הרבה יותר גבוהה.
+      <strong>קשר ל-sigmoid:</strong> Softmax עם 2 מחלקות = sigmoid.
+      <strong>שימוש:</strong> תמיד בשכבת הפלט של סיווג רב-מחלקתי, יחד עם <em>categorical_crossentropy</em>.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- Optimization & Learning -->
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">FeedForward</span>
+      <span class="term-he">— הזנה קדמית</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">תהליך זרימת הנתונים מהקלט דרך השכבות ועד לקבלת התחזית בפלט.</div>
+    <div class="term-long">
+      <strong>הצעדים:</strong>
+      <ol>
+        <li>קלט x נכנס לשכבה הראשונה.</li>
+        <li>בכל שכבה: z = Wx + b → a = activation(z).</li>
+        <li>הפלט של כל שכבה הוא הקלט לשכבה הבאה.</li>
+        <li>בשכבה האחרונה — מקבלים את התחזית ŷ.</li>
+      </ol>
+      <strong>חשוב:</strong> Feedforward הוא חישוב בלבד — אין למידה. הלמידה מתבצעת ב-Backpropagation שאחריו.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Back-propagation</span>
+      <span class="term-he">— הפצה לאחור</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">האלגוריתם המחשב את הטעות של כל משקולת מהסוף להתחלה כדי לעדכן אותן ולשפר את המודל.</div>
+    <div class="term-long">
+      <strong>שלבים:</strong>
+      <ol>
+        <li>חישוב Loss בין ŷ ל-y.</li>
+        <li>חישוב ∂Loss/∂ŷ.</li>
+        <li>שכבה אחר שכבה (אחורה!): שימוש בכלל השרשרת לחישוב ∂Loss/∂Wₖ עבור כל W בשכבה.</li>
+        <li>עדכון: W ← W – α · ∂Loss/∂W.</li>
+      </ol>
+      <strong>למה "לאחור":</strong> הגרדיאנט בשכבה האחרונה פשוט; לחישוב הגרדיאנט בשכבה הקודמת צריך את הגרדיאנט שכבר חישבנו אחריה. לכן עוברים מהפלט להתחלה.
+      <strong>קסם ה-Frameworks:</strong> אנחנו לא מחשבים את זה ידנית — TF / PyTorch עושים זאת אוטומטית (Automatic Differentiation).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Gradient</span>
+      <span class="term-he">— גרדיאנט</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">הנגזרת של פונקציית ההפסד; מראה את הכיוון והעוצמה לשינוי המשקולות לצמצום הטעות.</div>
+    <div class="term-long">
+      <strong>פורמלית:</strong> וקטור של נגזרות חלקיות:
+      <div class="formula">∇E = (∂E/∂w₁, ∂E/∂w₂, ..., ∂E/∂wₙ)</div>
+      <strong>אינטואיציה:</strong> הגרדיאנט מצביע ל<em>כיוון העלייה התלולה ביותר</em>. לכן ב-Gradient Descent נעים בכיוון <em>ההפוך</em> — מינוס הגרדיאנט.
+      <strong>תכונה חשובה:</strong> אורך וקטור הגרדיאנט = שיפוע השטח. בקצוות (חיוביים/שליליים מאוד) של sigmoid — האורך זעיר → vanishing gradient.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Loss Function</span>
+      <span class="term-he">— פונקציית הפסד</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">מדד המחשב כמה התחזית רחוקה מהמציאות; המטרה באימון היא למזער ערך זה.</div>
+    <div class="term-long">
+      <strong>מקובלות:</strong>
+      <ul>
+        <li><strong>Binary Cross-Entropy</strong> — סיווג בינארי (sigmoid).</li>
+        <li><strong>Categorical Cross-Entropy</strong> — סיווג רב-מחלקתי (softmax + one-hot).</li>
+        <li><strong>Sparse Categorical Cross-Entropy</strong> — כמו הקודם אך תיוג כ-int.</li>
+        <li><strong>MSE (Mean Squared Error)</strong> — רגרסיה.</li>
+        <li><strong>MAE (Mean Absolute Error)</strong> — רגרסיה עמידה לחריגים.</li>
+      </ul>
+      <strong>הבדל מ-Metrics:</strong> Loss משמש לאופטימיזציה (חייב להיות גזיר); Metrics (כמו accuracy) הם רק לדיווח.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Chain Rule</span>
+      <span class="term-he">— כלל השרשרת</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">כלל מתמטי המאפשר לחשב את השפעת המשקולות המוקדמות על הטעות דרך שרשרת נגזרות.</div>
+    <div class="term-long">
+      <strong>הכלל:</strong> אם h(x) = f(g(x)), אז:
+      <div class="formula">dh/dx = (df/dg) · (dg/dx)</div>
+      <strong>בהקשר של רשת:</strong> השגיאה E היא פונקציה של ŷ, ŷ של h, h של h₁, h₁ של w. אז:
+      <div class="formula">∂E/∂w = ∂E/∂ŷ · ∂ŷ/∂h · ∂h/∂h₁ · ∂h₁/∂w</div>
+      <strong>חשיבות:</strong> זהו הכלי המתמטי שעליו נשען Backpropagation, וכל DL בכלל.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Optimizer</span>
+      <span class="term-he">— אופטימייזר</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">האלגוריתם המעדכן את המשקולות כדי להגיע למינימום של פונקציית ההפסד.</div>
+    <div class="term-long">
+      <strong>אופציות נפוצות:</strong>
+      <ul>
+        <li><strong>SGD</strong> — Stochastic Gradient Descent בסיסי. דורש כיוון ידני של LR.</li>
+        <li><strong>SGD + Momentum</strong> — צובר מהירות בכיוונים עקביים.</li>
+        <li><strong>RMSprop</strong> — מתאים LR לכל פרמטר. הסטנדרט בקורס.</li>
+        <li><strong>Adam</strong> — שילוב Momentum + RMSprop. הברירת מחדל הפופולרית בעולם.</li>
+        <li><strong>AdamW</strong> — Adam עם weight decay נכון. שכיח ב-Transformers.</li>
+      </ul>
+      <strong>פרקטיקה:</strong> אם בספק — Adam עם LR=0.001. אם המודל לא מתכנס — לנסות RMSprop או SGD+Momentum.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Stochastic Gradient Descent (SGD)</span>
+      <span class="term-he">— ירידת גרדיאנט סטוכסטית</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">עדכון משקולות המשתמש בדגימה אקראית (או mini-batch) בכל שלב, מה שמאיץ את הלמידה ומאפשר שימוש בנתונים גדולים.</div>
+    <div class="term-long">
+      <strong>הבעיה עם Batch GD:</strong> לחשב גרדיאנט על מיליוני דגימות בכל epoch — איטי וזולל זיכרון.
+      <strong>SGD הקיצוני:</strong> עדכון אחרי כל דגימה בודדת. רועש אך מהיר.
+      <strong>Mini-batch (הסטנדרט):</strong> עדכון על batch של 32-256 דגימות. מאזן בין יציבות למהירות, ומנצל GPU.
+      <strong>יתרון נסתר:</strong> הרעש של SGD עוזר לצאת ממינימה לוקליות.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Mini-batches</span>
+      <span class="term-he">— מיני-באצ'ים</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">חלוקת הנתונים לקבוצות קטנות; מאזנת בין מהירות חישוב ליציבות בעדכון המשקולות.</div>
+    <div class="term-long">
+      <strong>גודל טיפוסי:</strong> 32, 64, 128, 256.
+      <strong>שיקולים:</strong>
+      <ul>
+        <li>גודל קטן = רעש גבוה יותר, יציאה ממינימה לוקליות, יותר עדכונים ב-epoch.</li>
+        <li>גודל גדול = יציבות, ניצול GPU טוב יותר, פחות עדכונים אך כל אחד מדויק.</li>
+      </ul>
+      <strong>כלל אצבע:</strong> 32 לרשתות קטנות, 128-256 לרשתות גדולות עם GPU טוב.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Learning Rate (α)</span>
+      <span class="term-he">— קצב למידה</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">קצב הלמידה הקובע את גודל הצעד בכל עדכון משקולות; קריטי להצלחת האימון ולמהירותו.</div>
+    <div class="term-long">
+      <strong>בנוסחה:</strong> w ← w – α · ∂E/∂w. א גדול = צעד גדול.
+      <strong>סימפטומים:</strong>
+      <ul>
+        <li><strong>α גדול מדי:</strong> Loss מתפזר או "מנתר" סביב המינימום.</li>
+        <li><strong>α קטן מדי:</strong> אימון איטי, מסכן בהיתקעות במינימום מקומי.</li>
+        <li><strong>α נכון:</strong> Loss יורד בעקביות.</li>
+      </ul>
+      <strong>ערכים סטנדרטיים:</strong> Adam=0.001, SGD=0.01-0.1.
+      <strong>שיפור:</strong> Learning Rate Decay — להקטין את α עם הזמן.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Learning Rate Decay</span>
+      <span class="term-he">— קצב למידה דועך</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">הפחתה הדרגתית של קצב הלמידה בזמן האימון כדי לאפשר למודל להתייצב על הפתרון המדויק.</div>
+    <div class="term-long">
+      <strong>אסטרטגיות:</strong>
+      <ul>
+        <li><strong>Step decay</strong> — חלוקה ב-2 כל 10 epochs.</li>
+        <li><strong>Exponential decay</strong> — α(t) = α₀ · γᵗ.</li>
+        <li><strong>Cosine annealing</strong> — נע בקצב גל קוסינוס.</li>
+        <li><strong>Warmup + decay</strong> — מתחיל קטן, עולה, ואז יורד (סטנדרט ב-Transformers).</li>
+        <li><strong>ReduceLROnPlateau</strong> — Keras callback שמקטין α כש-validation לא משתפר.</li>
+      </ul>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Momentum</span>
+      <span class="term-he">— מומנטום</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">טכניקה המאיצה את האימון על ידי הוספת "תנופה" מצעדים קודמים, מה שעוזר לעבור מינימה רדודות.</div>
+    <div class="term-long">
+      <strong>נוסחה:</strong>
+      <div class="formula">v ← β·v + ∇E,    w ← w – α·v</div>
+      <strong>מקדם:</strong> β = 0.9 בדרך כלל.
+      <strong>אינטואיציה:</strong> כדור עם אינרציה — צובר מהירות בכיוון עקבי, מתעלם מתנודות מקריות. עוזר במיוחד ב"גאיות צרים" (canyons) של פונקציית השגיאה.
+      <strong>וריאציה:</strong> Nesterov Accelerated Gradient — חישוב הגרדיאנט במיקום העתידי הצפוי.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Early Stopping</span>
+      <span class="term-he">— עצירה מוקדמת</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">עצירת האימון כשביצועי המודל על נתוני הבדיקה מפסיקים להשתפר, למניעת שינון (Overfitting).</div>
+    <div class="term-long">
+      <strong>איך זה עובד:</strong>
+      <ol>
+        <li>אחרי כל epoch — מודדים val_loss.</li>
+        <li>שומרים גרסה הטובה ביותר.</li>
+        <li>אם N epochs ברצף ללא שיפור (patience) — עוצרים ומחזירים את הגרסה הטובה.</li>
+      </ol>
+      <strong>ב-Keras:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">callback = EarlyStopping(patience=5, restore_best_weights=True)
+model.fit(..., callbacks=[callback])</div>
+      <strong>חשוב:</strong> דורש סט ולידציה נפרד מהטסט.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Regularization</span>
+      <span class="term-he">— רגולריזציה</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">שיטות למניעת התאמת יתר על ידי הוספת "קנס" על משקלות גדולים או מורכבות מודל.</div>
+    <div class="term-long">
+      <strong>L2 (Ridge):</strong> קנס על סכום ריבועי המשקלות:
+      <div class="formula">E = Loss + λ · Σ wᵢ²</div>
+      <em>מכווץ את כל המשקלות לכיוון 0, אך לא מאפס. ברירת מחדל פרקטית.</em>
+
+      <strong>L1 (Lasso):</strong> קנס על סכום הערכים האבסולוטיים:
+      <div class="formula">E = Loss + λ · Σ |wᵢ|</div>
+      <em>מאפס לחלוטין משקלות לא חשובים → Feature Selection אוטומטי.</em>
+
+      <strong>שיטות נוספות:</strong> Dropout, Early Stopping, Data Augmentation, Batch Normalization — כולן צורות של רגולריזציה.
+      <strong>היפר-פרמטר λ:</strong> טיפוסית 0.001-0.01. גדול מדי → underfit, קטן מדי → overfit.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- ML Algorithms -->
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Supervised Learning</span>
+      <span class="term-he">— למידה מונחית</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">למידה מנתונים מתויגים — לכל קלט x ידוע y הנכון. דוגמאות: Classification, Regression.</div>
+    <div class="term-long">
+      <strong>היפותזה:</strong> יש פונקציה f כך ש-y = f(x) + רעש. המטרה: ללמוד f על סמך דוגמאות (x, y) רבות.
+      <strong>חלוקה:</strong> Classification (y קטגוריאלי), Regression (y רציף).
+      <strong>רוב הקורס:</strong> כל הבעיות שלמדנו (IMDB, Reuters, MNIST, Boston) — Supervised.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Unsupervised Learning</span>
+      <span class="term-he">— למידה לא מונחית</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">למידה מנתונים <em>ללא תיוג</em> — מנסה למצוא דפוסים, קבוצות וייצוגים בעצמה.</div>
+    <div class="term-long">
+      <strong>סוגים מרכזיים:</strong>
+      <ul>
+        <li><strong>Clustering</strong> — חלוקה לקבוצות (K-Means, DBSCAN).</li>
+        <li><strong>Dimensionality Reduction</strong> — צמצום מימדים (PCA, t-SNE, UMAP, autoencoders).</li>
+        <li><strong>Association Rules</strong> — מציאת קשרים (Apriori).</li>
+      </ul>
+      <strong>ב-DL:</strong> Self-supervised learning הפך לפופולרי — מודלי שפה (BERT, GPT) לומדים בלי תיוגים מפורשים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Classification</span>
+      <span class="term-he">— סיווג</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">בעיית supervised שבה הפלט הוא קטגוריה דיסקרטית (לדוגמה: חתול / כלב / דג).</div>
+    <div class="term-long">
+      <strong>סוגים:</strong>
+      <ul>
+        <li><strong>Binary</strong> — שתי מחלקות (sigmoid + binary_CE).</li>
+        <li><strong>Multi-class single-label</strong> — N מחלקות, תיוג יחיד (softmax + categorical_CE).</li>
+        <li><strong>Multi-label</strong> — N מחלקות, מספר תיוגים (sigmoid לכל אחת + binary_CE על כל מימד).</li>
+      </ul>
+      <strong>מדדים:</strong> Accuracy, Precision, Recall, F1, ROC-AUC.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Regression</span>
+      <span class="term-he">— רגרסיה</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">בעיית supervised שבה הפלט הוא מספר רציף (למשל: מחיר דירה, טמפרטורה, גיל).</div>
+    <div class="term-long">
+      <strong>שכבת פלט:</strong> 1 יחידה ללא אקטיבציה (או linear).
+      <strong>Loss:</strong> MSE (סטנדרטי), MAE (עמיד יותר לחריגים), Huber (בין שניהם).
+      <strong>Metrics:</strong> MAE, RMSE, R².
+      <strong>חשוב:</strong> נורמליזציה של הקלטים — חיונית כשערכי features ברמות גודל שונות.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Clustering</span>
+      <span class="term-he">— אשכול</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">חלוקה אוטומטית של נתונים לקבוצות (clusters) על סמך דמיון, ללא תיוגים מראש.</div>
+    <div class="term-long">
+      <strong>אלגוריתמים נפוצים:</strong>
+      <ul>
+        <li><strong>K-Means</strong> — מחלק ל-K קבוצות שכל אחת סביב מרכז (centroid).</li>
+        <li><strong>DBSCAN</strong> — מבוסס צפיפות, לא דורש לקבוע K.</li>
+        <li><strong>Hierarchical</strong> — בונה עץ של קבוצות.</li>
+      </ul>
+      <strong>ב-DL:</strong> אפשר לחלץ feature vectors מרשת ואז להפעיל K-Means במרחב הייצוג שלמדה הרשת.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Cross Entropy</span>
+      <span class="term-he">— אנטרופיה צולבת</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">פונקציית הפסד המודדת מרחק בין חלוקת הסתברויות חזויה (ŷ) לאמיתית (y). הסטנדרט בסיווג.</div>
+    <div class="term-long">
+      <strong>בינארית:</strong>
+      <div class="formula">CE = –Σ [yᵢ ln(ŷᵢ) + (1–yᵢ) ln(1–ŷᵢ)]</div>
+      <strong>קטגוריאלית:</strong>
+      <div class="formula">CE = –Σ yᵢ · ln(ŷᵢ)   (sum across classes)</div>
+      <strong>אינטואיציה:</strong> CE קטן ↔ המודל "בטוח ונכון". CE גדול ↔ המודל "בטוח ושוגה" — ענישה כבדה.
+      <strong>למה לא MSE:</strong> CE נותנת גרדיאנטים גדולים יותר במצבים גרועים, מה שמאיץ למידה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Maximum Likelihood</span>
+      <span class="term-he">— מקסימום נראות</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">עיקרון: לבחור פרמטרים שמעניקים את ההסתברות הגבוהה ביותר לראות את הנתונים שראינו.</div>
+    <div class="term-long">
+      <strong>הקשר ל-Cross Entropy:</strong> מזעור CE שווה למקסימום log-likelihood. כך שאופטימיזציה של CE היא ביטוי מתמטי של עיקרון Maximum Likelihood.
+      <strong>למה log:</strong> מכפלות הסתברויות (אלפי פעמים) מתכנסות ל-0. log הופך מכפלות לסכומים, יציב מספרית.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">One-Hot Encoding</span>
+      <span class="term-he">— קידוד חם-יחיד</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">ייצוג קטגוריה כווקטור של 0 ו-1 בדיוק במקום אחד. למשל: מתוך 3 מחלקות, "כלב" → [0,1,0].</div>
+    <div class="term-long">
+      <strong>למה:</strong> אם נקודד "חתול=1, כלב=2, דג=3", המודל "ילמד" שדג קרוב יותר לכלב מאשר לחתול — מה שלא נכון. One-hot מבטיח מרחק שווה בין מחלקות.
+      <strong>חיסרון:</strong> בזבוז זיכרון כשיש הרבה מחלקות (10K מילים → וקטור באורך 10K). פתרונות: sparse storage, embedding layers.
+      <strong>אלטרנטיבה ב-Keras:</strong> sparse_categorical_crossentropy עובדת ישירות עם תיוגים כ-int.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Overfitting / Underfitting</span>
+      <span class="term-he">— התאמת יתר / חסר</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">Overfit: המודל "שיננן" את האימון אך נכשל על נתונים חדשים. Underfit: המודל פשוט מדי לתפוס את הקשר.</div>
+    <div class="term-long">
+      <strong>איך מזהים:</strong>
+      <ul>
+        <li>Underfit: train_loss + val_loss שניהם גבוהים.</li>
+        <li>Just right: שניהם נמוכים וקרובים.</li>
+        <li>Overfit: train_loss נמוך, val_loss גבוה ונפתח פער.</li>
+      </ul>
+      <strong>פתרונות ל-Overfit:</strong> יותר נתונים, רגולריזציה (L1/L2/Dropout), Early Stopping, מודל קטן יותר, Data Augmentation.
+      <strong>פתרונות ל-Underfit:</strong> מודל גדול יותר, יותר epochs, פיצ'רים נוספים, פחות רגולריזציה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">K-fold Cross Validation</span>
+      <span class="term-he">— ולידציה צולבת K-קבוצות</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">חלוקת הנתונים ל-K קבוצות; מאמנים K פעמים, בכל פעם קבוצה אחרת משמשת ולידציה. הממוצע נותן הערכה יציבה.</div>
+    <div class="term-long">
+      <strong>K טיפוסי:</strong> 4, 5, 10.
+      <strong>מתי משתמשים:</strong>
+      <ul>
+        <li>מעט נתונים (פחות מ-1K-10K) — Holdout רגיל לא יציב.</li>
+        <li>חוסר וודאות בפיצול — רוצים הערכה ממוצעת.</li>
+      </ul>
+      <strong>חיסרון:</strong> יקר חישובית — מאמנים את המודל K פעמים. ב-DL לרוב יקר מדי, ולכן Holdout עם train/val/test הוא הסטנדרט.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- DL Architectures (preview) -->
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">CNN — Convolutional Neural Network</span>
+      <span class="term-he">— רשת קונבולוציונית</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">ארכיטקטורה לתמונות שמשתמשת בשכבות convolution לחיפוש דפוסים מקומיים (קצוות, צורות) ו-pooling לסיכום מידע.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נלמד בהרצאה 7.</strong>
+      <strong>הרעיון:</strong> במקום לחבר כל פיקסל לכל נוירון (Dense), חיבור מקומי בלבד. <em>שיתוף משקלות</em> בין מיקומים שונים בתמונה — הקרנל "סורק" את התמונה.
+      <strong>שכבות מרכזיות:</strong> Conv2D (סינון), MaxPooling2D (סיכום), Flatten + Dense (לסיווג סופי).
+      <strong>דוגמאות:</strong> LeNet, AlexNet, VGG, ResNet, EfficientNet.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">RNN — Recurrent Neural Network</span>
+      <span class="term-he">— רשת רקורסיבית</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">רשת לעיבוד רצפים (טקסט, סדרות זמן) — שומרת state פנימי שמתעדכן בכל צעד.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נלמד בהרצאות 7-8.</strong>
+      <strong>הרעיון:</strong> בכל צעד t, הרשת מקבלת קלט x_t וזיכרון h_{t-1}, ומחזירה h_t. כך היא מתחשבת בהקשר ההיסטורי.
+      <strong>בעיות:</strong> Vanishing gradients ברצפים ארוכים → הומצאו LSTM ו-GRU שפותרים את זה.
+      <strong>היום:</strong> רוב יישומי הטקסט עברו ל-Transformers, אבל RNNים עדיין שימושיים בסדרות זמן.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">GRU — Gated Recurrent Unit</span>
+      <span class="term-he">— יחידה חוזרת עם שערים</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">סוג של RNN עם שערים שמחליטים אילו חלקים של הזיכרון לעדכן ולשמור — פותר את בעיית ה-vanishing gradient.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נראה בהרצאות 7-8.</strong>
+      <strong>שערים:</strong> Update gate (כמה מהזיכרון הקודם לשמור) ו-Reset gate (כמה לאפס). פשוט יותר מ-LSTM, אבל לרוב נותן ביצועים דומים.
+      <strong>פרמטרים:</strong> פחות מ-LSTM (אין שער "forget" נפרד) → אימון מהיר יותר.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">BiGRU / BiLSTM</span>
+      <span class="term-he">— רשת רקורסיבית דו-כיוונית</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">RNN שעובר על הרצף בשני הכיוונים (מהתחלה לסוף ומהסוף להתחלה) ומחבר את הייצוגים.</div>
+    <div class="term-long">
+      <strong>מתי שימושי:</strong> בטקסט — להבנת מילה כדאי לדעת גם מה לפני וגם מה אחרי. דוגמה: "תפוח" יכול להיות פרי או חברה — תלוי בהקשר משני הצדדים.
+      <strong>מגבלה:</strong> דורש לראות את כל הרצף לפני החיזוי — לא מתאים לזמן אמת (streaming).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">Stacked BiGRU / BiLSTM</span>
+      <span class="term-he">— שכבות RNN דו-כיווניות מוערמות</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">מספר שכבות BiGRU/BiLSTM זו על גבי זו, לקבלת ייצוגים היררכיים של רצפים.</div>
+    <div class="term-long">
+      <strong>אינטואיציה:</strong> כל שכבה לומדת ייצוג ברמת הפשטה גבוהה יותר — כמו רשת עמוקה רגילה. שימושי במשימות מורכבות של NLP לפני עידן ה-Transformers.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">TCN — Temporal Convolutional Network</span>
+      <span class="term-he">— רשת קונבולוציה זמנית</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">חלופה ל-RNN שמשתמשת ב-CNN על סדרות זמן עם dilated convolutions לכיסוי תלות ארוכה.</div>
+    <div class="term-long">
+      <strong>יתרון:</strong> אימון מקבילי (CNN) — מהיר יותר מ-RNN. גם יציב יותר מבחינת גרדיאנטים.
+      <strong>שימוש:</strong> פופולרי בסדרות זמן, אודיו, חיזוי שווקים פיננסיים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">SNN — Shallow Neural Network</span>
+      <span class="term-he">— רשת רדודה</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">רשת בעלת שכבה נסתרת אחת. ההפך מ-Deep — מספר שכבות מוגבל.</div>
+    <div class="term-long">
+      <strong>מתי שימושי:</strong> בעיות פשוטות, כשמעט נתונים, או כ-baseline. תיאורטית מסוגלת לקרב כל פונקציה רציפה (Universal Approximation), אך פחות יעילה מבחינת פרמטרים מאשר רשת עמוקה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">edRVFL — Ensemble Deep Random Vector Functional Link</span>
+      <span class="term-he">— רשת אנסמבל עם משקלות אקראיות</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">משפחת מודלים שבה רוב המשקלות אקראיים-קבועים, רק שכבת הפלט מאומנת. אנסמבל של מספר רשתות כאלה.</div>
+    <div class="term-long">
+      <strong>יתרון:</strong> אימון מהיר במיוחד (אין backprop ברוב הרשת). מתאים לסדרות זמן.
+      <strong>חיסרון:</strong> בדרך כלל פחות מדויק מ-DL מאומן במלואו.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">ResNet</span>
+      <span class="term-he">— Residual Network</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">רשת CNN עמוקה במיוחד שמשתמשת ב"קישורי דילוג" (skip connections) — מאפשרת אימון של 50, 100, 152 שכבות.</div>
+    <div class="term-long">
+      <strong>הרעיון:</strong> במקום שכל שכבה תלמד y = f(x), היא לומדת y = f(x) + x — "שארית" (residual) מעל הקלט.
+      <strong>למה זה עובד:</strong> השכבה תמיד יכולה ללמוד "אפס" ולא להזיק. גם הגרדיאנט עובר ישירות דרך החיבור — פתרון ל-vanishing gradient ברשתות עמוקות מאוד.
+      <strong>גרסאות:</strong> ResNet-18, 34, 50, 101, 152.
+      <strong>השפעה:</strong> פתח את הדרך לכל הרשתות הענקיות שבאו אחרי (DenseNet, EfficientNet).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- NLP -->
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">NLP — Natural Language Processing</span>
+      <span class="term-he">— עיבוד שפה טבעית</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">תחום ב-AI העוסק בעיבוד והבנה של שפה אנושית — תרגום, סיווג, סיכום, מענה לשאלות.</div>
+    <div class="term-long">
+      <strong>אתגרים:</strong> רב-משמעות, הקשר, סדר חשוב, אורך משתנה.
+      <strong>תחומים:</strong> Sentiment Analysis, Machine Translation, Q&amp;A, Named Entity Recognition, Summarization, Generation.
+      <strong>אבולוציה:</strong> BoW → Word2Vec/GloVe → RNN/LSTM → Attention → Transformers → LLMs (GPT, BERT, Claude).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">Word2Vec</span>
+      <span class="term-he">— ייצוג מילים כווקטורים</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">שיטה ללימוד embedding צפוף לכל מילה (50-300 מימדים) כך שמילים בעלות הקשר דומה יקבלו וקטורים דומים.</div>
+    <div class="term-long">
+      <strong>שתי אופציות אימון:</strong>
+      <ul>
+        <li><strong>Skip-gram</strong> — מנסה לחזות מילים קרובות בהינתן מילה.</li>
+        <li><strong>CBOW</strong> — מנסה לחזות מילה בהינתן מילים קרובות.</li>
+      </ul>
+      <strong>תכונות מרשימות:</strong> "King – Man + Woman ≈ Queen" — קשרים סמנטיים נשמרים גאומטרית.
+      <strong>היום:</strong> הוחלף ברובו ב-contextual embeddings (BERT, GPT) — אבל עדיין רלוונטי כ-baseline ושימושים פשוטים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">GloVe — Global Vectors for Word Representation</span>
+      <span class="term-he">— וקטורים גלובליים</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">שיטה אלטרנטיבית ללמידת word embeddings, מבוססת על מטריצת co-occurrence גלובלית (כמה פעמים מילה i מופיעה ליד מילה j).</div>
+    <div class="term-long">
+      <strong>הבדל מ-Word2Vec:</strong> Word2Vec מבוסס על חלון מקומי, GloVe על סטטיסטיקה גלובלית.
+      <strong>בפועל:</strong> שניהם נותנים ביצועים דומים. בחירה ביניהם היא לרוב עניין של נוחות ולא של דיוק.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">FastText</span>
+      <span class="term-he">— ייצוג ברמת תת-מילה</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">הרחבה של Word2Vec של Facebook — מייצגת כל מילה כסכום של n-grams של אותיות. מאפשר התמודדות עם מילים שלא נראו באימון.</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> "running" → ייצוג של "run", "unn", "nni", "nin", "ing" + המילה השלמה. אפילו מילה חדשה כמו "runned" תקבל ייצוג סביר.
+      <strong>שימושי:</strong> שפות עם מורפולוגיה עשירה (עברית, ערבית, פינית), מילים נדירות, טעויות הקלדה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">Doc2Vec</span>
+      <span class="term-he">— ייצוג מסמכים כווקטורים</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">הרחבה של Word2Vec לרמת מסמך שלם — לומדת ייצוג צפוף עבור כל מסמך, לא רק עבור כל מילה.</div>
+    <div class="term-long">
+      <strong>שימוש:</strong> חיפוש דמיון בין מסמכים, סיווג מסמכים, המלצות.
+      <strong>היום:</strong> הוחלף ברובו ב-embeddings של Transformers (BERT [CLS], Sentence-BERT).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">Attention Mechanism</span>
+      <span class="term-he">— מנגנון קשב</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">טכניקה המאפשרת למודל "להתמקד" בחלקים רלוונטיים של הקלט בעת חיזוי. הבסיס של Transformers.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נלמד בהרצאה 9.</strong>
+      <strong>אינטואיציה:</strong> כשמתרגמים "הכלב חצה את הכביש", המילה "חצה" בעברית קרובה ל-"חצה" באנגלית — המודל "מתמקד" בה ולא במילים אחרות.
+      <strong>נוסחה (פשוטה):</strong> Attention(Q, K, V) = softmax(QKᵀ/√d) · V.
+      <strong>השפעה:</strong> Self-Attention הוא הליבה של Transformers — שינו את כל NLP מ-2017.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- Computer Vision -->
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Image Processing</span>
+      <span class="term-he">— עיבוד תמונה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">תחום העוסק בניתוח, עיבוד והבנה של תמונות באמצעות אלגוריתמים. ב-DL הוא הובל ע"י CNNs.</div>
+    <div class="term-long">
+      <strong>משימות עיקריות:</strong>
+      <ul>
+        <li><strong>Classification</strong> — מהי התמונה? (חתול / כלב / מכונית).</li>
+        <li><strong>Object Detection</strong> — איפה ומה בתמונה? (YOLO, Faster R-CNN).</li>
+        <li><strong>Segmentation</strong> — תיוג כל פיקסל.</li>
+        <li><strong>Generation</strong> — יצירת תמונות חדשות (GANs, Diffusion).</li>
+      </ul>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">ImageNet</span>
+      <span class="term-he">— מאגר נתוני תמונות</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">מאגר של 14M+ תמונות ב-1000 קטגוריות, נוצר ע"י Fei-Fei Li ב-2009. נחשב ל"benchmark" של DL לתמונות.</div>
+    <div class="term-long">
+      <strong>השפעה היסטורית:</strong> תחרות ImageNet (ILSVRC) הביאה לפריצת AlexNet ב-2012 — נקודת ההפיכה של DL.
+      <strong>שימוש:</strong> אימון Pre-trained models (ResNet, VGG, EfficientNet) שמשמשים כ-feature extractors בכל פרויקט CV — Transfer Learning.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Kernel Size</span>
+      <span class="term-he">— גודל פילטר קונבולוציה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">הגודל של הפילטר המתחלק בשכבת Convolution. נפוץ: 3x3, 5x5. קובע את "שדה הראייה" של כל פיקסל בפלט.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נלמד בהרצאה 7.</strong>
+      <strong>שיקולים:</strong>
+      <ul>
+        <li>קטן (3x3) — מעט פרמטרים, לוכד דפוסים מקומיים מאוד. רוב CNNים מודרניים משתמשים ב-3x3 בלבד.</li>
+        <li>גדול (5x5, 7x7) — לוכד דפוסים גדולים יותר, אבל הרבה יותר פרמטרים.</li>
+        <li>שתי שכבות 3x3 = שדה ראייה אקוויוולנטי ל-5x5, אבל פחות פרמטרים ויותר עומק.</li>
+      </ul>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Global Pooling</span>
+      <span class="term-he">— איחוד גלובלי</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">פעולת pooling שמסכמת את כל המפה הספטרלית למספר אחד (ממוצע או מקסימום) לכל ערוץ.</div>
+    <div class="term-long">
+      <strong>מקדים את החומר — נלמד בהרצאה 7.</strong>
+      <strong>שימוש:</strong> בקצה רשת CNN — במקום Flatten + Dense ענקי, משתמשים ב-Global Average Pooling להפחתה דרסטית של פרמטרים.
+      <strong>יתרונות:</strong> פחות overfit, מודל קל יותר, אינווריאנט לגודל הקלט (בגבולות).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Cosine Similarity</span>
+      <span class="term-he">— דמיון קוסינוס</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">מדד דמיון בין שני וקטורים על סמך הזווית ביניהם. שווה ל-1 לוקטורים זהים בכיוון, 0 לאורתוגונליים, –1 להפוכים.</div>
+    <div class="term-long">
+      <div class="formula">cos(A, B) = (A · B) / (‖A‖ · ‖B‖)</div>
+      <strong>שימוש:</strong>
+      <ul>
+        <li>השוואת feature vectors של תמונות (face recognition).</li>
+        <li>השוואת embeddings של מילים / מסמכים (NLP).</li>
+        <li>חיפוש סמנטי, המלצות.</li>
+      </ul>
+      <strong>למה לא Euclidean distance:</strong> מתעלם מאורך הוקטורים — נותן רק את כיוון הוקטור. לרוב מתאים יותר ב-DL כי מה שמעניין הוא הכיוון, לא העוצמה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Forward Pass</span>
+      <span class="term-he">— מעבר קדמי</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">תהליך חישוב הפלט של רשת בהינתן קלט — בדיוק זהה ל-Feedforward.</div>
+    <div class="term-long">
+      <strong>הקשר:</strong> במקור הופיע במאמרים על NN לתמונות. כיום משתמשים ב-Forward Pass ו-Feedforward בערבוביה.
+      <strong>שימוש פרקטי:</strong> בזמן Inference (חיזוי) — מבצעים רק Forward Pass, ללא BP. לכן הוא הרבה יותר מהיר מ-Training.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- Tools -->
+  <div class="term-card" data-cat="tools">
+    <div class="term-head">
+      <span class="term-en">TensorFlow / Keras</span>
+      <span class="term-he">— Frameworks ל-DL</span>
+      <span class="term-cat">כלים וספריות</span>
+    </div>
+    <div class="term-short">TensorFlow היא ספרייה low-level של Google לחישובי tensor ו-DL. Keras היא API high-level שיושב מעליה ומספק שכבות מוכנות.</div>
+    <div class="term-long">
+      <strong>היחס:</strong> כיום Keras היא tf.keras — ה-API הרשמי של TensorFlow.
+      <strong>למה Keras בקורס:</strong> מאפשר לבנות מודלים ב-5-10 שורות קוד, מתמקד בארכיטקטורה ולא בפלאמברינג.
+      <strong>גרסאות:</strong> TF 1.x השתמש ב-static graph (קשה לדיבוג). TF 2.x עבר ל-eager execution (כמו PyTorch).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head">
+      <span class="term-en">PyTorch</span>
+      <span class="term-he">— Framework של Meta</span>
+      <span class="term-cat">כלים וספריות</span>
+    </div>
+    <div class="term-short">Framework ל-DL של Meta (Facebook). Pythonic, eager-by-default, פופולרי במחקר אקדמי וב-LLMs.</div>
+    <div class="term-long">
+      <strong>הבדלים מ-TF/Keras:</strong>
+      <ul>
+        <li>"Pythonic" יותר — נכתב כאילו זה Python רגיל.</li>
+        <li>Dynamic computation graphs — קל לדיבוג.</li>
+        <li>פופולרי במאמרים אקדמיים והרבה LLMs (GPT, LLaMA) נכתבו ב-PyTorch.</li>
+      </ul>
+      <strong>בקורס:</strong> נתמקד ב-Keras, אבל אם תמשיכו ל-research או ל-LLMs — PyTorch כדאי להכיר.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head">
+      <span class="term-en">Google Colab</span>
+      <span class="term-he">— Jupyter בענן</span>
+      <span class="term-cat">כלים וספריות</span>
+    </div>
+    <div class="term-short">סביבת Jupyter Notebook חינמית בענן של Google, הכוללת גישה ל-GPU/TPU. הסטנדרט של הקורס.</div>
+    <div class="term-long">
+      <strong>יתרונות:</strong>
+      <ul>
+        <li>חינמי (גרסה Pro תמורת תשלום).</li>
+        <li>GPU בלי התקנה.</li>
+        <li>שיתוף קל (Google Drive integration).</li>
+        <li>מותקן מראש כל מה שצריך — TF, Keras, PyTorch, NumPy, Pandas.</li>
+      </ul>
+      <strong>מגבלות:</strong> זמן ריצה מוגבל, מנותק אחרי תקופה לא פעילה, GPU "חינמי" יכול להיות זמין באופן לא צפוי.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <h3 style="margin-top:0">איך להשתמש במילון בלמידה</h3>
+    <ul class="checklist">
+      <li>בכל שאלת חזרה — בדקו אם יש מושג שלא זכור והקפידו להבין אותו לעומק.</li>
+      <li>במהלך קריאת הרצאה — חפשו במילון את כל המושגים שעולים בה.</li>
+      <li>שבוע לפני המבחן — עברו על המילון לפי קטגוריות (חברו אותם לקבוצות הגיוניות).</li>
+      <li>נסו "להקריא" כל מושג בקול: שם → הגדרה במשפט → מתי משתמשים → דוגמה.</li>
+      <li>אם אתם לא יכולים להסביר אותו לעצמכם — לא מבינים אותו עדיין.</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<button id="toc-button" onclick="toggleTOC()" title="תוכן עניינים">☰</button>
+<div id="toc-panel">
+  <h4>תוכן עניינים</h4>
+  <ul id="toc-list"></ul>
+</div>
+
+<button id="to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="חזרה לראש">↑</button>
+
+<footer class="bottom">
+  סיכום אינטראקטיבי לקורס "סדנה בלמידה עמוקה" · מתעדכן עם התקדמות הסמסטר.
+</footer>
+
+<script>
+  // Tabs
+  const tabs = document.querySelectorAll('nav.tabs button');
+  const panels = document.querySelectorAll('.tab-panel');
+  tabs.forEach(b => b.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    panels.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    document.getElementById(b.dataset.tab).classList.add('active');
+    rebuildTOC();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }));
+
+  // Expand / collapse all (within active tab)
+  function expandAll(){ document.querySelectorAll('.tab-panel.active details').forEach(d => d.open = true); }
+  function collapseAll(){ document.querySelectorAll('.tab-panel.active details').forEach(d => d.open = false); }
+
+  // TOC
+  function rebuildTOC(){
+    const list = document.getElementById('toc-list');
+    list.innerHTML = '';
+    const active = document.querySelector('.tab-panel.active');
+    const headings = active.querySelectorAll('h2, h3');
+    headings.forEach((h, i) => {
+      if (!h.id) h.id = 'h-' + active.id + '-' + i;
+      const li = document.createElement('li');
+      li.style.paddingRight = (h.tagName === 'H3' ? '14px' : '0');
+      li.innerHTML = `<a href="#${h.id}">${h.textContent}</a>`;
+      list.appendChild(li);
+    });
+  }
+  function toggleTOC(){ document.getElementById('toc-panel').classList.toggle('open'); }
+  document.addEventListener('click', e => {
+    const panel = document.getElementById('toc-panel');
+    const btn = document.getElementById('toc-button');
+    if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) panel.classList.remove('open');
+  });
+
+  // To-top button
+  window.addEventListener('scroll', () => {
+    document.getElementById('to-top').classList.toggle('visible', window.scrollY > 300);
+  });
+
+  // Term card toggle
+  document.addEventListener('click', e => {
+    const head = e.target.closest('.term-head');
+    if (head) head.parentElement.classList.toggle('open');
+  });
+
+  // Glossary search + filter
+  function filterGlossary(){
+    const q = (document.getElementById('gloss-search')?.value || '').toLowerCase().trim();
+    const activeCat = document.querySelector('.cat-filter.active')?.dataset.cat || 'all';
+    document.querySelectorAll('.term-card').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const cat = card.dataset.cat;
+      const matchQ = !q || text.includes(q);
+      const matchCat = activeCat === 'all' || cat === activeCat;
+      card.style.display = (matchQ && matchCat) ? '' : 'none';
+    });
+  }
+  document.addEventListener('input', e => { if (e.target.id === 'gloss-search') filterGlossary(); });
+  document.addEventListener('click', e => {
+    const f = e.target.closest('.cat-filter');
+    if (f){
+      document.querySelectorAll('.cat-filter').forEach(x => x.classList.remove('active'));
+      f.classList.add('active');
+      filterGlossary();
+    }
+  });
+
+  // Initial
+  rebuildTOC();
+</script>
+
+</body>
+</html>
