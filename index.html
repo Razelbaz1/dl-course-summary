@@ -2832,6 +2832,85 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
   <div class="term-card" data-cat="opt">
     <div class="term-head">
+      <span class="term-en">Epoch</span>
+      <span class="term-he">— אפוק / סבב אימון מלא</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">מעבר אחד מלא על כל דגימות סט האימון. אחרי epoch אחד המודל "ראה" את כל הנתונים פעם אחת ועדכן את המשקלות לפי כולם.</div>
+    <div class="term-long">
+      <strong>למה צריך כמה epochs?</strong> מעבר אחד לרוב לא מספיק כדי שהמשקלות יתכנסו. בכל epoch הרשת רואה שוב את אותם נתונים, אבל עם משקלות מעודכנים — וכך משפרת את עצמה הדרגתית.
+      <strong>איך מחליטים על מספר ה-epochs?</strong>
+      <ul>
+        <li><strong>מעט מדי</strong> (underfit): המודל לא הספיק ללמוד את הקשר.</li>
+        <li><strong>הרבה מדי</strong> (overfit): המודל "שינן" את האימון אך לא מכליל.</li>
+        <li><strong>הנכון:</strong> עוקבים אחר val_loss; עוצרים כשהוא מתחיל לעלות (Early Stopping).</li>
+      </ul>
+      <strong>חישוב:</strong> בכל epoch מתבצעים <code style="direction:ltr;display:inline-block">N / batch_size</code> עדכוני משקלות, כאשר N = מספר דגימות האימון. למשל 60,000 דגימות / batch_size=128 = 469 עדכונים לכל epoch.
+      <strong>ערך טיפוסי:</strong> 10-100 epochs, תלוי בגודל המודל ובכמות הנתונים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Batch</span>
+      <span class="term-he">— באצ' / קבוצת דגימות</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">קבוצת דגימות שעוברות יחד ב-Forward + Backward pass של הרשת בצעד אימון אחד. זוהי היחידה האטומית של עדכון משקלות.</div>
+    <div class="term-long">
+      <strong>הזרימה בכל batch:</strong>
+      <ol>
+        <li>בוחרים batch של N דגימות.</li>
+        <li>Forward pass — חישוב חיזויים לכל הדגימות בו זמנית (כפל מטריצות מקבילי).</li>
+        <li>חישוב הפסד ממוצע על ה-batch.</li>
+        <li>Backward pass — חישוב גרדיאנטים.</li>
+        <li><strong>עדכון משקלות אחד</strong> על בסיס הגרדיאנט הממוצע של ה-batch כולו.</li>
+      </ol>
+      <strong>למה לעבוד ב-batches ולא דגימה-דגימה?</strong>
+      <ul>
+        <li><strong>יעילות חישוב:</strong> GPU מקבל את כל ה-batch במקביל — מהיר פי 100 מ-loop רציף.</li>
+        <li><strong>יציבות:</strong> ממוצע על batch הוא הערכה פחות רועשת של הגרדיאנט מאשר דגימה בודדת.</li>
+        <li><strong>זיכרון:</strong> לא צריך לטעון את כל הנתונים בבת אחת — רק batch אחד בכל פעם.</li>
+      </ul>
+      <strong>שלוש האסטרטגיות:</strong> Batch GD (כל הנתונים יחד) · Mini-batch GD (32-256 דגימות, הסטנדרט) · SGD (דגימה אחת בלבד).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Batch Size</span>
+      <span class="term-he">— גודל ה-batch</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">היפרפרמטר שקובע כמה דגימות יש בכל batch. משפיע על מהירות, יציבות, צריכת זיכרון, ואיכות הגרדיאנט.</div>
+    <div class="term-long">
+      <strong>ערכים טיפוסיים:</strong> חזקות של 2 — 16, 32, 64, 128, 256, 512. הגודל הסטנדרטי בקורס: 128 או 512.
+      <strong>טבלת ההשפעות:</strong>
+      <table class="compare">
+        <tr><th>קריטריון</th><th>batch קטן (16-32)</th><th>batch גדול (256-512)</th></tr>
+        <tr><td>זיכרון GPU</td><td>נמוך</td><td>גבוה</td></tr>
+        <tr><td>גרדיאנט</td><td>רועש</td><td>חלק ומדויק</td></tr>
+        <tr><td>יציאה ממינימה לוקליות</td><td>טוב יותר (הרעש עוזר)</td><td>פחות טוב</td></tr>
+        <tr><td>עדכונים לכל epoch</td><td>הרבה</td><td>מעט</td></tr>
+        <tr><td>זמן רץ של epoch</td><td>איטי יותר</td><td>מהיר יותר (ניצול GPU)</td></tr>
+        <tr><td>איכות ההכללה</td><td>לעיתים טובה יותר</td><td>לעיתים נוטה ל-overfit</td></tr>
+      </table>
+      <strong>כלל אצבע:</strong>
+      <ul>
+        <li>אם יש GPU חזק — גדל את ה-batch_size למקסימום שהזיכרון מאפשר (512 או 1024).</li>
+        <li>אם המודל לא מתכנס — נסה batch_size קטן יותר (32-64).</li>
+        <li>אם משנים את batch_size פי X — רצוי לכוון את ה-Learning Rate באותו יחס (Linear Scaling Rule).</li>
+      </ul>
+      <strong>איפה זה מופיע בקוד:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">model.fit(x_train, y_train, epochs=20, batch_size=128)</div>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
       <span class="term-en">Mini-batches</span>
       <span class="term-he">— מיני-באצ'ים</span>
       <span class="term-cat">למידה ואופטימיזציה</span>
