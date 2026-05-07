@@ -1877,7 +1877,128 @@ x = x / x.std(axis=0)</div>
     </ol>
   </div>
 
-  <h3>3. בעיה שנייה: סיווג רב-מחלקתי — Reuters</h3>
+  <h3>3. רענון מושגים: Tensor, Embedding, Embedding Layer</h3>
+  <div class="card">
+    <p>שלושה מושגים שעולים בקוד של ההרצאה הזו וחשוב להבין לעומק. <strong>Tensor</strong> הוא ה<em>צורה</em> שבה הנתונים נשמרים בכל רשת. <strong>Embedding</strong> הוא <em>השיטה</em> להפוך מילים לוקטורים שמשמעות שלהם נשמרת. <strong>Embedding Layer</strong> הוא ה<em>כלי</em> ב-Keras שלומד את ה-Embeddings תוך כדי האימון.</p>
+
+    <h4>3.1 Tensor — מה זה?</h4>
+    <p><strong>אינטואיציה:</strong> Tensor הוא בסך הכל "מערך של מספרים בכל כמות מימדים". הוא ההרחבה הכללית של סקלר → וקטור → מטריצה. רשת נוירונים <em>תמיד</em> עובדת על Tensors. כל קלט (תמונה, טקסט, קול) חייב להפוך ל-Tensor לפני שהוא נכנס לרשת.</p>
+
+    <p><strong>היררכיית המימדים:</strong></p>
+    <table class="compare">
+      <tr><th>מימד</th><th>שם</th><th>דוגמה</th><th>צורה (shape)</th></tr>
+      <tr><td>0D</td><td>Scalar</td><td>הטמפרטורה בחדר: 23.5</td><td>()</td></tr>
+      <tr><td>1D</td><td>Vector</td><td>פרופיל לקוח [גיל, גובה, משקל]</td><td>(3,)</td></tr>
+      <tr><td>2D</td><td>Matrix</td><td><strong>IMDB train</strong>: 25000 ביקורות × 10000 מילים</td><td>(25000, 10000)</td></tr>
+      <tr><td>3D</td><td>Tensor</td><td>רצף טקסט עם embeddings: batch × words × dim</td><td>(32, 200, 64)</td></tr>
+      <tr><td>4D</td><td>Tensor</td><td>תמונות RGB: batch × גובה × רוחב × צבעים</td><td>(64, 224, 224, 3)</td></tr>
+      <tr><td>5D</td><td>Tensor</td><td>וידאו: batch × פריימים × גובה × רוחב × צבעים</td><td>(8, 30, 224, 224, 3)</td></tr>
+    </table>
+
+    <p><strong>בקוד</strong> (חזרה מהרצאה 5):</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">x_train.shape    # (25000, 10000) — 2D tensor
+x_train.ndim     # 2 — מספר המימדים
+x_train.dtype    # float32 — טיפוס הנתונים</div>
+
+    <p><strong>הקשר לאריתמטיקה:</strong> בפועל Tensor הוא NumPy array בגרסת TF/PyTorch. כל פעולת + - * / @ עובדת עליו. שכבת Dense בעצם עושה <code style="direction:ltr;display:inline-block">activation(dot(input_tensor, W) + b)</code> — הכל פעולות tensor.</p>
+
+    <details class="expand">
+      <summary>מה קורה לקלט שלך לאורך הרשת?</summary>
+      <div class="body">
+        <p>בעיית IMDB לדוגמה:</p>
+        <ol>
+          <li><strong>קלט גולמי:</strong> טקסט "this movie was great" — לא tensor.</li>
+          <li><strong>אחרי tokenization:</strong> [42, 217, 5, 89] — וקטור של אינדקסים, 1D tensor.</li>
+          <li><strong>אחרי vectorization (multi-hot):</strong> [0,0,1,...,1,...,0] באורך 10,000 — 1D tensor של 10000 ערכים.</li>
+          <li><strong>קיבוץ ל-batch:</strong> 25,000 ביקורות מקובצות → 2D tensor (25000, 10000).</li>
+          <li><strong>אחרי שכבת Dense (16):</strong> כל ביקורת → 16 ערכים → 2D tensor (25000, 16).</li>
+          <li><strong>פלט סופי:</strong> סיכוי בין 0 ל-1 לכל ביקורת → 2D tensor (25000, 1).</li>
+        </ol>
+        <p>בכל שלב הצורה (shape) משתנה — וזה בדיוק מה שהרשת לומדת לעשות.</p>
+      </div>
+    </details>
+
+    <h4>3.2 Embedding — מה הבעיה שהוא פותר?</h4>
+    <p><strong>הבעיה:</strong> איך מציגים מילה לרשת?</p>
+
+    <p>נראה שלוש גישות לאותה דוגמה — מילון של 10,000 מילים, נרצה לייצג את המילה "cat":</p>
+
+    <table class="compare">
+      <tr><th>שיטה</th><th>הייצוג של "cat"</th><th>מימד</th><th>מורכבות</th></tr>
+      <tr><td><strong>One-hot</strong></td><td>[0, 0, 0, ..., 1, ..., 0, 0]</td><td>10,000</td><td>סר ומבזבז זיכרון</td></tr>
+      <tr><td><strong>Multi-hot</strong> (כמו ב-IMDB)</td><td>וקטור של 10,000, 1 בכל מקום של מילה שהופיעה במשפט</td><td>10,000</td><td>מאבד סדר</td></tr>
+      <tr><td><strong>Embedding</strong></td><td>[0.21, -0.15, 0.83, 0.42, ..., 0.04]</td><td>50-300</td><td>צפוף + שומר משמעות</td></tr>
+    </table>
+
+    <p><strong>הקסם של Embedding:</strong> הוקטורים <em>נלמדים</em> כך שמילים בעלות משמעות דומה — מקבלות וקטורים קרובים במרחב. כך הרשת מבינה ש-"good" ו-"great" קרובות יותר זו לזו מאשר ל-"terrible".</p>
+
+    <p><strong>הדוגמה המפורסמת</strong> מ-Word2Vec:</p>
+    <div class="formula">vec("King") – vec("Man") + vec("Woman") ≈ vec("Queen")</div>
+    <p>כלומר היחסים <em>הסמנטיים</em> בין מילים מתורגמים ליחסים <em>גאומטריים</em> בין הוקטורים. הוקטור של "Queen" הוא בערך הוקטור של "King" פחות "Man" ועוד "Woman".</p>
+
+    <details class="expand">
+      <summary>למה לא פשוט להשתמש ב-One-Hot תמיד?</summary>
+      <div class="body">
+        <ol>
+          <li><strong>זיכרון:</strong> 10,000 מימדים × 200 מילים × 32,000 דגימות = 64GB. עם embedding של 64 = 410MB. פי 150 פחות.</li>
+          <li><strong>חוסר משמעות:</strong> One-hot של "cat" אורתוגונלי ל-One-hot של "kitten" — הרשת לא יודעת שהן דומות, חייבת ללמוד מאפס.</li>
+          <li><strong>הכללה:</strong> אם המודל ראה "cat" באימון אבל לא ראה "feline", עם One-hot הוא לא יידע שהן קשורות. עם embedding מאומן מראש (Word2Vec) — הוא יידע.</li>
+        </ol>
+      </div>
+    </details>
+
+    <h4>3.3 Embedding Layer — איך לומדים את ה-Embeddings ב-Keras</h4>
+    <p>שכבת Embedding ב-Keras היא בעצם <strong>טבלת חיפוש (lookup table)</strong> שמתאמנת. הצורה שלה: (vocabulary_size × embedding_dim).</p>
+
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">from tensorflow.keras import layers
+
+embedding_layer = layers.Embedding(
+    input_dim=10000,    # גודל המילון
+    output_dim=64       # מימד ה-embedding
+)</div>
+
+    <p><strong>מה קורה בפנים:</strong></p>
+    <ul>
+      <li>פנימית, השכבה היא מטריצה בצורה (10000, 64). זה <strong>640,000 פרמטרים</strong> שנלמדים.</li>
+      <li><strong>קלט:</strong> מספר שלם (אינדקס מילה).</li>
+      <li><strong>פלט:</strong> השורה ה-i של המטריצה — וקטור של 64 מספרים.</li>
+      <li>בזמן אימון: הגרדיאנט מתעדכן כל המטריצה דרך Backpropagation, בדיוק כמו כל משקל אחר.</li>
+    </ul>
+
+    <h4>3.4 איך זה משתלב ב-IMDB עם רצף שלם</h4>
+    <p>במקום multi-hot, אפשר היה לעבוד עם הרצף עצמו:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = keras.Sequential([
+    layers.Embedding(input_dim=10000, output_dim=64),  # (batch, seq_len) → (batch, seq_len, 64)
+    layers.GlobalAveragePooling1D(),                    # (batch, seq_len, 64) → (batch, 64)
+    layers.Dense(16, activation='relu'),
+    layers.Dense(1, activation='sigmoid')
+])</div>
+
+    <p><strong>זרימת הצורות:</strong></p>
+    <ol>
+      <li>קלט: ביקורת באורך 200 מילים → tensor של (32, 200) — batch של 32, כל אחת 200 אינדקסים.</li>
+      <li>אחרי Embedding: (32, 200, 64) — לכל מילה יש וקטור של 64.</li>
+      <li>אחרי GlobalAveragePooling1D: (32, 64) — ממוצע על פני המילים.</li>
+      <li>אחרי Dense(16): (32, 16).</li>
+      <li>אחרי Dense(1, sigmoid): (32, 1) — הסיכוי שהביקורת חיובית.</li>
+    </ol>
+
+    <div class="callout info">
+      <strong>למה לא השתמשנו בזה ב-IMDB מההרצאה?</strong> כי בהרצאה הזו עוד לא הוצגו רצפים. ההסבר נשמר להרצאות 7-9 (Sequence Models / RNN / Transformers) שבהן השכבות שלאחר ה-Embedding (RNN, LSTM, Transformer) ינצלו את הסדר. עם Multi-hot, סדר המילים מאבד משמעות; עם Embedding + RNN, הוא נשמר.
+    </div>
+
+    <h4>3.5 Embeddings מאומנים מראש (Pre-trained)</h4>
+    <p>במקום ללמד את ה-Embeddings מאפס על נתוני הקורס שלך, אפשר להשתמש ב-Embeddings שכבר אומנו על קורפוסים ענקיים:</p>
+    <ul>
+      <li><strong>Word2Vec</strong> (Google, 2013) — 100B מילים מ-Google News.</li>
+      <li><strong>GloVe</strong> (Stanford, 2014) — מבוסס סטטיסטיקה גלובלית.</li>
+      <li><strong>FastText</strong> (Facebook, 2016) — embeddings ברמת תת-מילה (טוב לעברית).</li>
+      <li><strong>BERT/GPT embeddings</strong> (2018+) — embeddings <em>תלויי הקשר</em>: אותה מילה מקבלת וקטור שונה לפי המשפט.</li>
+    </ul>
+    <p><strong>איך משתמשים:</strong> טוענים את המטריצה המאומנת לתוך שכבת Embedding ויכולים להגדיר אותה כ-<code style="direction:ltr;display:inline-block">trainable=False</code> (לא להמשיך ללמוד אותה) או <code style="direction:ltr;display:inline-block">trainable=True</code> (Fine-Tuning קל).</p>
+  </div>
+
+  <h3>4. בעיה שנייה: סיווג רב-מחלקתי — Reuters</h3>
   <div class="card">
     <p><strong>הנתונים:</strong> 11,228 ידיעות חדשותיות מ-Reuters משנת 1986, מסווגות ל-46 קטגוריות. 8,982 לאימון, 2,246 לטסט. כל ידיעה כבר מקודדת כרצף אינדקסים — כמו ב-IMDB.</p>
 
@@ -1911,7 +2032,7 @@ model.compile(optimizer='rmsprop',
     </div>
   </div>
 
-  <h3>4. בעיה שלישית: רגרסיה — Boston Housing</h3>
+  <h3>5. בעיה שלישית: רגרסיה — Boston Housing</h3>
   <div class="card">
     <p><strong>הנתונים:</strong> 506 דגימות (404 train + 102 test) של דירות בבוסטון משנות ה-70. תכונות: אחוז פשיעה באזור, מספר חדרים ממוצע, שיעור מס נכסים, מרחק ממוקדי תעסוקה וכו'. <strong>מטרה:</strong> לחזות את מחיר הדירה (מספר רציף, באלפי דולרים).</p>
 
@@ -1950,7 +2071,7 @@ model.compile(optimizer='rmsprop',
     </ul>
   </div>
 
-  <h3>5. K-fold Cross Validation</h3>
+  <h3>6. K-fold Cross Validation</h3>
   <div class="card">
     <p>הרעיון: מחלקים את ה-train ל-K חלקים שווים. ב-K איטרציות, בכל איטרציה:</p>
     <ol>
@@ -1985,7 +2106,7 @@ print(f"Average MAE: {np.mean(mae_scores)}")</div>
     <p>תוצאה אופיינית בבוסטון: MAE ממוצע ~$2,400 — כלומר התחזית של המודל סוטה בממוצע ב-2,400$ ממחיר אמיתי. בהתחשב במחירי הדירות אז, זה דיוק יחסית סביר.</p>
   </div>
 
-  <h3>6. תהליך העבודה הסטנדרטי של פרויקט DL — 8 שלבים</h3>
+  <h3>7. תהליך העבודה הסטנדרטי של פרויקט DL — 8 שלבים</h3>
   <div class="card">
     <p>זוהי תזכורת קריטית למבחן ולפרויקט המסכם:</p>
 
@@ -2005,7 +2126,7 @@ print(f"Average MAE: {np.mean(mae_scores)}")</div>
     </div>
   </div>
 
-  <h3>7. השוואת שלוש הבעיות — תזכיר</h3>
+  <h3>8. השוואת שלוש הבעיות — תזכיר</h3>
   <div class="card">
     <table class="compare">
       <tr><th></th><th>IMDB (סיווג בינארי)</th><th>Reuters (רב-מחלקתי)</th><th>Boston (רגרסיה)</th></tr>
@@ -2018,11 +2139,11 @@ print(f"Average MAE: {np.mean(mae_scores)}")</div>
     </table>
   </div>
 
-  <h3>8. תוספות מקובץ הקוד שהוצג בהרצאה</h3>
+  <h3>9. תוספות מקובץ הקוד שהוצג בהרצאה</h3>
   <div class="card">
     <p>הסעיף הזה מתבסס על ה-notebook <code style="direction:ltr;display:inline-block">6.Getting-started-with-NN.ipynb</code>. זה הקובץ הפרקטי המלא של ההרצאה — הוא מציג טכניקות שמשפיעות ישירות על איכות התוצאה, ניסויים אמפיריים שמוכיחים תאוריה, וקטעי קוד שיהיו שימושיים לכל פרויקט עתידי.</p>
 
-    <h4>8.1 פענוח ביקורת חזרה לטקסט קריא</h4>
+    <h4>9.1 פענוח ביקורת חזרה לטקסט קריא</h4>
     <p>הביקורות ב-IMDB מגיעות כרצף של מספרים. כדי לראות את הטקסט המקורי:</p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">word_index = imdb.get_word_index()
 reverse_word_index = dict([(value, key) for (key, value) in word_index.items()])
@@ -2037,7 +2158,7 @@ decoded = " ".join([reverse_word_index.get(i - 3, "?") for i in train_data[0]])<
       לכן המילה הראשונה במילון היא באינדקס 3, ויש להחסיר 3 כדי לקבל את האינדקס במילון. ה-fallback ל-"?" מטפל באינדקסים שלא מצאנו.
     </div>
 
-    <h4>8.2 הצגת עקומות אימון ב-matplotlib — הקוד המלא</h4>
+    <h4>9.2 הצגת עקומות אימון ב-matplotlib — הקוד המלא</h4>
     <p>אחרי <code style="direction:ltr;display:inline-block">history = model.fit(...)</code>, האובייקט <code style="direction:ltr;display:inline-block">history.history</code> הוא dict עם המפתחות <code style="direction:ltr;display:inline-block">loss, val_loss, accuracy, val_accuracy</code>. ככה מציירים אותם:</p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import matplotlib.pyplot as plt
 hist = history.history
@@ -2056,7 +2177,7 @@ plt.xlabel("Epochs"); plt.ylabel("Loss"); plt.legend(); plt.show()</div>
       <li>שתיהן לא יורדות → הבעיה במודל / הנתונים, לא במספר ה-epochs.</li>
     </ul>
 
-    <h4>8.3 L2 Regularization — הסינטקס ב-Keras</h4>
+    <h4>9.3 L2 Regularization — הסינטקס ב-Keras</h4>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">from tensorflow.keras import regularizers
 
 model = keras.Sequential([
@@ -2070,7 +2191,7 @@ regularizers.l2(0.002)               # רק L2 (הסטנדרט)
 regularizers.l1_l2(l1=0.001, l2=0.001)  # שילוב Elastic Net</div>
     <p>הפרמטר (0.002 בדוגמה) הוא ה-λ — מקדם הקנס. גדול יותר = ריסון חזק יותר. טווח טיפוסי: 1e-4 עד 1e-2.</p>
 
-    <h4>8.4 Dropout ב-Keras</h4>
+    <h4>9.4 Dropout ב-Keras</h4>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = keras.Sequential([
     layers.Dense(16, activation="relu"),
     layers.Dropout(0.5),                  # 50% מהנוירונים מכובים בכל epoch
@@ -2080,7 +2201,7 @@ regularizers.l1_l2(l1=0.001, l2=0.001)  # שילוב Elastic Net</div>
 ])</div>
     <p><strong>סדר השכבות:</strong> Dropout באה <em>אחרי</em> שכבת Dense ואקטיבציה, לפני השכבה הבאה. ערך טיפוסי: 0.2-0.5. אסור להוסיף Dropout בשכבת הפלט.</p>
 
-    <h4>8.5 שני אופנים לקודד תיוגים רב-מחלקתיים</h4>
+    <h4>9.5 שני אופנים לקודד תיוגים רב-מחלקתיים</h4>
     <p><strong>אפשרות א' — One-hot ידני:</strong></p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">def to_one_hot(labels, dimension=46):
     results = np.zeros((len(labels), dimension))
@@ -2100,7 +2221,7 @@ model.compile(optimizer="rmsprop",
               metrics=["accuracy"])</div>
     <p>שלוש האופציות נותנות <em>אותן תוצאות</em>. ההבדל הוא רק אופן הייצוג של y. שלישית חוסכת זיכרון אם יש הרבה מחלקות.</p>
 
-    <h4>8.6 חישוב baseline אקראי ב-Reuters</h4>
+    <h4>9.6 חישוב baseline אקראי ב-Reuters</h4>
     <p>איך יודעים אם 78% accuracy על Reuters זה "טוב"? בודקים מה היה קורה אם היינו מתייגים אקראית:</p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import copy
 test_labels_copy = copy.copy(test_labels)
@@ -2109,7 +2230,7 @@ hits_array = np.array(test_labels) == np.array(test_labels_copy)
 print(hits_array.mean())                         # ~0.18-0.20</div>
     <p>הניחוש האקראי, כשהוא דוגם מהתפלגות התיוגים האמיתית, נותן ~18-20% (כי יש כמה קטגוריות שכיחות יותר). 78% של המודל הוא <strong>פי 4-5 טוב יותר</strong> מניחוש — אישור אמפירי שהמודל באמת לומד.</p>
 
-    <h4>8.7 ניסוי ה"צוואר בקבוק" — הוכחה אמפירית</h4>
+    <h4>9.7 ניסוי ה"צוואר בקבוק" — הוכחה אמפירית</h4>
     <p>בפרק 3 דיברנו על למה שכבת ביניים קטנה ממימד הפלט מזיקה. ה-notebook מציג את הניסוי הזה ישירות:</p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">model = keras.Sequential([
     layers.Dense(64, activation="relu"),
@@ -2121,7 +2242,7 @@ print(hits_array.mean())                         # ~0.18-0.20</div>
       <strong>כלל אצבע:</strong> אף שכבה בדרך לפלט אסור שתהיה קטנה ממימד הפלט. אם בעיית סיווג עם N קטגוריות, השכבה הנסתרת האחרונה צריכה להיות לפחות N (ובדרך כלל הרבה יותר).
     </div>
 
-    <h4>8.8 K-fold מתקדם — בחירת מספר epochs מיטבי</h4>
+    <h4>9.8 K-fold מתקדם — בחירת מספר epochs מיטבי</h4>
     <p>ה-notebook מראה שימוש מתוחכם של K-fold לא רק כדי לקבל ציון ממוצע — אלא כדי לבחור את מספר ה-epochs האופטימלי:</p>
     <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">k = 4
 num_epochs = 500       # מאמנים הרבה epochs כדי לראות את כל העקומה
@@ -2147,11 +2268,11 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
     <p><strong>שלב סופי:</strong> מסתכלים על העקומה החתוכה, מזהים את ה-epoch שבו ה-val_mae מתחיל לעלות (overfit), ומאמנים מחדש על כל ה-train עד אותו epoch. דוגמה מהקוד: 130 epochs.</p>
 
-    <h4>8.9 שלמות וההפסד מול accuracy ב-Boston</h4>
+    <h4>9.9 שלמות וההפסד מול accuracy ב-Boston</h4>
     <p>תוצאה אופיינית: <code style="direction:ltr;display:inline-block">test_mae_score ≈ 2.5</code>. תרגום: התחזית של המודל סוטה בממוצע ב-2,500$ ממחיר אמיתי. כשמחירי הבתים נעים בין 10K-50K — זו סטייה של ~5-10%, סביר לבעיה רגרסיבית עם 506 דגימות בלבד.</p>
   </div>
 
-  <h3>9. שאלות חזרה למבחן — הרצאה 6</h3>
+  <h3>10. שאלות חזרה למבחן — הרצאה 6</h3>
   <div class="quiz-q">
     <div class="q">ש1. מה ההבדל בין binary_crossentropy ל-categorical_crossentropy ול-sparse_categorical_crossentropy?</div>
     <details><summary>הצג תשובה</summary><div class="a">binary_crossentropy: סיווג בינארי, פלט יחיד עם sigmoid, תיוג 0/1. categorical_crossentropy: סיווג רב-מחלקתי, פלט עם softmax, תיוג one-hot. sparse_categorical_crossentropy: כמו הקודם אך התיוג כמספר שלם בלבד (לא one-hot) — חוסך זיכרון כשיש הרבה מחלקות.</div></details>
@@ -2188,8 +2309,20 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
     <div class="q">ש9. מה <code style="direction:ltr;display:inline-block">average_mae_history[10:]</code> עושה ולמה משתמשים בזה?</div>
     <details><summary>הצג תשובה</summary><div class="a">מדלג על 10 ה-epochs הראשונים ומציג רק מ-epoch 11 ואילך. הסיבה: ב-10 הראשונים ה-MAE צונח דרסטית מהאתחול האקראי לערך סביר, וזה "דוחס" את ציר ה-y בגרף ומסתיר את העקומה האמיתית שמגלה את נקודת ה-overfit. החיתוך פותח את התצוגה ומאפשר לזהות בדיוק מתי ה-validation מתחיל לעלות.</div></details>
   </div>
+  <div class="quiz-q">
+    <div class="q">ש10. נתון tensor בצורה (32, 200, 64). מה הוא יכול לייצג ובאיזה שלב ברשת הוא מופיע?</div>
+    <details><summary>הצג תשובה</summary><div class="a">3D tensor שמייצג batch של 32 רצפים, כל אחד באורך 200 מילים, וכל מילה היא וקטור Embedding באורך 64. זה הפלט של שכבת Embedding כשמזינים אותה ב-batch של רצפי אינדקסים בצורה (32, 200). המימד הראשון = batch, השני = אורך הרצף, השלישי = embedding dimension.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש11. למה Embedding עדיף על Multi-hot ל-NLP מתקדם?</div>
+    <details><summary>הצג תשובה</summary><div class="a">שלוש סיבות: (1) <em>צפיפות</em> — וקטור של 64 מספרים לעומת 10,000 — חיסכון אדיר בזיכרון. (2) <em>משמעות</em> — מילים דומות מקבלות וקטורים דומים, ולכן הרשת מבינה את הקרבה הסמנטית. (3) <em>סדר</em> — Multi-hot מאבד את סדר המילים במשפט; עם Embedding + RNN/Transformer הסדר נשמר ויש בו משמעות.</div></details>
+  </div>
+  <div class="quiz-q">
+    <div class="q">ש12. שכבת <code style="direction:ltr;display:inline-block">Embedding(input_dim=10000, output_dim=64)</code> — כמה פרמטרים יש בה?</div>
+    <details><summary>הצג תשובה</summary><div class="a">10,000 × 64 = 640,000 פרמטרים. השכבה היא בעצם טבלת חיפוש בצורה (vocabulary × dim), שכל ערך בה הוא משקל שנלמד דרך Backpropagation בדיוק כמו כל משקל אחר ברשת.</div></details>
+  </div>
 
-  <h3>10. מה תצא מן הפרק הזה</h3>
+  <h3>11. מה תצא מן הפרק הזה</h3>
   <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
     <ul class="checklist">
       <li>תוכל לבנות מודל Keras מלא לסיווג בינארי, רב-מחלקתי, ורגרסיה — ולדעת מתי כל אחד.</li>
@@ -2204,6 +2337,9 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
       <li>תכיר את שלוש האפשרויות לקודד תיוגים רב-מחלקתיים ותבחר ביניהן לפי גודל הזיכרון.</li>
       <li>תחשב baseline אקראי בעצמך ותוכל להעריך כמה המודל "באמת לומד".</li>
       <li>תזהה ניסוי "צוואר בקבוק" ותימנע ממנו בארכיטקטורה.</li>
+      <li>תזהה Tensor בכל מימד שלו ותדע לקרוא את ה-shape שלו.</li>
+      <li>תסביר את ההבדל בין Multi-hot ל-Embedding ותדע מתי כל אחד מתאים.</li>
+      <li>תכיר את שכבת ה-Embedding ב-Keras ותחשב את מספר הפרמטרים שלה (vocabulary × dim).</li>
     </ul>
   </div>
 
@@ -2377,6 +2513,70 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <li>תמונה אחרי CNN → "feature vector" ב-end-of-CNN באורך 512 או 2048.</li>
       </ul>
       <strong>שימוש:</strong> מאפשר השוואת דמיון (Cosine Similarity), חיפוש קרובים, clustering, או הזנה לסיווג.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Tensor</span>
+      <span class="term-he">— מערך מספרים בכל כמות מימדים</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">מבנה הנתונים המרכזי של DL — כל קלט, ביניים ופלט של רשת הוא Tensor. הכללה של סקלר → וקטור → מטריצה לכל מימד.</div>
+    <div class="term-long">
+      <strong>היררכיה:</strong>
+      <ul>
+        <li><strong>0D — Scalar:</strong> מספר בודד.</li>
+        <li><strong>1D — Vector:</strong> וקטור (כמו רשימת תכונות).</li>
+        <li><strong>2D — Matrix:</strong> טבלה (samples × features) — הנפוץ ביותר ב-NN טבלאי.</li>
+        <li><strong>3D:</strong> רצפים — (batch × time × features).</li>
+        <li><strong>4D:</strong> תמונות — (batch × height × width × channels).</li>
+        <li><strong>5D:</strong> וידאו — (batch × frames × height × width × channels).</li>
+      </ul>
+      <strong>תכונות:</strong> <code style="direction:ltr;display:inline-block">.ndim</code> (מספר מימדים), <code style="direction:ltr;display:inline-block">.shape</code> (אורך כל מימד), <code style="direction:ltr;display:inline-block">.dtype</code> (טיפוס — בדרך כלל float32).
+      <strong>הקשר:</strong> בפועל Tensor הוא NumPy array בגרסה של TensorFlow / PyTorch. כל פעולה שעושים על מטריצה ב-NumPy מומשת גם על Tensors, ובנוסף יודעת לרוץ על GPU.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">Embedding</span>
+      <span class="term-he">— ייצוג צפוף וסמנטי</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">המרת ישות בדידה (מילה, מוצר, משתמש) לוקטור צפוף של מספרים אמיתיים, כך שישויות דומות מקבלות וקטורים קרובים במרחב.</div>
+    <div class="term-long">
+      <strong>הבעיה:</strong> איך מציגים מילה ל-NN? One-hot של 10,000 מימדים בזבזני וחסר משמעות.
+      <strong>הפתרון:</strong> embedding של 50-300 מימדים, צפוף ועם משמעות. וקטורים נלמדים כך שמילים דומות (cat / kitten) קרובות גאומטרית.
+      <strong>הדוגמה הקלאסית:</strong> vec("King") – vec("Man") + vec("Woman") ≈ vec("Queen") — היחסים הסמנטיים מתורגמים ליחסים גאומטריים.
+      <strong>שימוש:</strong> NLP, מערכות המלצה (Movie/User embeddings), אפילו בעיבוד תמונה (face embeddings).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head">
+      <span class="term-en">Embedding Layer</span>
+      <span class="term-he">— שכבת ה-Embedding ב-Keras</span>
+      <span class="term-cat">NLP</span>
+    </div>
+    <div class="term-short">שכבה ב-Keras שלומדת embeddings תוך כדי האימון — בעצם טבלת lookup בגודל (vocabulary × dim) שמתעדכנת דרך Backpropagation.</div>
+    <div class="term-long">
+      <strong>סינטקס:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">layers.Embedding(input_dim=10000, output_dim=64)</div>
+      <ul>
+        <li><strong>input_dim:</strong> גודל המילון.</li>
+        <li><strong>output_dim:</strong> מימד הוקטור לכל מילה (טיפוסי 50-300).</li>
+        <li><strong>פנימית:</strong> מטריצה בצורה (10000, 64) = 640,000 פרמטרים שנלמדים.</li>
+      </ul>
+      <strong>קלט/פלט:</strong>
+      <ul>
+        <li>קלט: tensor של אינדקסים בצורה (batch, seq_len).</li>
+        <li>פלט: tensor של embeddings בצורה (batch, seq_len, dim).</li>
+      </ul>
+      <strong>חוזק:</strong> אפשר לאתחל ב-embeddings מאומנים מראש (Word2Vec / GloVe / FastText) ולהמשיך לאמן או להקפיא.
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>
