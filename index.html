@@ -88,10 +88,24 @@
   #tabs-toggle:hover { background: var(--c-chip); transform: scale(1.05); }
   #tabs-toggle::before { content: "▲"; }
 
-  /* Collapsed state — hide non-active tabs, flip arrow */
-  nav.tabs.collapsed { padding: 6px 24px; }
-  nav.tabs.collapsed button[data-tab]:not(.active) { display: none; }
-  nav.tabs.collapsed #tabs-toggle::before { content: "▼"; }
+  /* Collapsed state — hide entire tabs bar */
+  nav.tabs.collapsed { display: none; }
+
+  /* Floating reopen button (visible only when tabs are collapsed) */
+  #tabs-reopen {
+    position: fixed;
+    top: 14px; right: 14px;
+    z-index: 70;
+    background: var(--c-primary); color: #fff;
+    border: none; width: 46px; height: 46px;
+    border-radius: 50%; cursor: pointer;
+    font-size: 22px; line-height: 1;
+    display: none; align-items: center; justify-content: center;
+    box-shadow: 0 6px 18px rgba(30,58,138,.35);
+    transition: transform .15s, background .2s;
+  }
+  #tabs-reopen:hover { background: var(--c-primary-2); transform: scale(1.06); }
+  #tabs-reopen.visible { display: inline-flex; }
 
   main { padding: 26px 24px 80px; max-width: 1180px; margin: 0 auto; }
 
@@ -5145,6 +5159,8 @@ model.fit(..., callbacks=[callback])</div>
 
 </main>
 
+<button id="tabs-reopen" type="button" title="הצג לשוניות" aria-label="הצג לשוניות">☰</button>
+
 <button id="toc-button" onclick="toggleTOC()" title="תוכן עניינים">☰</button>
 <div id="toc-panel">
   <h4>תוכן עניינים</h4>
@@ -5175,13 +5191,19 @@ model.fit(..., callbacks=[callback])</div>
     window.scrollTo({top:0,behavior:'smooth'});
   }));
 
-  // Collapse toggle for tabs row
+  // Collapse / reopen tabs row
   const tabsToggle = document.getElementById('tabs-toggle');
+  const tabsReopen = document.getElementById('tabs-reopen');
   if (tabsToggle) {
     tabsToggle.addEventListener('click', () => {
-      navEl.classList.toggle('collapsed');
-      const isCollapsed = navEl.classList.contains('collapsed');
-      tabsToggle.title = isCollapsed ? 'הצג את כל הלשוניות' : 'הסתר את שאר הלשוניות';
+      navEl.classList.add('collapsed');
+      tabsReopen.classList.add('visible');
+    });
+  }
+  if (tabsReopen) {
+    tabsReopen.addEventListener('click', () => {
+      navEl.classList.remove('collapsed');
+      tabsReopen.classList.remove('visible');
     });
   }
 
