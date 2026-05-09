@@ -2570,9 +2570,9 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <circle class="h-circle2" cx="595" cy="180" r="20" fill="#10b981"/>
         <circle class="h-circle2" cx="595" cy="270" r="20" fill="#3b82f6"/>
         <circle class="h-circle2" cx="595" cy="360" r="20" fill="#f59e0b"/>
-        <!-- Caption -->
-        <text x="350" y="420" text-anchor="middle" class="lbl2-sm" direction="rtl">בלי Weight Sharing: 4 אזורים × 4 משקלות = <tspan font-weight="700" fill="#dc2626">16 משקלות</tspan></text>
-        <text x="350" y="438" text-anchor="middle" class="lbl2-sm" direction="rtl">עם Weight Sharing: <tspan font-weight="700" fill="#16a34a">4 משקלות בלבד</tspan> — וכשמדובר ב-CNN אמיתי הניצול גדול בעשרות אלפי פעמים</text>
+        <!-- Caption: pure Hebrew to avoid bidi reorder -->
+        <text x="350" y="420" text-anchor="middle" class="lbl2-sm" direction="rtl">בלי שיתוף משקלות — 4 אזורים, 4 משקלות לכל אחד = <tspan font-weight="700" fill="#dc2626">16 משקלות</tspan></text>
+        <text x="350" y="438" text-anchor="middle" class="lbl2-sm" direction="rtl">עם שיתוף משקלות — <tspan font-weight="700" fill="#16a34a">4 משקלות בלבד</tspan>; ברשת אמיתית החיסכון פי עשרות אלפים</text>
       </svg>
     </div>
   </div>
@@ -2726,9 +2726,9 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <tspan font-weight="700" fill="#16a34a" font-size="17">600</tspan>
         </text>
 
-        <!-- Interpretation -->
-        <text x="370" y="295" text-anchor="middle" class="c-sub" direction="rtl">תוצאה חיובית גבוהה ⇐ הקרנל זיהה <tspan font-weight="700" fill="#1e3a8a">קצה אנכי</tspan> בחלון הזה (מעבר מכהה לבהיר משמאל לימין)</text>
-        <text x="370" y="320" text-anchor="middle" class="c-sub" direction="rtl">ואת הפעולה הזו מבצעים על <tspan font-weight="700" fill="#1e3a8a">כל פיקסל</tspan> בתמונה — וכך נוצר ה-Feature Map המלא</text>
+        <!-- Interpretation: tspan at end of phrase to avoid bidi reorder -->
+        <text x="370" y="295" text-anchor="middle" class="c-sub" direction="rtl">תוצאה חיובית גבוהה — הקרנל זיהה בחלון הזה <tspan font-weight="700" fill="#1e3a8a">קצה אנכי</tspan></text>
+        <text x="370" y="320" text-anchor="middle" class="c-sub" direction="rtl">חוזרים על הפעולה לכל פיקסל בתמונה — וכך נוצר <tspan font-weight="700" fill="#1e3a8a">Feature Map</tspan></text>
       </svg>
     </div>
   </div>
@@ -3187,7 +3187,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             <path d="M0,0 L9,3 L0,6 z" fill="#1e3a8a"/>
           </marker>
         </defs>
-        <text x="370" y="220" text-anchor="middle" class="p-sub" direction="rtl">לוקחים את ה-Max</text>
+        <text x="370" y="220" text-anchor="middle" class="p-sub" direction="rtl">לוקחים את המקסימום</text>
         <text x="370" y="240" text-anchor="middle" class="p-sub" direction="rtl">בכל חלון של 2×2</text>
 
         <!-- Output 2x2 -->
@@ -3205,7 +3205,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
         <!-- Bottom annotations -->
         <text x="170" y="290" text-anchor="middle" class="p-sub" direction="rtl">4 חלונות צבעוניים — כל אחד 2×2</text>
-        <text x="555" y="290" text-anchor="middle" class="p-sub" direction="rtl">כל ערך = ה-Max של החלון התואם בקלט</text>
+        <text x="555" y="290" text-anchor="middle" class="p-sub" direction="rtl">כל ערך הוא המקסימום של החלון התואם בקלט</text>
       </svg>
     </div>
   </div>
@@ -3356,7 +3356,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <text x="615" y="305" class="a-sub" font-weight="700" fill="#16a34a">4096</text>
         <text x="675" y="305" class="a-sub" font-weight="700" fill="#16a34a">10</text>
 
-        <text x="370" y="335" text-anchor="middle" class="a-sub" direction="rtl">המסר: <tspan font-weight="700" fill="#dc2626">H×W מצטמצמים</tspan> בעוד <tspan font-weight="700" fill="#16a34a">depth גדל</tspan> — הרשת לומדת תבניות יותר ויותר מופשטות, פחות מרחביות יותר סמנטיות</text>
+        <text x="370" y="335" text-anchor="middle" class="a-sub" direction="rtl">המסר — רוחב וגובה מצטמצמים, עומק גדל; הרשת לומדת תבניות מופשטות יותר ויותר</text>
       </svg>
     </div>
   </div>
