@@ -33,7 +33,7 @@
     -webkit-tap-highlight-color: rgba(59,130,246,.2);
   }
   header.top {
-    position: sticky; top: 0; z-index: 50;
+    position: relative; z-index: 50;
     background: linear-gradient(135deg, var(--c-primary) 0%, var(--c-primary-2) 100%);
     color: #fff;
     padding: 14px 24px;
@@ -58,7 +58,8 @@
   nav.tabs {
     display: flex; gap: 6px; padding: 12px 24px; flex-wrap: wrap;
     background: #fff; border-bottom: 1px solid var(--c-border);
-    position: sticky; top: 64px; z-index: 40;
+    position: sticky; top: 0; z-index: 40;
+    box-shadow: 0 2px 8px rgba(30,58,138,.06);
   }
   nav.tabs button {
     background: var(--c-bg-2); color: var(--c-primary);
