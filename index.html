@@ -2465,7 +2465,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           </style>
         </defs>
 
-        <text x="350" y="22" text-anchor="middle" class="lbl" font-size="15" font-weight="700">Locally Connected Layer — כל יחידה רואה רבע מהקלט</text>
+        <text x="350" y="22" text-anchor="middle" class="lbl" font-size="15" font-weight="700" direction="rtl">Locally Connected Layer — כל יחידה רואה רבע מהקלט</text>
 
         <text x="112" y="46" text-anchor="middle" class="lbl">Input (784)</text>
         <text x="380" y="46" text-anchor="middle" class="lbl">Hidden (4 units)</text>
@@ -2508,8 +2508,8 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <text x="600" y="222" text-anchor="middle" font-family="Heebo,system-ui" font-size="18" font-weight="700" fill="#fff">7</text>
 
         <!-- Caption -->
-        <text x="350" y="430" text-anchor="middle" class="lbl-sm">בניגוד ל-MLP מלא, כאן כל אזור בקלט מקושר רק ליחידה אחת — חסכון אדיר בפרמטרים</text>
-        <text x="350" y="450" text-anchor="middle" class="lbl-sm">המסר: <tspan font-weight="700" fill="#1e3a8a">Local Connectivity</tspan> + <tspan font-weight="700" fill="#1e3a8a">Weight Sharing</tspan> = הבסיס של CNN</text>
+        <text x="350" y="430" text-anchor="middle" class="lbl-sm" direction="rtl">בניגוד ל-MLP מלא, כאן כל אזור בקלט מקושר רק ליחידה אחת — חסכון אדיר בפרמטרים</text>
+        <text x="350" y="450" text-anchor="middle" class="lbl-sm" direction="rtl">המסר: <tspan font-weight="700" fill="#1e3a8a">Local Connectivity</tspan> + <tspan font-weight="700" fill="#1e3a8a">Weight Sharing</tspan> = הבסיס של CNN</text>
       </svg>
     </div>
 
@@ -2527,7 +2527,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .ker { fill: #fef3c7; stroke: #f59e0b; stroke-width: 2.5; }
           </style>
         </defs>
-        <text x="350" y="22" text-anchor="middle" class="lbl2" font-size="15" font-weight="700">Weight Sharing — אותם 4 משקלות בכל אזור</text>
+        <text x="350" y="22" text-anchor="middle" class="lbl2" font-size="15" font-weight="700" direction="rtl">Weight Sharing — אותם 4 משקלות בכל אזור</text>
         <text x="105" y="48" text-anchor="middle" class="lbl2">Input Regions</text>
         <text x="345" y="48" text-anchor="middle" class="lbl2">Shared Kernel</text>
         <text x="595" y="48" text-anchor="middle" class="lbl2">Hidden Units</text>
@@ -2559,7 +2559,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <text x="368" y="208" class="lbl-w">w₁₂</text>
         <text x="318" y="248" class="lbl-w">w₂₁</text>
         <text x="368" y="248" class="lbl-w">w₂₂</text>
-        <text x="347" y="172" text-anchor="middle" class="lbl2-sm" font-weight="700" fill="#92400e">משקלות משותפים</text>
+        <text x="347" y="172" text-anchor="middle" class="lbl2-sm" font-weight="700" fill="#92400e" direction="rtl">משקלות משותפים</text>
         <!-- Arrows from kernel diverging to hidden -->
         <path class="conn2" stroke="#ef4444" d="M395,200 Q480,200 565,90"/>
         <path class="conn2" stroke="#10b981" d="M395,215 Q480,215 565,180"/>
@@ -2571,8 +2571,8 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <circle class="h-circle2" cx="595" cy="270" r="20" fill="#3b82f6"/>
         <circle class="h-circle2" cx="595" cy="360" r="20" fill="#f59e0b"/>
         <!-- Caption -->
-        <text x="350" y="420" text-anchor="middle" class="lbl2-sm">בלי Weight Sharing: 4 אזורים × 4 משקלות = <tspan font-weight="700" fill="#dc2626">16 משקלות</tspan></text>
-        <text x="350" y="438" text-anchor="middle" class="lbl2-sm">עם Weight Sharing: <tspan font-weight="700" fill="#16a34a">4 משקלות בלבד</tspan> — וכשמדובר ב-CNN אמיתי הניצול גדול בעשרות אלפי פעמים</text>
+        <text x="350" y="420" text-anchor="middle" class="lbl2-sm" direction="rtl">בלי Weight Sharing: 4 אזורים × 4 משקלות = <tspan font-weight="700" fill="#dc2626">16 משקלות</tspan></text>
+        <text x="350" y="438" text-anchor="middle" class="lbl2-sm" direction="rtl">עם Weight Sharing: <tspan font-weight="700" fill="#16a34a">4 משקלות בלבד</tspan> — וכשמדובר ב-CNN אמיתי הניצול גדול בעשרות אלפי פעמים</text>
       </svg>
     </div>
   </div>
@@ -2625,11 +2625,11 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .c-op { font-family: 'Cambria Math', serif; font-size: 28px; fill: #1e3a8a; font-weight: 700; }
           </style>
         </defs>
-        <text x="370" y="22" text-anchor="middle" class="c-lbl" font-size="15">דוגמה מספרית — Convolution על חלון 3×3</text>
+        <text x="370" y="22" text-anchor="middle" class="c-lbl" font-size="15" direction="rtl">דוגמה מספרית — Convolution על חלון 3×3</text>
 
         <!-- Input window (left) -->
         <text x="80" y="55" text-anchor="middle" class="c-lbl">Input Window</text>
-        <text x="80" y="70" text-anchor="middle" class="c-sub">קצה אנכי בתמונה</text>
+        <text x="80" y="70" text-anchor="middle" class="c-sub" direction="rtl">קצה אנכי בתמונה</text>
         <g transform="translate(20,80)">
           <rect class="c-cell" x="0"  y="0"  width="40" height="40"/>
           <rect class="c-cell" x="40" y="0"  width="40" height="40"/>
@@ -2656,7 +2656,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
         <!-- Kernel (Sobel-x) -->
         <text x="270" y="55" text-anchor="middle" class="c-lbl">Kernel (Sobel-x)</text>
-        <text x="270" y="70" text-anchor="middle" class="c-sub">קצוות אנכיים</text>
+        <text x="270" y="70" text-anchor="middle" class="c-sub" direction="rtl">קצוות אנכיים</text>
         <g transform="translate(210,80)">
           <rect class="c-cell-k" x="0"  y="0"  width="40" height="40"/>
           <rect class="c-cell-k" x="40" y="0"  width="40" height="40"/>
@@ -2683,7 +2683,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
         <!-- Element-wise products -->
         <text x="475" y="55" text-anchor="middle" class="c-lbl">Element-wise Products</text>
-        <text x="475" y="70" text-anchor="middle" class="c-sub">כל קלט × קרנל</text>
+        <text x="475" y="70" text-anchor="middle" class="c-sub" direction="rtl">כל קלט × קרנל</text>
         <g transform="translate(400,80)">
           <rect class="c-cell" x="0"  y="0"  width="50" height="40"/>
           <rect class="c-cell" x="50" y="0"  width="50" height="40"/>
@@ -2710,25 +2710,25 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
         <!-- Output cell -->
         <text x="685" y="55" text-anchor="middle" class="c-lbl">Output Pixel</text>
-        <text x="685" y="70" text-anchor="middle" class="c-sub">בתמונה החדשה</text>
+        <text x="685" y="70" text-anchor="middle" class="c-sub" direction="rtl">בתמונה החדשה</text>
         <rect class="c-cell-out" x="640" y="115" width="90" height="55" rx="4"/>
         <text x="685" y="150" text-anchor="middle" class="c-num c-num-pos" font-size="22" font-weight="700">600</text>
 
-        <!-- Equation row at bottom -->
-        <text x="370" y="245" text-anchor="middle" class="c-sub" font-size="13">
-          <tspan>סכום: </tspan>
-          <tspan class="c-num-neg" font-weight="700">-50 + 0 + 200</tspan>
+        <!-- Equation row at bottom — split: Hebrew label (RTL) + LTR equation -->
+        <text x="370" y="232" text-anchor="middle" class="c-sub" font-size="13" direction="rtl" font-weight="700">סכום הערכים:</text>
+        <text x="370" y="258" text-anchor="middle" class="c-sub" font-size="14" direction="ltr">
+          <tspan class="c-num-neg" font-weight="700">(-50 + 0 + 200)</tspan>
           <tspan> + </tspan>
-          <tspan class="c-num-neg" font-weight="700">-100 + 0 + 400</tspan>
+          <tspan class="c-num-neg" font-weight="700">(-100 + 0 + 400)</tspan>
           <tspan> + </tspan>
-          <tspan class="c-num-neg" font-weight="700">-50 + 0 + 200</tspan>
+          <tspan class="c-num-neg" font-weight="700">(-50 + 0 + 200)</tspan>
           <tspan> = </tspan>
-          <tspan font-weight="700" fill="#16a34a" font-size="15">600</tspan>
+          <tspan font-weight="700" fill="#16a34a" font-size="17">600</tspan>
         </text>
 
         <!-- Interpretation -->
-        <text x="370" y="295" text-anchor="middle" class="c-sub">תוצאה חיובית גבוהה ⇐ הקרנל זיהה <tspan font-weight="700" fill="#1e3a8a">קצה אנכי</tspan> בחלון הזה (מעבר מכהה לבהיר משמאל לימין)</text>
-        <text x="370" y="320" text-anchor="middle" class="c-sub">ואת הפעולה הזו מבצעים על <tspan font-weight="700" fill="#1e3a8a">כל פיקסל</tspan> בתמונה — וכך נוצר ה-Feature Map המלא</text>
+        <text x="370" y="295" text-anchor="middle" class="c-sub" direction="rtl">תוצאה חיובית גבוהה ⇐ הקרנל זיהה <tspan font-weight="700" fill="#1e3a8a">קצה אנכי</tspan> בחלון הזה (מעבר מכהה לבהיר משמאל לימין)</text>
+        <text x="370" y="320" text-anchor="middle" class="c-sub" direction="rtl">ואת הפעולה הזו מבצעים על <tspan font-weight="700" fill="#1e3a8a">כל פיקסל</tspan> בתמונה — וכך נוצר ה-Feature Map המלא</text>
       </svg>
     </div>
   </div>
@@ -2778,10 +2778,10 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .k-num-pos { fill: #16a34a; }
           </style>
         </defs>
-        <text x="370" y="22" text-anchor="middle" class="k-title" font-size="15">סוגי Kernels — 4 פילטרים קלאסיים</text>
+        <text x="370" y="22" text-anchor="middle" class="k-title" font-size="15" direction="rtl">סוגי Kernels — 4 פילטרים קלאסיים</text>
 
         <!-- Kernel 1: Edge horizontal (Sobel-y) -->
-        <text x="95" y="55" text-anchor="middle" class="k-title">Edge — אופקי</text>
+        <text x="95" y="55" text-anchor="middle" class="k-title" direction="rtl">Edge — אופקי</text>
         <text x="95" y="70" text-anchor="middle" class="k-sub">Sobel-y</text>
         <g transform="translate(50,80)">
           <rect class="k-cell" x="0"  y="0"  width="30" height="30"/>
@@ -2803,12 +2803,12 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="45" y="80" text-anchor="middle" class="k-num k-num-pos">2</text>
           <text x="75" y="80" text-anchor="middle" class="k-num k-num-pos">1</text>
         </g>
-        <text x="95" y="195" text-anchor="middle" class="k-sub">סכום=0; חיוב למטה,</text>
-        <text x="95" y="210" text-anchor="middle" class="k-sub">שלילי למעלה →</text>
-        <text x="95" y="225" text-anchor="middle" class="k-sub">מזהה <tspan font-weight="700" fill="#1e3a8a">קצוות אופקיים</tspan></text>
+        <text x="95" y="195" text-anchor="middle" class="k-sub" direction="rtl">סכום=0; חיוב למטה,</text>
+        <text x="95" y="210" text-anchor="middle" class="k-sub" direction="rtl">שלילי למעלה →</text>
+        <text x="95" y="225" text-anchor="middle" class="k-sub" direction="rtl">מזהה <tspan font-weight="700" fill="#1e3a8a">קצוות אופקיים</tspan></text>
 
         <!-- Kernel 2: Edge vertical (Sobel-x) -->
-        <text x="265" y="55" text-anchor="middle" class="k-title">Edge — אנכי</text>
+        <text x="265" y="55" text-anchor="middle" class="k-title" direction="rtl">Edge — אנכי</text>
         <text x="265" y="70" text-anchor="middle" class="k-sub">Sobel-x</text>
         <g transform="translate(220,80)">
           <rect class="k-cell" x="0"  y="0"  width="30" height="30"/>
@@ -2830,13 +2830,13 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="45" y="80" text-anchor="middle" class="k-num">0</text>
           <text x="75" y="80" text-anchor="middle" class="k-num k-num-pos">1</text>
         </g>
-        <text x="265" y="195" text-anchor="middle" class="k-sub">סכום=0; חיוב מימין,</text>
-        <text x="265" y="210" text-anchor="middle" class="k-sub">שלילי משמאל →</text>
-        <text x="265" y="225" text-anchor="middle" class="k-sub">מזהה <tspan font-weight="700" fill="#1e3a8a">קצוות אנכיים</tspan></text>
+        <text x="265" y="195" text-anchor="middle" class="k-sub" direction="rtl">סכום=0; חיוב מימין,</text>
+        <text x="265" y="210" text-anchor="middle" class="k-sub" direction="rtl">שלילי משמאל →</text>
+        <text x="265" y="225" text-anchor="middle" class="k-sub" direction="rtl">מזהה <tspan font-weight="700" fill="#1e3a8a">קצוות אנכיים</tspan></text>
 
         <!-- Kernel 3: Sharpen -->
         <text x="450" y="55" text-anchor="middle" class="k-title">Sharpen</text>
-        <text x="450" y="70" text-anchor="middle" class="k-sub">חידוד קצוות</text>
+        <text x="450" y="70" text-anchor="middle" class="k-sub" direction="rtl">חידוד קצוות</text>
         <g transform="translate(405,80)">
           <rect class="k-cell" x="0"  y="0"  width="30" height="30"/>
           <rect class="k-cell" x="30" y="0"  width="30" height="30"/>
@@ -2857,13 +2857,13 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="45" y="80" text-anchor="middle" class="k-num k-num-neg">-1</text>
           <text x="75" y="80" text-anchor="middle" class="k-num">0</text>
         </g>
-        <text x="450" y="195" text-anchor="middle" class="k-sub">סכום=1; מרכז חיובי גבוה,</text>
-        <text x="450" y="210" text-anchor="middle" class="k-sub">שכנים שליליים →</text>
-        <text x="450" y="225" text-anchor="middle" class="k-sub">מחזק <tspan font-weight="700" fill="#1e3a8a">פרטים מקומיים</tspan></text>
+        <text x="450" y="195" text-anchor="middle" class="k-sub" direction="rtl">סכום=1; מרכז חיובי גבוה,</text>
+        <text x="450" y="210" text-anchor="middle" class="k-sub" direction="rtl">שכנים שליליים →</text>
+        <text x="450" y="225" text-anchor="middle" class="k-sub" direction="rtl">מחזק <tspan font-weight="700" fill="#1e3a8a">פרטים מקומיים</tspan></text>
 
         <!-- Kernel 4: Blur -->
         <text x="635" y="55" text-anchor="middle" class="k-title">Blur</text>
-        <text x="635" y="70" text-anchor="middle" class="k-sub">טשטוש (ממוצע)</text>
+        <text x="635" y="70" text-anchor="middle" class="k-sub" direction="rtl">טשטוש (ממוצע)</text>
         <g transform="translate(590,80)">
           <rect class="k-cell" x="0"  y="0"  width="30" height="30"/>
           <rect class="k-cell" x="30" y="0"  width="30" height="30"/>
@@ -2884,9 +2884,9 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="45" y="80" text-anchor="middle" class="k-num" font-size="11">1/9</text>
           <text x="75" y="80" text-anchor="middle" class="k-num" font-size="11">1/9</text>
         </g>
-        <text x="635" y="195" text-anchor="middle" class="k-sub">סכום=1; כל הקלטים בשווה →</text>
-        <text x="635" y="210" text-anchor="middle" class="k-sub">ממוצע 9 שכנים →</text>
-        <text x="635" y="225" text-anchor="middle" class="k-sub">מטשטש <tspan font-weight="700" fill="#1e3a8a">רעש מקומי</tspan></text>
+        <text x="635" y="195" text-anchor="middle" class="k-sub" direction="rtl">סכום=1; כל הקלטים בשווה →</text>
+        <text x="635" y="210" text-anchor="middle" class="k-sub" direction="rtl">ממוצע 9 שכנים →</text>
+        <text x="635" y="225" text-anchor="middle" class="k-sub" direction="rtl">מטשטש <tspan font-weight="700" fill="#1e3a8a">רעש מקומי</tspan></text>
       </svg>
     </div>
   </div>
@@ -2921,11 +2921,11 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .b-num-fade { fill: #94a3b8; }
           </style>
         </defs>
-        <text x="370" y="22" text-anchor="middle" class="b-lbl" font-size="15">טיפול בקצוות — 3 שיטות</text>
+        <text x="370" y="22" text-anchor="middle" class="b-lbl" font-size="15" direction="rtl">טיפול בקצוות — 3 שיטות</text>
 
         <!-- Crop -->
         <text x="120" y="50" text-anchor="middle" class="b-lbl">Crop</text>
-        <text x="120" y="65" text-anchor="middle" class="b-sub">מתעלמים מהקצוות → תמונה קטנה יותר</text>
+        <text x="120" y="65" text-anchor="middle" class="b-sub" direction="rtl">מתעלמים מהקצוות → תמונה קטנה יותר</text>
         <g transform="translate(50,80)">
           <!-- 5x5 grid: outer ring faded, inner 3x3 normal -->
           <rect class="b-crop" x="0"   y="0"   width="28" height="28"/>
@@ -2954,12 +2954,12 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <rect class="b-crop" x="84"  y="112" width="28" height="28"/>
           <rect class="b-crop" x="112" y="112" width="28" height="28"/>
         </g>
-        <text x="120" y="245" text-anchor="middle" class="b-sub">פלט: <tspan font-weight="700">3×3</tspan> (קטן מהקלט)</text>
-        <text x="120" y="265" text-anchor="middle" class="b-sub">⚠️ מאבדים מידע בקצוות</text>
+        <text x="120" y="245" text-anchor="middle" class="b-sub" direction="rtl">פלט: <tspan font-weight="700">3×3</tspan> (קטן מהקלט)</text>
+        <text x="120" y="265" text-anchor="middle" class="b-sub" direction="rtl">⚠️ מאבדים מידע בקצוות</text>
 
         <!-- Padding -->
         <text x="370" y="50" text-anchor="middle" class="b-lbl">Padding (Same)</text>
-        <text x="370" y="65" text-anchor="middle" class="b-sub">מוסיפים אפסים מסביב</text>
+        <text x="370" y="65" text-anchor="middle" class="b-sub" direction="rtl">מוסיפים אפסים מסביב</text>
         <g transform="translate(300,80)">
           <rect class="b-pad" x="0"   y="0"   width="28" height="28"/>
           <rect class="b-pad" x="28"  y="0"   width="28" height="28"/>
@@ -3004,12 +3004,12 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="98" y="130" text-anchor="middle" class="b-num b-num-fade">0</text>
           <text x="126" y="130" text-anchor="middle" class="b-num b-num-fade">0</text>
         </g>
-        <text x="370" y="245" text-anchor="middle" class="b-sub">פלט: <tspan font-weight="700">3×3</tspan> (אותו גודל) ✓</text>
-        <text x="370" y="265" text-anchor="middle" class="b-sub">הסטנדרט המודרני</text>
+        <text x="370" y="245" text-anchor="middle" class="b-sub" direction="rtl">פלט: <tspan font-weight="700">3×3</tspan> (אותו גודל) ✓</text>
+        <text x="370" y="265" text-anchor="middle" class="b-sub" direction="rtl">הסטנדרט המודרני</text>
 
         <!-- Extension -->
         <text x="620" y="50" text-anchor="middle" class="b-lbl">Extension</text>
-        <text x="620" y="65" text-anchor="middle" class="b-sub">משכפלים את ערכי הקצה</text>
+        <text x="620" y="65" text-anchor="middle" class="b-sub" direction="rtl">משכפלים את ערכי הקצה</text>
         <g transform="translate(550,80)">
           <rect class="b-ext" x="0"   y="0"   width="28" height="28"/>
           <rect class="b-ext" x="28"  y="0"   width="28" height="28"/>
@@ -3042,18 +3042,18 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
           <text x="70" y="18" text-anchor="middle" class="b-num">↑</text>
           <text x="70" y="130" text-anchor="middle" class="b-num">↓</text>
         </g>
-        <text x="620" y="245" text-anchor="middle" class="b-sub">פלט: <tspan font-weight="700">3×3</tspan> (אותו גודל)</text>
-        <text x="620" y="265" text-anchor="middle" class="b-sub">פחות נפוץ; שימושי לעיבוד תמונה</text>
+        <text x="620" y="245" text-anchor="middle" class="b-sub" direction="rtl">פלט: <tspan font-weight="700">3×3</tspan> (אותו גודל)</text>
+        <text x="620" y="265" text-anchor="middle" class="b-sub" direction="rtl">פחות נפוץ; שימושי לעיבוד תמונה</text>
 
         <!-- Bottom legend -->
         <rect class="b-orig" x="200" y="285" width="14" height="14"/>
-        <text x="218" y="296" class="b-sub">תמונה מקורית</text>
+        <text x="218" y="296" class="b-sub" direction="rtl">תמונה מקורית</text>
         <rect class="b-pad"  x="305" y="285" width="14" height="14"/>
-        <text x="323" y="296" class="b-sub">אפסים</text>
+        <text x="323" y="296" class="b-sub" direction="rtl">אפסים</text>
         <rect class="b-ext"  x="370" y="285" width="14" height="14"/>
-        <text x="388" y="296" class="b-sub">העתקה</text>
+        <text x="388" y="296" class="b-sub" direction="rtl">העתקה</text>
         <rect class="b-crop" x="445" y="285" width="14" height="14"/>
-        <text x="463" y="296" class="b-sub">קצוות שהוסרו</text>
+        <text x="463" y="296" class="b-sub" direction="rtl">קצוות שהוסרו</text>
       </svg>
     </div>
   </div>
@@ -3132,7 +3132,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .p-num-out { font-family: 'Cambria Math', serif; font-size: 24px; fill: #1e3a8a; font-weight: 800; }
           </style>
         </defs>
-        <text x="370" y="25" text-anchor="middle" class="p-title" font-size="16">Max Pooling — מטריצה 4×4 הופכת ל-2×2</text>
+        <text x="370" y="25" text-anchor="middle" class="p-title" font-size="16" direction="rtl">Max Pooling — מטריצה 4×4 הופכת ל-2×2</text>
 
         <!-- Input 4x4 -->
         <text x="170" y="60" text-anchor="middle" class="p-title">Input (4×4)</text>
@@ -3187,8 +3187,8 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             <path d="M0,0 L9,3 L0,6 z" fill="#1e3a8a"/>
           </marker>
         </defs>
-        <text x="370" y="220" text-anchor="middle" class="p-sub">לוקחים את ה-Max</text>
-        <text x="370" y="240" text-anchor="middle" class="p-sub">בכל חלון של 2×2</text>
+        <text x="370" y="220" text-anchor="middle" class="p-sub" direction="rtl">לוקחים את ה-Max</text>
+        <text x="370" y="240" text-anchor="middle" class="p-sub" direction="rtl">בכל חלון של 2×2</text>
 
         <!-- Output 2x2 -->
         <text x="555" y="60" text-anchor="middle" class="p-title">Output (2×2)</text>
@@ -3204,8 +3204,8 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         </g>
 
         <!-- Bottom annotations -->
-        <text x="170" y="290" text-anchor="middle" class="p-sub">4 חלונות צבעוניים — כל אחד 2×2</text>
-        <text x="555" y="290" text-anchor="middle" class="p-sub">כל ערך = ה-Max של החלון התואם בקלט</text>
+        <text x="170" y="290" text-anchor="middle" class="p-sub" direction="rtl">4 חלונות צבעוניים — כל אחד 2×2</text>
+        <text x="555" y="290" text-anchor="middle" class="p-sub" direction="rtl">כל ערך = ה-Max של החלון התואם בקלט</text>
       </svg>
     </div>
   </div>
@@ -3251,7 +3251,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
             .a-arrow { stroke: #64748b; stroke-width: 2; fill: none; }
           </style>
         </defs>
-        <text x="370" y="22" text-anchor="middle" class="a-title">CNN Architecture — H,W מצטמצמים, depth גדל</text>
+        <text x="370" y="22" text-anchor="middle" class="a-title" direction="rtl">CNN Architecture — H,W מצטמצמים, depth גדל</text>
 
         <!-- Stage labels with depth markers and shapes -->
         <!-- Stage 1: Input 32x32x3 -->
@@ -3356,7 +3356,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <text x="615" y="305" class="a-sub" font-weight="700" fill="#16a34a">4096</text>
         <text x="675" y="305" class="a-sub" font-weight="700" fill="#16a34a">10</text>
 
-        <text x="370" y="335" text-anchor="middle" class="a-sub">המסר: <tspan font-weight="700" fill="#dc2626">H×W מצטמצמים</tspan> בעוד <tspan font-weight="700" fill="#16a34a">depth גדל</tspan> — הרשת לומדת תבניות יותר ויותר מופשטות, פחות מרחביות יותר סמנטיות</text>
+        <text x="370" y="335" text-anchor="middle" class="a-sub" direction="rtl">המסר: <tspan font-weight="700" fill="#dc2626">H×W מצטמצמים</tspan> בעוד <tspan font-weight="700" fill="#16a34a">depth גדל</tspan> — הרשת לומדת תבניות יותר ויותר מופשטות, פחות מרחביות יותר סמנטיות</text>
       </svg>
     </div>
   </div>
