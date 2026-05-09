@@ -244,10 +244,17 @@
   /* iPad / טאבלטים גדולים (עד 1024px) */
   @media (max-width: 1024px) {
     main { padding: 22px 18px 80px; }
-    header.top { padding: 12px 20px; }
+    header.top {
+      padding: 12px 20px;
+      position: relative;  /* let header scroll out of view */
+    }
     header.top h1 { font-size: 20px; }
     header.top .subtitle { font-size: 12px; display: block; margin-right: 0; margin-top: 2px; }
-    nav.tabs { padding: 10px 18px; gap: 6px; }
+    nav.tabs {
+      padding: 10px 18px;
+      gap: 6px;
+      top: 0;  /* tabs stick to top of viewport */
+    }
     nav.tabs button { padding: 9px 14px; font-size: 13.5px; min-height: 40px; }
     .btn { padding: 9px 14px; min-height: 38px; }
 
@@ -3045,15 +3052,23 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
         <text x="620" y="245" text-anchor="middle" class="b-sub" direction="rtl">פלט: <tspan font-weight="700">3×3</tspan> (אותו גודל)</text>
         <text x="620" y="265" text-anchor="middle" class="b-sub" direction="rtl">פחות נפוץ; שימושי לעיבוד תמונה</text>
 
-        <!-- Bottom legend -->
-        <rect class="b-orig" x="200" y="285" width="14" height="14"/>
-        <text x="218" y="296" class="b-sub" direction="rtl">תמונה מקורית</text>
-        <rect class="b-pad"  x="305" y="285" width="14" height="14"/>
-        <text x="323" y="296" class="b-sub" direction="rtl">אפסים</text>
-        <rect class="b-ext"  x="370" y="285" width="14" height="14"/>
-        <text x="388" y="296" class="b-sub" direction="rtl">העתקה</text>
-        <rect class="b-crop" x="445" y="285" width="14" height="14"/>
-        <text x="463" y="296" class="b-sub" direction="rtl">קצוות שהוסרו</text>
+        <!-- Bottom legend — rect on left, label centered to its right with breathing room -->
+        <g transform="translate(70,287)">
+          <rect class="b-orig" x="0" y="0" width="14" height="14"/>
+          <text x="20" y="11" class="b-sub" text-anchor="start" direction="ltr">תמונה מקורית</text>
+        </g>
+        <g transform="translate(220,287)">
+          <rect class="b-pad" x="0" y="0" width="14" height="14"/>
+          <text x="20" y="11" class="b-sub" text-anchor="start" direction="ltr">אפסים</text>
+        </g>
+        <g transform="translate(330,287)">
+          <rect class="b-ext" x="0" y="0" width="14" height="14"/>
+          <text x="20" y="11" class="b-sub" text-anchor="start" direction="ltr">העתקה</text>
+        </g>
+        <g transform="translate(450,287)">
+          <rect class="b-crop" x="0" y="0" width="14" height="14"/>
+          <text x="20" y="11" class="b-sub" text-anchor="start" direction="ltr">קצוות שהוסרו</text>
+        </g>
       </svg>
     </div>
   </div>
