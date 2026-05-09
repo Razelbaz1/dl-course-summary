@@ -2443,6 +2443,67 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
     </ol>
 
     <p><strong>למה Weight Sharing הגיוני?</strong> כי תבנית כמו "קצה אנכי" או "פינה" יכולה להופיע בכל מקום בתמונה — אין סיבה ללמוד אותה בנפרד לכל אזור. Weight sharing אומר: <em>"לימדנו פעם אחת לזהות 'קצה אנכי' — נפעיל את הפילטר הזה על כל התמונה"</em>.</p>
+
+    <h4>תרשים — איך נראית Locally Connected Layer</h4>
+    <div style="background: #fff; padding: 18px; border-radius: 10px; border: 1px solid var(--c-border); margin: 12px 0; direction: ltr;">
+      <svg viewBox="0 0 700 470" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+        <defs>
+          <style>
+            .lbl { font-family: 'Heebo', system-ui, sans-serif; font-size: 13px; font-weight: 600; fill: #1e3a8a; }
+            .lbl-sm { font-family: 'Heebo', system-ui, sans-serif; font-size: 11.5px; fill: #475569; }
+            .input-sq { stroke-width: 2.5; }
+            .h-circle { stroke: #fff; stroke-width: 2; }
+            .conn { fill: none; stroke-width: 1.5; opacity: 0.55; }
+          </style>
+        </defs>
+
+        <text x="350" y="22" text-anchor="middle" class="lbl" font-size="15" font-weight="700">Locally Connected Layer — כל יחידה רואה רבע מהקלט</text>
+
+        <text x="112" y="46" text-anchor="middle" class="lbl">Input (784)</text>
+        <text x="380" y="46" text-anchor="middle" class="lbl">Hidden (4 units)</text>
+        <text x="600" y="46" text-anchor="middle" class="lbl">Output</text>
+
+        <!-- Connections: input groups to hidden -->
+        <path class="conn" stroke="#ef4444" d="M125,67 L360,84 M125,96 L360,84 M125,126 L360,84"/>
+        <path class="conn" stroke="#10b981" d="M125,155 L360,171 M125,184 L360,171 M125,213 L360,171"/>
+        <path class="conn" stroke="#3b82f6" d="M125,242 L360,258 M125,271 L360,258 M125,300 L360,258"/>
+        <path class="conn" stroke="#f59e0b" d="M125,329 L360,345 M125,358 L360,345 M125,387 L360,345"/>
+
+        <!-- Connections: hidden to output -->
+        <path class="conn" stroke="#64748b" d="M400,84 L580,215 M400,171 L580,215 M400,258 L580,215 M400,345 L580,215"/>
+
+        <!-- Input squares — 12 squares, alternating fill -->
+        <rect class="input-sq" x="100" y="55"  width="25" height="25" fill="#1e293b" stroke="#ef4444"/>
+        <rect class="input-sq" x="100" y="84"  width="25" height="25" fill="#ffffff" stroke="#ef4444"/>
+        <rect class="input-sq" x="100" y="113" width="25" height="25" fill="#1e293b" stroke="#ef4444"/>
+
+        <rect class="input-sq" x="100" y="142" width="25" height="25" fill="#1e293b" stroke="#10b981"/>
+        <rect class="input-sq" x="100" y="171" width="25" height="25" fill="#ffffff" stroke="#10b981"/>
+        <rect class="input-sq" x="100" y="200" width="25" height="25" fill="#1e293b" stroke="#10b981"/>
+
+        <rect class="input-sq" x="100" y="229" width="25" height="25" fill="#1e293b" stroke="#3b82f6"/>
+        <rect class="input-sq" x="100" y="258" width="25" height="25" fill="#1e293b" stroke="#3b82f6"/>
+        <rect class="input-sq" x="100" y="287" width="25" height="25" fill="#ffffff" stroke="#3b82f6"/>
+
+        <rect class="input-sq" x="100" y="316" width="25" height="25" fill="#1e293b" stroke="#f59e0b"/>
+        <rect class="input-sq" x="100" y="345" width="25" height="25" fill="#1e293b" stroke="#f59e0b"/>
+        <rect class="input-sq" x="100" y="374" width="25" height="25" fill="#ffffff" stroke="#f59e0b"/>
+
+        <!-- Hidden circles -->
+        <circle class="h-circle" cx="380" cy="84"  r="22" fill="#ef4444"/>
+        <circle class="h-circle" cx="380" cy="171" r="22" fill="#10b981"/>
+        <circle class="h-circle" cx="380" cy="258" r="22" fill="#3b82f6"/>
+        <circle class="h-circle" cx="380" cy="345" r="22" fill="#f59e0b"/>
+
+        <!-- Output -->
+        <circle class="h-circle" cx="600" cy="215" r="24" fill="#84cc16"/>
+        <text x="600" y="222" text-anchor="middle" font-family="Heebo,system-ui" font-size="18" font-weight="700" fill="#fff">7</text>
+
+        <!-- Caption -->
+        <text x="350" y="430" text-anchor="middle" class="lbl-sm">בניגוד ל-MLP מלא, כאן כל אזור בקלט מקושר רק ליחידה אחת — חסכון אדיר בפרמטרים</text>
+        <text x="350" y="450" text-anchor="middle" class="lbl-sm">המסר: <tspan font-weight="700" fill="#1e3a8a">Local Connectivity</tspan> + <tspan font-weight="700" fill="#1e3a8a">Weight Sharing</tspan> = הבסיס של CNN</text>
+      </svg>
+    </div>
   </div>
 
   <h3>4. פעולת ה-Convolution — איך זה עובד בפועל</h3>
