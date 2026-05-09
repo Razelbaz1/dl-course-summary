@@ -2392,12 +2392,28 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
     <table class="compare">
       <tr><th></th><th>MLP על תמונה (אחרי Flatten)</th><th>CNN</th></tr>
+      <tr><td><strong>סוג החיבורים</strong></td><td><strong>Fully Connected</strong> — כל נוירון מחובר לכל הפיקסלים</td><td><strong>Sparsely Connected</strong> — כל נוירון מחובר רק לחלון מקומי</td></tr>
+      <tr><td><strong>קלט</strong></td><td>וקטור 1D (תמונה אחרי Flatten)</td><td>מטריצה 2D / טנסור 3D ישירות</td></tr>
       <tr><td><strong>פרמטרים</strong></td><td>על MNIST: ~800,000+ פרמטרים</td><td>פי 10-100 פחות (לרוב 50-100K)</td></tr>
       <tr><td><strong>שמירה על מבנה דו-מימדי</strong></td><td>❌ אובד אחרי Flatten</td><td>✅ נשמר לאורך הרשת</td></tr>
       <tr><td><strong>שיתוף משקלות</strong></td><td>❌ כל פיקסל לומד עצמאית</td><td>✅ אותו פילטר על כל התמונה</td></tr>
       <tr><td><strong>Translation invariance</strong> (אובייקט במיקום אחר)</td><td>❌ צריך ללמוד מחדש</td><td>✅ מובנה בארכיטקטורה</td></tr>
       <tr><td><strong>ביצועים על MNIST</strong></td><td>~97%</td><td>99%+</td></tr>
     </table>
+
+    <h4>חישוב מספרי — למה ההבדל כל-כך גדול</h4>
+    <p>ניקח שכבה ראשונה שמחברת MNIST (28×28 = 784 פיקסלים) ל-512 נוירונים, ונשווה את שלוש האפשרויות:</p>
+
+    <table class="compare">
+      <tr><th>ארכיטקטורה</th><th>חישוב</th><th>פרמטרים</th></tr>
+      <tr><td><strong>Fully Connected</strong> (Dense)</td><td>784 × 512</td><td><strong>401,408</strong></td></tr>
+      <tr><td><strong>Sparsely Connected</strong> (Local, חלון 3×3)</td><td>9 × 512</td><td><strong>4,608</strong> (פי 87 פחות)</td></tr>
+      <tr><td><strong>CNN</strong> (Sparsely + Weight Sharing)</td><td>9 בלבד (משותפים)</td><td><strong>9</strong> (פי 44,600 פחות!)</td></tr>
+    </table>
+
+    <div class="callout info">
+      <strong>למה זה הגיוני?</strong> בתמונה, פיקסל בפינה השמאלית-עליונה לא באמת קשור לפיקסל בפינה הימנית-תחתונה. מה שמעניין הוא <em>דפוסים מקומיים</em> — קצוות, פינות, מרקמים. שכבה Sparsely Connected אומרת לרשת: <em>"אל תבזבזי פרמטרים על קשרים מרוחקים — תתמקדי במקומי"</em>. Weight Sharing מוסיף: <em>"ואם למדת לזהות קצה אנכי באזור אחד — תשתמשי באותם משקלות בכל התמונה"</em>.
+    </div>
 
     <h4>הסיבה המעמיקה: למה Flatten הורס מידע</h4>
     <p>בתמונה, פיקסלים קרובים זה לזה מספרים סיפור משותף — הם חלקים של אותו אובייקט. כשמיישרים תמונה לוקטור, פיקסלים שכנים מאבדים את הקשר המרחבי שלהם. הרשת רואה רק רצף של 784 מספרים בלי לדעת ש-30 ו-31 שכנים בעוד 30 ו-58 רחוקים.</p>
@@ -2850,6 +2866,55 @@ plt.imshow(filtered, cmap='gray')</div>
         <li><strong>רצפים</strong> (טקסט, סדרות זמן) — לא מנצל את הסדר. הפתרון: <em>RNN</em>, <em>Transformer</em>.</li>
       </ul>
       <strong>השמות הנרדפים שתפגוש:</strong> Multi-Layer Perceptron · Multi-layer Network · Fully-Connected Network (FCN) · Dense Network · Feed-Forward Neural Network (FFNN). כולם מתארים את אותה ארכיטקטורה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Fully Connected Layer (FC)</span>
+      <span class="term-he">— שכבה צפופה / מקושרת מלאה</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">שכבה שבה <em>כל</em> נוירון מחובר ל<em>כל</em> הנוירונים בשכבה הקודמת. זה השם הרשמי של שכבת `Dense` ב-Keras והבסיס של MLP.</div>
+    <div class="term-long">
+      <strong>הפעולה המתמטית:</strong>
+      <div class="formula">y = Wx + b,    כאשר W הוא מטריצה מלאה (n_out × n_in)</div>
+      <strong>חישוב פרמטרים:</strong> n_in × n_out + n_out (bias). למשל קלט 784 → 512: 401,408 פרמטרים.
+      <strong>מתי משתמשים:</strong>
+      <ul>
+        <li>נתונים טבלאיים (אין מבנה מרחבי).</li>
+        <li>שכבת פלט סופית — אחרי Flatten בקצה CNN, או על vectors קטנים.</li>
+        <li>בעיות סיווג / רגרסיה פשוטות.</li>
+      </ul>
+      <strong>מתי לא:</strong> תמונות, רצפים — שם sparsely connected (CNN/RNN) חוסך פי עשרות בפרמטרים.
+      <strong>שמות נרדפים:</strong> Dense Layer · FC Layer · Linear Layer (ב-PyTorch).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">Sparsely Connected</span>
+      <span class="term-he">— מקושר באופן דליל / מקומי</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">המנוגד של Fully Connected — כל נוירון בפלט מחובר רק לתת-קבוצה קטנה של הקלט (חלון מקומי). הבסיס של CNN ושל מודלים יעילים מודרניים.</div>
+    <div class="term-long">
+      <strong>למה "Sparsely":</strong> אם נכתוב את מטריצת החיבורים W, רובה תהיה אפסים — ערכים בלתי-אפסיים רק במקומות של החלון המקומי. זוהי מטריצה <em>דלילה (sparse)</em>.
+      <strong>דוגמאות בפועל:</strong>
+      <ul>
+        <li><strong>CNN — Conv2D:</strong> כל נוירון בפלט רואה רק חלון 3×3 בקלט. + Weight Sharing → מינימום פרמטרים.</li>
+        <li><strong>RNN:</strong> בכל צעד זמן, הנוירון רואה רק את הקלט הנוכחי + ה-state הקודם.</li>
+        <li><strong>Sparse Transformer / Linformer:</strong> מגבילים את ה-attention לחלקים מסוימים מהרצף.</li>
+      </ul>
+      <strong>למה זה עובד טוב לתמונות:</strong>
+      <ul>
+        <li>פיקסלים קרובים <em>קשורים סמנטית</em> (חלקי אותו אובייקט).</li>
+        <li>פיקסלים מרוחקים <em>לרוב לא קשורים ישירות</em> — אז לחבר אותם מבזבז פרמטרים.</li>
+        <li>שכבה Sparsely connected חוסכת פי 100-50,000 בפרמטרים (תלוי ב-stride וב-weight sharing).</li>
+      </ul>
+      <strong>הקבלה:</strong> Sparsely connected = "תתמקדי במה שקרוב, התעלמי ממה שרחוק". Fully connected = "כל פיקסל יכול להשפיע על כל פלט".
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>
