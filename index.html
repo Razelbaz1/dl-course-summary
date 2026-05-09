@@ -367,6 +367,7 @@
   <button data-tab="lect4">4 · אופטימיזציה</button>
   <button data-tab="lect5">5 · Frameworks</button>
   <button data-tab="lect6">6 · Keras בפועל</button>
+  <button data-tab="lect7">7 · CNN</button>
   <button data-tab="glossary">מילון מושגים</button>
 </nav>
 
@@ -403,7 +404,7 @@
     <tr><td>4</td><td>אופטימיזציה של NN</td><td><span class="chip">נלמד</span></td><td>—</td></tr>
     <tr><td>5</td><td>סביבות פיתוח · Keras / TensorFlow</td><td><span class="chip">נלמד</span></td><td>מטלה 3 (פתוחה)</td></tr>
     <tr><td>6</td><td>NN with Keras: סיווג ורגרסיה מלא</td><td><span class="chip">נלמד</span></td><td>הצעה לפרויקט</td></tr>
-    <tr><td>7</td><td>CNN — Computer Vision</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
+    <tr><td>7</td><td>CNN — Computer Vision</td><td><span class="chip">נלמד</span></td><td>—</td></tr>
     <tr><td>8</td><td>Sequence Models · RNN · Time Series</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
     <tr><td>9</td><td>DL for Text · Word Embeddings</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
     <tr><td>10</td><td>Transformers · Attention</td><td><span class="chip outline">בקרוב</span></td><td>—</td></tr>
@@ -881,6 +882,10 @@
   <h3>1. שילוב פרספטרונים — למה זה עובד?</h3>
   <div class="card">
     <p>פרספטרון יחיד מציע <em>קו ישר</em> כגבול החלטה. אם נחבר שני פרספטרונים, כל אחד עם קו משלו, ונחבר את הפלטים שלהם — נקבל אזור לא-לינארי. דוגמה:</p>
+
+    <div class="callout info">
+      <strong>שם רשמי:</strong> רשת בעלת שכבה נסתרת אחת או יותר עם שכבות צפופות (Dense / Fully-Connected) ואקטיבציה לא-לינארית נקראת <strong>Multi-Layer Perceptron — MLP</strong>. זוהי הארכיטקטורה הסטנדרטית של feed-forward NN — וכל המודלים שנבנה בהרצאות הבאות (כולל המודלים על MNIST, IMDB, Reuters, Boston) הם MLPs. את החלופות (CNN לתמונות, RNN לרצפים) נכיר בהרצאות 7+.
+    </div>
 
     <p>נניח פרספטרון 1 נותן ŷ₁ = σ(7x₁ – 3x₂ – 1), פרספטרון 2 נותן ŷ₂ = σ(4x₁ – 2x₂ + 6). שילוב לינארי שלהם בשכבה הבאה: z = 7·ŷ₁ + 5·ŷ₂ – 6, ואז סיגמואיד.</p>
 
@@ -2344,7 +2349,409 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
   </div>
 
   <div class="callout info">
-    <strong>גשר להרצאה הבאה (לא מן ההרצאות שכיסינו):</strong> כל מה שלמדנו עד כאן הוא <em>Fully Connected Networks</em>. בהרצאה 7 — CNN — נכיר ארכיטקטורה מיוחדת לתמונות שמנצלת את העובדה שתמונה היא דו-מימדית עם תכונות מקומיות (קצוות, צורות). שכבות Convolution ו-Pooling יחליפו את ה-Dense הרגילות.
+    <strong>גשר להרצאה הבאה:</strong> כל המודלים שבנינו עד עכשיו הם <strong>MLPs</strong> (Multi-Layer Perceptrons) — רשתות feed-forward עם שכבות Dense בלבד. הם מצוינים לנתונים טבלאיים, אבל לא מנצלים את המבנה המרחבי של תמונות. בהרצאה 7 — CNN — נכיר ארכיטקטורה מיוחדת לתמונות שמשתמשת ב-Convolution ו-Pooling במקום ב-Dense, וחוסכת מיליוני פרמטרים תוך שיפור הביצועים.
+  </div>
+</section>
+
+<section id="lect7" class="tab-panel">
+  <h2 class="section">הרצאה 7 — Convolutional Neural Networks (CNN)</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 7</span>
+      <span class="chip outline">69 שקפים</span>
+      <span class="chip outline">תאריך: 07.05.2026</span>
+      <span class="chip">Computer Vision</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> להציג את ה-CNN — הארכיטקטורה הבסיסית של עיבוד תמונות ב-DL. נראה למה MLP לא מתאים לתמונות, נבין את פעולת ה-Convolution ברמת הפיקסל, נכיר את אבני הבניין (Kernel, Stride, Padding, Pooling), ונסיים עם הארכיטקטורות המפורסמות שעשו את המהפכה (AlexNet, VGG, ResNet).</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>למה MLP לא מספיק לתמונות — בעיית הפרמטרים והאיבוד המרחבי.</li>
+      <li>שימושים אמיתיים של CNN: ראייה, NLP (פחות שכיח), קול.</li>
+      <li>Locally Connected Layers — אבן דרך תאורטית לקראת CNN.</li>
+      <li>פעולת ה-Convolution — מה קורה ברמת הפיקסל הבודד.</li>
+      <li>Kernels (פילטרים): סוגים שונים — קצוות, חידוד, טשטוש.</li>
+      <li>טיפול בקצוות (Padding / Crop / Extension).</li>
+      <li>Hyper-parameters של CNN: גודל פילטר, מספר פילטרים, Stride.</li>
+      <li>Pooling Layers (Max / Average) — להפחתת מימדים.</li>
+      <li>הארכיטקטורה הכללית של CNN — איך הצורות משתנות לאורך הרשת.</li>
+      <li>Translation / Rotation Invariance ו-Data Augmentation.</li>
+      <li>הארכיטקטורות המפורסמות: AlexNet, VGG, ResNet.</li>
+      <li>תוספות מקוד ההרצאה — שימוש ב-OpenCV ובמסנני Sobel.</li>
+    </ol>
+  </div>
+
+  <h3>1. למה MLP לא מספיק לתמונות</h3>
+  <div class="card">
+    <p>עד עכשיו כל המודלים שלנו היו <strong>MLP</strong> — שכבות Dense רצופות. כשרוצים להזין תמונה ל-MLP, חייבים קודם <strong>"ליישר"</strong> אותה לוקטור (Flatten):</p>
+
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">תמונת MNIST 28×28 → flatten → וקטור באורך 784 → MLP</div>
+
+    <p>הבעיות עם הגישה הזו:</p>
+
+    <table class="compare">
+      <tr><th></th><th>MLP על תמונה (אחרי Flatten)</th><th>CNN</th></tr>
+      <tr><td><strong>פרמטרים</strong></td><td>על MNIST: ~800,000+ פרמטרים</td><td>פי 10-100 פחות (לרוב 50-100K)</td></tr>
+      <tr><td><strong>שמירה על מבנה דו-מימדי</strong></td><td>❌ אובד אחרי Flatten</td><td>✅ נשמר לאורך הרשת</td></tr>
+      <tr><td><strong>שיתוף משקלות</strong></td><td>❌ כל פיקסל לומד עצמאית</td><td>✅ אותו פילטר על כל התמונה</td></tr>
+      <tr><td><strong>Translation invariance</strong> (אובייקט במיקום אחר)</td><td>❌ צריך ללמוד מחדש</td><td>✅ מובנה בארכיטקטורה</td></tr>
+      <tr><td><strong>ביצועים על MNIST</strong></td><td>~97%</td><td>99%+</td></tr>
+    </table>
+
+    <h4>הסיבה המעמיקה: למה Flatten הורס מידע</h4>
+    <p>בתמונה, פיקסלים קרובים זה לזה מספרים סיפור משותף — הם חלקים של אותו אובייקט. כשמיישרים תמונה לוקטור, פיקסלים שכנים מאבדים את הקשר המרחבי שלהם. הרשת רואה רק רצף של 784 מספרים בלי לדעת ש-30 ו-31 שכנים בעוד 30 ו-58 רחוקים.</p>
+
+    <p><strong>CNN פותר את זה</strong> על ידי שכבות שעובדות <em>מקומית</em> — כל נוירון בשכבה הראשונה רואה רק חלון קטן של פיקסלים שכנים, וכך נשמר המבנה הדו-מימדי.</p>
+  </div>
+
+  <h3>2. שימושים של CNN</h3>
+  <div class="card">
+    <ul>
+      <li><strong>Computer Vision</strong> (התחום העיקרי): סיווג תמונות, זיהוי אובייקטים, סגמנטציה, איתור פנים, רכבים אוטונומיים.</li>
+      <li><strong>NLP</strong>: פחות נפוץ מ-RNN/Transformer, אבל עובד יפה לסיווג טקסטים קצרים.</li>
+      <li><strong>אודיו</strong>: Google WaveNet — המרת טקסט לקול אנושי. מסתמך על CNN.</li>
+      <li><strong>גרפיקה משחקים</strong>: Quick-Draw של Google, FaceApp, פיענוח כתב יד.</li>
+    </ul>
+  </div>
+
+  <h3>3. Locally Connected Layer — מהמלא ללוקלי</h3>
+  <div class="card">
+    <p>זוהי אבן הדרך התאורטית בין MLP ל-CNN. הרעיון: <strong>במקום שכל נוירון יראה את כל התמונה, כל נוירון יראה רק אזור מקומי</strong> שלה.</p>
+
+    <p><strong>המעבר משלב לשלב:</strong></p>
+    <ol>
+      <li><strong>MLP מלא</strong> — כל יחידה מחוברת לכל 784 הפיקסלים. הרבה פרמטרים, אין ניצול של מבנה.</li>
+      <li><strong>Locally Connected</strong> — מחלקים את התמונה ל-4 אזורים, כל יחידה רואה אזור אחד בלבד. פחות פרמטרים, נשמר מבנה.</li>
+      <li><strong>Convolution</strong> = Locally Connected + <em>Weight Sharing</em>. כל האזורים משתמשים <em>באותם משקלות</em>. עוד פחות פרמטרים, ושיפור הכללה.</li>
+    </ol>
+
+    <p><strong>למה Weight Sharing הגיוני?</strong> כי תבנית כמו "קצה אנכי" או "פינה" יכולה להופיע בכל מקום בתמונה — אין סיבה ללמוד אותה בנפרד לכל אזור. Weight sharing אומר: <em>"לימדנו פעם אחת לזהות 'קצה אנכי' — נפעיל את הפילטר הזה על כל התמונה"</em>.</p>
+  </div>
+
+  <h3>4. פעולת ה-Convolution — איך זה עובד בפועל</h3>
+  <div class="card">
+    <p><strong>Kernel</strong> (או פילטר) הוא מטריצה קטנה של מספרים — בדרך כלל 3×3 או 5×5. הפעולה: "מחליקים" את ה-Kernel על כל התמונה ולכל מיקום מחשבים סכום משוקלל.</p>
+
+    <h4>דוגמה מספרית מהשקפים</h4>
+    <p>נניח שיש לנו פיקסל מרכזי בערך 220, וחלון 3×3 סביבו. נכפיל איבר-איבר ב-Kernel:</p>
+
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">חלון בתמונה          Kernel              תוצאת המכפלה
+[a, b, c]            [k1, k2, k3]
+[d, 220, e]    *     [k4, k5, k6]   →    סכום של (a·k1 + b·k2 + ... + e·k9)
+[f, g, h]            [k7, k8, k9]                          ↓
+                                            פיקסל אחד בתמונה החדשה</div>
+
+    <p>אם בתמונה המקורית הפיקסל היה 220, ב-feature map שיוצא יהיה ערך אחר (למשל 60) — שמבטא <em>כמה התבנית של ה-Kernel נמצאת באותו מיקום</em>.</p>
+
+    <h4>הזרימה השלמה לתמונה</h4>
+    <ol>
+      <li>בוחרים פיקסל בתמונה.</li>
+      <li>לוקחים חלון 3×3 (או 5×5) סביבו.</li>
+      <li>מכפילים איבר-איבר עם ה-Kernel.</li>
+      <li>סוכמים את כל המכפלות → ערך אחד.</li>
+      <li>הערך הזה הופך לפיקסל המרכזי ב-<strong>Feature Map</strong> (התמונה החדשה).</li>
+      <li>חוזרים על כל פיקסל בתמונה.</li>
+    </ol>
+
+    <details class="expand">
+      <summary>למה זה נקרא "convolution"?</summary>
+      <div class="body">
+        <p>במתמטיקה, convolution היא פעולה רשמית בין שתי פונקציות. במחשב, הפעולה שאנחנו עושים היא טכנית "cross-correlation" — אבל בקהילת ה-DL השם "convolution" השתרש. ההבדל המתמטי קטן (היפוך של ה-kernel) ולא רלוונטי לפרקטיקה.</p>
+      </div>
+    </details>
+  </div>
+
+  <h3>5. סוגי Kernels — מה כל אחד עושה</h3>
+  <div class="card">
+    <p>סוגי הפילטרים הקלאסיים:</p>
+
+    <table class="compare">
+      <tr><th>פילטר</th><th>המטריצה</th><th>מה הוא עושה</th></tr>
+      <tr>
+        <td><strong>Edge detection — אנכי (Sobel-x)</strong></td>
+        <td><code style="direction:ltr;display:inline-block">[[-1,0,1],<br/>[-2,0,2],<br/>[-1,0,1]]</code></td>
+        <td>מזהה קצוות אנכיים. סכום=0 ⇒ באזור אחיד יוצא 0.</td>
+      </tr>
+      <tr>
+        <td><strong>Edge detection — אופקי (Sobel-y)</strong></td>
+        <td><code style="direction:ltr;display:inline-block">[[-1,-2,-1],<br/>[0,0,0],<br/>[1,2,1]]</code></td>
+        <td>מזהה קצוות אופקיים.</td>
+      </tr>
+      <tr>
+        <td><strong>Sharpen (חידוד)</strong></td>
+        <td><code style="direction:ltr;display:inline-block">[[0,-1,0],<br/>[-1,6,-1],<br/>[0,-1,0]]</code></td>
+        <td>מחדד קצוות בתמונה.</td>
+      </tr>
+      <tr>
+        <td><strong>Blur (טשטוש ממוצע)</strong></td>
+        <td><code style="direction:ltr;display:inline-block">[[1/9,1/9,1/9],<br/>[1/9,1/9,1/9],<br/>[1/9,1/9,1/9]]</code></td>
+        <td>ממוצע 9 פיקסלים שכנים — מטשטש את התמונה.</td>
+      </tr>
+    </table>
+
+    <div class="callout info">
+      <strong>הקסם של CNN:</strong> ב-CNN <em>אנחנו לא בוחרים את הפילטרים האלה ידנית</em>. הרשת לומדת אותם בעצמה דרך Backpropagation. כל פילטר ש"שווה" משהו לסיווג — הרשת תפתח. אם המודל מנסה להבדיל בין דולפינים לחתולים — היא תפתח פילטרים שמזהים סנפירים, פנים, וכו'.
+    </div>
+  </div>
+
+  <h3>6. טיפול בקצוות — Padding, Crop, Extension</h3>
+  <div class="card">
+    <p>בעיה: כשמפעילים פילטר 3×3 על פיקסל בקצה התמונה, חסר חלק מהחלון — אין שכנים מימין/למעלה/למטה.</p>
+
+    <p>שלוש האפשרויות לפתרון:</p>
+
+    <table class="compare">
+      <tr><th>שיטה</th><th>איך</th><th>תוצאה</th></tr>
+      <tr><td><strong>Crop</strong></td><td>מתעלמים מפיקסלי הקצה</td><td>תמונת פלט קטנה יותר. מאבדים מידע בקצוות.</td></tr>
+      <tr><td><strong>Padding</strong></td><td>מוסיפים "מסגרת" של אפסים סביב התמונה</td><td>תמונת פלט באותו גודל. הסטנדרט המודרני.</td></tr>
+      <tr><td><strong>Extension</strong></td><td>מעתיקים את ערכי הקצה החוצה</td><td>פחות נפוץ; שימושי כשפדינג של אפסים יוצר רעש.</td></tr>
+    </table>
+
+    <p><strong>בקוד Keras:</strong> <code style="direction:ltr;display:inline-block">layers.Conv2D(32, (3,3), padding='same')</code> — משמר את הגודל. <code style="direction:ltr;display:inline-block">padding='valid'</code> — מקטין (Crop).</p>
+  </div>
+
+  <h3>7. Hyper-parameters של שכבת Convolution</h3>
+  <div class="card">
+
+    <h4>(א) Filter / Kernel Size</h4>
+    <ul>
+      <li>נפוץ: 3×3, 5×5.</li>
+      <li>3×3 הוא הסטנדרט במודלים מודרניים — מעט פרמטרים, ושני שכבות 3×3 שוות שדה ראייה ל-5×5 אחד.</li>
+    </ul>
+
+    <h4>(ב) Number of Filters (Depth)</h4>
+    <ul>
+      <li>בכל שכבת Conv אנחנו מפעילים <em>הרבה</em> פילטרים שונים. נפוץ: 32, 64, 128, 256.</li>
+      <li>כל פילטר מוצא תבנית שונה — אחד יזהה קצוות אנכיים, אחר אופקיים, שלישי קווי 45°...</li>
+      <li>אם יש 32 פילטרים → 32 feature maps שיוצאים מהשכבה.</li>
+    </ul>
+
+    <h4>(ג) Stride</h4>
+    <ul>
+      <li>קצב ה"החלקה" של הפילטר על התמונה.</li>
+      <li><strong>Stride=1</strong> (ברירת מחדל) — מזיזים את הפילטר פיקסל אחד בכל פעם.</li>
+      <li><strong>Stride=2</strong> — מדלגים על פיקסל בכל פעם — feature map מוקטן בחצי.</li>
+      <li>Stride גדול = פחות מידע, אבל פחות פרמטרים ופחות חישוב.</li>
+    </ul>
+
+    <h4>(ד) Padding</h4>
+    <p>ראינו לעיל. הבחירה האופיינית: <code style="direction:ltr;display:inline-block">padding='same'</code>.</p>
+  </div>
+
+  <h3>8. Pooling Layers — הקטנת המימדים</h3>
+  <div class="card">
+    <p>אחרי שכבת Conv שמוסיפה פילטרים — מספר ה-feature maps גדל, ויש סיכון ל-overfit. <strong>Pooling</strong> פותר את זה: דחיסת המידע במחיר של אובדן רזולוציה.</p>
+
+    <h4>Max Pooling</h4>
+    <p>חלון (לרוב 2×2), stride 2, ולוקחים את <em>הערך המקסימלי</em> בכל חלון:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">[1, 4, 8, 9]      [4, 9]
+[3, 5, 3, 4]   →  [8, 6]
+[8, 1, 1, 1]
+[7, 1, 4, 7]
+                    תוצאה: 4×4 → 2×2</div>
+
+    <h4>Average Pooling</h4>
+    <p>אותה פעולה, אבל לוקחים את <em>הממוצע</em>. פחות נפוץ במודרני (Max עובד טוב יותר ברוב המקרים).</p>
+
+    <h4>Global Average Pooling</h4>
+    <p>חלון בגודל כל ה-feature map → מספר אחד לכל מפה. נפוץ בקצה רשתות מודרניות (במקום Flatten + Dense).</p>
+
+    <h4>למה Max Pooling חזק</h4>
+    <ul>
+      <li><strong>הקטנת מימדים</strong> — פי 4 פחות פיקסלים אחרי 2×2 pool.</li>
+      <li><strong>Translation invariance</strong> — אם התבנית "זזה" קצת, היא עדיין תופיע ב-pool.</li>
+      <li><strong>פחות פרמטרים → פחות overfit</strong>.</li>
+    </ul>
+  </div>
+
+  <h3>9. ארכיטקטורה כללית של CNN — איך הצורות משתנות</h3>
+  <div class="card">
+    <p>הדפוס הסטנדרטי של CNN:</p>
+
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">Input (32×32×3) → Conv2D + ReLU → MaxPool → Conv2D + ReLU → MaxPool → ... → Flatten → Dense → Softmax</div>
+
+    <p><strong>שינוי הצורה לאורך הרשת:</strong></p>
+    <table class="compare">
+      <tr><th>שכבה</th><th>גובה×רוחב</th><th>עומק</th><th>סה"כ ערכים</th></tr>
+      <tr><td>Input</td><td>32×32</td><td>3 (RGB)</td><td>3,072</td></tr>
+      <tr><td>Conv2D(32 filters, 3x3, padding=same)</td><td>32×32</td><td>32</td><td>32,768</td></tr>
+      <tr><td>MaxPool(2x2)</td><td>16×16</td><td>32</td><td>8,192</td></tr>
+      <tr><td>Conv2D(64 filters)</td><td>16×16</td><td>64</td><td>16,384</td></tr>
+      <tr><td>MaxPool(2x2)</td><td>8×8</td><td>64</td><td>4,096</td></tr>
+      <tr><td>Conv2D(128 filters)</td><td>8×8</td><td>128</td><td>8,192</td></tr>
+      <tr><td>Flatten</td><td>—</td><td>—</td><td>8,192</td></tr>
+      <tr><td>Dense(10, softmax)</td><td>—</td><td>—</td><td>10</td></tr>
+    </table>
+
+    <p><strong>הדפוס:</strong> ככל שמתקדמים, האורך והרוחב <em>קטנים</em> אבל העומק <em>גדל</em>. ההיגיון: השכבות הראשונות לומדות תבניות פשוטות (קצוות), השכבות העמוקות לומדות תבניות מורכבות (חלקי גוף, אובייקטים) — ולכל שכבה צריך יותר "ערוצים" לבטא את העושר הזה.</p>
+
+    <h4>למה ReLU אחרי Conv?</h4>
+    <p>בדיוק כמו ב-MLP — ReLU מוסיפה אי-לינאריות. בלעדיה, רצף שכבות convolution היה שווה לשכבת convolution אחת גדולה.</p>
+  </div>
+
+  <h3>10. Translation / Rotation Invariance ו-Data Augmentation</h3>
+  <div class="card">
+    <p><strong>השאלה:</strong> אם הרשת ראתה חתול בצד ימין של התמונה, האם תזהה חתול שמופיע בצד שמאל? בזווית? בגודל אחר?</p>
+
+    <h4>Translation Invariance — מובנה ב-CNN</h4>
+    <p>בזכות weight sharing ו-Max Pooling, התשובה היא <strong>כן</strong>. הפילטר שלמדנו לזהות אוזניים יזהה אותן בכל מקום בתמונה.</p>
+
+    <h4>Rotation/Scale Invariance — לא מובנה</h4>
+    <p>הרשת לא יודעת אוטומטית שזה אותו אובייקט גם כשהוא מסובב או בגודל אחר. הפתרון: <strong>Data Augmentation</strong> — מייצרים גרסאות מסובבות / מוגדלות / מוטות של התמונות בזמן האימון.</p>
+
+    <p><strong>טכניקות סטנדרטיות של Data Augmentation:</strong></p>
+    <ul>
+      <li><strong>Rotation</strong> — סיבוב אקראי ב-±15°.</li>
+      <li><strong>Translation</strong> — הזזה לימין/שמאל.</li>
+      <li><strong>Scaling / Zoom</strong> — הגדלה/הקטנה.</li>
+      <li><strong>Horizontal Flip</strong> — היפוך אופקי (טוב לחיות, אסור לאותיות).</li>
+      <li><strong>Color jittering</strong> — שינוי בהירות, ניגודיות, רוויה.</li>
+    </ul>
+
+    <p><strong>בונוס:</strong> Augmentation מטפל גם ב-overfit — המודל רואה תמונות "חדשות" בכל epoch ולכן לומד להכליל במקום לזכור.</p>
+
+    <p><strong>ב-Keras:</strong></p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">data_augmentation = keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+])</div>
+  </div>
+
+  <h3>11. ארכיטקטורות CNN שעשו מהפכה</h3>
+  <div class="card">
+
+    <h4>AlexNet (2012) — המהפך הגדול</h4>
+    <ul>
+      <li><strong>צוות:</strong> Alex Krizhevsky, Ilya Sutskever, Geoffrey Hinton (אוניברסיטת טורונטו).</li>
+      <li><strong>הישג:</strong> זכייה בתחרות ImageNet עם 16% שגיאה — לעומת 26% של המקום השני.</li>
+      <li><strong>חידושים:</strong> שימוש ראשון ב-<em>ReLU</em>, ב-<em>Dropout</em>, וב-<em>GPU</em> לאימון.</li>
+      <li><strong>גודל:</strong> 8 שכבות (5 Conv + 3 FC), 60M פרמטרים, אומן על 2 GPUs במשך שבוע.</li>
+      <li><strong>השפעה:</strong> נקודת המהפך של DL — מאז כל זוכי ImageNet מבוססי DL.</li>
+    </ul>
+
+    <h4>VGG (2014) — אלגנטיות במקום עומק</h4>
+    <ul>
+      <li><strong>צוות:</strong> Visual Geometry Group, אוניברסיטת אוקספורד.</li>
+      <li><strong>גרסאות:</strong> VGG-16 (16 שכבות), VGG-19 (19 שכבות).</li>
+      <li><strong>חידוש:</strong> משתמש <em>רק</em> ב-Conv 3×3 ו-MaxPool 2×2. במקום פילטרים גדולים (11×11 של AlexNet) — שתי שכבות 3×3 רצופות נותנות אותו שדה ראייה עם פחות פרמטרים.</li>
+      <li><strong>חיסרון:</strong> 138M פרמטרים — מודל כבד מאוד.</li>
+    </ul>
+
+    <h4>ResNet (2015) — Skip Connections</h4>
+    <ul>
+      <li><strong>צוות:</strong> Microsoft Research.</li>
+      <li><strong>הבעיה שפתרו:</strong> במודלים עמוקים מאוד (50+ שכבות), הביצועים <em>יורדים</em> — בגלל vanishing gradient (הגרדיאנט "נחלש" כשהוא חוזר אחורה).</li>
+      <li><strong>הפתרון:</strong> <em>Skip Connections</em> — הוספת קיצור-דרך מכל שכבה לשכבה אחרי הבאה, כך שהגרדיאנט "מדלג" מעל שכבות.</li>
+      <li><strong>תוצאה:</strong> רשת של 152 שכבות שעובדת מצוין. ResNet-152 הגיעה לביצועים <em>על-אנושיים</em> ב-ImageNet.</li>
+      <li><strong>השפעה:</strong> Skip connections היום הם סטנדרט בכל הארכיטקטורות המודרניות (Transformers, Diffusion וכו').</li>
+    </ul>
+
+    <table class="compare">
+      <tr><th>מודל</th><th>שנה</th><th>שכבות</th><th>פרמטרים</th><th>שגיאה ב-ImageNet</th></tr>
+      <tr><td>AlexNet</td><td>2012</td><td>8</td><td>60M</td><td>16%</td></tr>
+      <tr><td>VGG-16</td><td>2014</td><td>16</td><td>138M</td><td>7.3%</td></tr>
+      <tr><td>ResNet-152</td><td>2015</td><td>152</td><td>60M</td><td>3.6%</td></tr>
+      <tr><td>אדם ממוצע</td><td>—</td><td>—</td><td>—</td><td>~5%</td></tr>
+    </table>
+  </div>
+
+  <h3>12. תוספות מקובץ הקוד <code style="direction:ltr;display:inline-block">7.FindingEdgesWithKernels.ipynb</code></h3>
+  <div class="card">
+    <p>ה-notebook של ההרצאה מדגים בפועל את פעולת ה-Kernel — בלי NN בכלל, רק NumPy + OpenCV. זה הצעד הקריטי להבנה אינטואיטיבית של מה ש-CNN <em>לומדת</em>.</p>
+
+    <h4>12.1 OpenCV — הספרייה לעיבוד תמונה</h4>
+    <p><code style="direction:ltr;display:inline-block">cv2</code> (OpenCV) היא ספריית קוד פתוח ל-computer vision. ההתקנה:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">!pip install opencv-python
+import cv2</div>
+
+    <h4>12.2 טעינת תמונה והמרה לאפור</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import matplotlib.image as mpimg
+image = mpimg.imread('Dolphin_Louie.jpeg')   # (H, W, 3) — RGB
+gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)  # (H, W) — grayscale</div>
+    <p>למה אפור? כי הדגמת קצוות פשוטה יותר על ערוץ אחד. ב-CNN אמיתי נעבוד ב-RGB.</p>
+
+    <h4>12.3 פילטר Sobel — קוד מלא</h4>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">import numpy as np
+
+# Sobel x — מזהה קצוות אנכיים (אופקיים? לא, אנכיים!)
+sobel_x = np.array([[-1, 0, 1],
+                    [-2, 0, 2],
+                    [-1, 0, 1]])
+
+# Sobel y — מזהה קצוות אופקיים
+sobel_y = np.array([[-1, -2, -1],
+                    [ 0,  0,  0],
+                    [ 1,  2,  1]])
+
+# הפעלת הפילטר על התמונה האפורה
+filtered = cv2.filter2D(gray, -1, sobel_x)
+plt.imshow(filtered, cmap='gray')</div>
+
+    <p><strong>נסה בעצמך:</strong> אחרי שתריץ — תראה את התמונה המקורית של הדולפין הופכת לתמונה ש"מאירה" רק את הקצוות האנכיים.</p>
+
+    <h4>12.4 פילטרים מותאמים אישית — חלוקה לרבעים</h4>
+    <p>ה-notebook גם מדגים פילטרים גדולים יותר (4×4) שמחלקים את התמונה לחצי שמאל/ימין או עליון/תחתון:</p>
+    <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">f_left_right = np.array([[-1,-1, 1, 1],
+                          [-1,-1, 1, 1],
+                          [-1,-1, 1, 1],
+                          [-1,-1, 1, 1]])  # מדגיש מעבר משמאל לימין</div>
+
+    <h4>12.5 הקשר ל-CNN המאומן</h4>
+    <div class="callout info">
+      <strong>תובנה מרכזית:</strong> הפילטרים שראינו כאן (Sobel, blur, sharpen) הם בדיוק מה שהשכבות הראשונות של CNN <em>לומדות בעצמן</em>. אם תקח רשת מאומנת ותציג את ה-32 הפילטרים הראשונים שלה — תזהה: קצוות אנכיים, אופקיים, אלכסוניים, נקודות צבע. הרשת "המציאה" את Sobel בלי שלימדנו אותה!
+    </div>
+  </div>
+
+  <h3>13. שאלות חזרה למבחן — הרצאה 7</h3>
+  <div class="quiz-q">
+    <div class="q">ש1. מה ההבדל המרכזי בין MLP ל-CNN בקלט שלהם?</div>
+    <details><summary>הצג תשובה</summary><div class="a">MLP מקבל וקטור 1D (תמונה צריכה Flatten לפני הזנה). CNN מקבל מטריצה דו-מימדית (או טנסור 3D עבור RGB) — שומר על המבנה המרחבי. כשמיישרים תמונה לוקטור, פיקסלים שכנים מאבדים את הקשר ביניהם.</div></details>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q">ש2. למה ב-CNN יש פחות פרמטרים מ-MLP על אותה תמונה?</div>
+    <details><summary>הצג תשובה</summary><div class="a">שתי סיבות: (1) <strong>Local connectivity</strong> — כל נוירון מחובר רק לחלון קטן (3×3 או 5×5) ולא לכל הפיקסלים. (2) <strong>Weight sharing</strong> — אותו פילטר מופעל על כל התמונה, אז לומדים את ה-9 משקלות פעם אחת בלבד. ב-MLP על MNIST: ~800K פרמטרים. ב-CNN דומה: ~50K.</div></details>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q">ש3. נתונה תמונה 32×32×3, פילטר 3×3, padding='same', stride=1, 64 פילטרים. מה הצורה של ה-feature map שיוצא מהשכבה? כמה פרמטרים יש בשכבה?</div>
+    <details><summary>הצג תשובה</summary><div class="a"><strong>צורת הפלט:</strong> 32×32×64 (padding=same שומר על H,W; 64 פילטרים = 64 ערוצי עומק). <strong>פרמטרים:</strong> כל פילטר הוא 3×3×3 (3 ערוצי קלט) + bias = 28. ל-64 פילטרים: 64×28 = 1,792 פרמטרים בלבד.</div></details>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q">ש4. מה ההבדל בין Max Pooling ל-Average Pooling? למה Max פופולרי יותר?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Max מחזיר את הערך הגבוה ביותר בחלון, Average מחזיר את הממוצע. Max פופולרי יותר כי הוא <em>מדגיש את הסיגנל החזק</em> — אם פילטר זיהה תבנית באזור, הערך הגבוה מבטא את עוצמת הזיהוי. Average "מרכך" את הסיגנל הזה. Max גם נותן יותר translation invariance.</div></details>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q">ש5. למה Translation invariance מובנה ב-CNN אבל Rotation invariance לא?</div>
+    <details><summary>הצג תשובה</summary><div class="a">Translation: הפילטר זהה בכל מקום (weight sharing) + Max Pooling בחלון = אותה תבנית מתגלה גם אם זזה. Rotation: הפילטר עצמו <em>לא מסתובב</em> — פילטר שלמד "אוזניים בצורה X" לא יזהה "אוזניים מסובבות". הפתרון הוא Data Augmentation — מציגים בזמן אימון גרסאות מסובבות של התמונה כדי שהרשת תפתח פילטרים מרובים שכל אחד מתאים לזווית מסוימת.</div></details>
+  </div>
+
+  <div class="quiz-q">
+    <div class="q">ש6. מה החידוש המרכזי של ResNet ולמה הוא הכרחי לרשתות עמוקות?</div>
+    <details><summary>הצג תשובה</summary><div class="a"><strong>Skip connections</strong> — קיצורי דרך שמעבירים את הקלט של שכבה ישירות אל הפלט של שכבה אחרי הבאה (פלוס מה שעובר דרך השכבות). <strong>למה הכרחי:</strong> ברשתות של 50+ שכבות, הגרדיאנט "נחלש" עד שהוא חוזר לשכבות הראשונות (vanishing gradient) — והן לא מתעדכנות. Skip connection מאפשר לגרדיאנט לעבור ישירות ולהגיע לשכבה הראשונה בעוצמה. בזכות זה אפשר לאמן רשתות של מאות שכבות.</div></details>
+  </div>
+
+  <h3>14. מה תצא מן הפרק הזה</h3>
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <ul class="checklist">
+      <li>תסביר במשפט אחד את ההבדל בין MLP ל-CNN ולמה CNN עדיף לתמונות.</li>
+      <li>תוכל לחשב את צורת ה-feature map שיוצא משכבת Conv2D עם פרמטרים נתונים.</li>
+      <li>תזהה Kernel של Sobel ותדע מה הוא עושה.</li>
+      <li>תזכור את 4 ה-hyperparameters של Conv2D: filter size, number, stride, padding.</li>
+      <li>תסביר למה Max Pooling חזק (3 סיבות: dim reduction, translation invariance, less overfit).</li>
+      <li>תזהה את הדפוס "אורך-רוחב יורדים, עומק עולה" לאורך CNN.</li>
+      <li>תכיר את 3 הארכיטקטורות הקלאסיות (AlexNet, VGG, ResNet) ותדע את החידוש של כל אחת.</li>
+      <li>תוכל להסביר למה Data Augmentation עוזר גם ל-rotation invariance וגם ל-overfit.</li>
+      <li>תזכור: הפילטרים ב-CNN לא נבחרים ידנית — הם נלמדים בעצמם דרך Backpropagation.</li>
+    </ul>
+  </div>
+
+  <div class="callout info">
+    <strong>גשר להרצאה הבאה:</strong> בהרצאה 8 (CNN with Keras) נעבור מהתאוריה לפועל — נבנה CNN שלם על MNIST, על Cats vs Dogs, ונכיר Data Augmentation ו-Transfer Learning ב-Keras. זה ייקח את כל מה שלמדנו כאן והופך אותו לקוד שאפשר להריץ על ה-RTX PRO 4000 שלך תוך דקות.
   </div>
 </section>
 
@@ -2416,6 +2823,33 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
     <div class="term-long">
       <strong>הקשר:</strong> "Multi-layer" = יותר משכבה אחת; "Deep" = הרבה שכבות (>2-3 בדרך כלל). DL התחיל כאשר הצליחו להתגבר על vanishing gradients ולאמן רשתות עם 5+, 50+, 100+ שכבות.
       <strong>אינטואיציה:</strong> כל שכבה עוסקת ברמת הפשטה גבוהה יותר. ברשת לזיהוי תמונות: שכבות ראשונות מזהות קצוות, אמצעיות מזהות חלקי גוף (אוזניים, עיניים), אחרונות מזהות אובייקטים שלמים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="net">
+    <div class="term-head">
+      <span class="term-en">MLP — Multi-Layer Perceptron</span>
+      <span class="term-he">— רשת נוירונים מסורתית עם שכבות צפופות</span>
+      <span class="term-cat">רשת — מבנה ופעולה</span>
+    </div>
+    <div class="term-short">המונח הסטנדרטי בתעשייה ל-feed-forward NN: רצף של שכבות Dense (Fully-Connected) עם פונקציות אקטיבציה לא-לינאריות. כל המודלים שראינו בהרצאות 3-6 הם MLPs.</div>
+    <div class="term-long">
+      <strong>המבנה הקלאסי:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">Input → Dense + ReLU → Dense + ReLU → ... → Dense + (Sigmoid/Softmax/None)</div>
+      <strong>תכונות מגדירות:</strong>
+      <ul>
+        <li><strong>Fully-Connected:</strong> כל נוירון בשכבה k מחובר לכל נוירון בשכבה k+1.</li>
+        <li><strong>Feed-Forward:</strong> אין מעגלים — המידע זורם רק בכיוון אחד מהקלט לפלט.</li>
+        <li><strong>אקטיבציה לא-לינארית:</strong> ReLU/tanh/sigmoid בכל שכבה נסתרת — בלעדיהן הרצף הופך לפרספטרון בודד.</li>
+      </ul>
+      <strong>מתי הוא הבחירה הנכונה:</strong> נתונים טבלאיים (rows × features), קלט בגודל קבוע, אין מבנה מרחבי או זמני.
+      <strong>מתי הוא לא מתאים:</strong>
+      <ul>
+        <li><strong>תמונות</strong> — מאבד את המבנה הדו-מימדי, יש יותר מדי פרמטרים. הפתרון: <em>CNN</em>.</li>
+        <li><strong>רצפים</strong> (טקסט, סדרות זמן) — לא מנצל את הסדר. הפתרון: <em>RNN</em>, <em>Transformer</em>.</li>
+      </ul>
+      <strong>השמות הנרדפים שתפגוש:</strong> Multi-Layer Perceptron · Multi-layer Network · Fully-Connected Network (FCN) · Dense Network · Feed-Forward Neural Network (FFNN). כולם מתארים את אותה ארכיטקטורה.
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>
@@ -3472,7 +3906,6 @@ model.fit(..., callbacks=[callback])</div>
     </div>
     <div class="term-short">הגודל של הפילטר המתחלק בשכבת Convolution. נפוץ: 3x3, 5x5. קובע את "שדה הראייה" של כל פיקסל בפלט.</div>
     <div class="term-long">
-      <strong>מקדים את החומר — נלמד בהרצאה 7.</strong>
       <strong>שיקולים:</strong>
       <ul>
         <li>קטן (3x3) — מעט פרמטרים, לוכד דפוסים מקומיים מאוד. רוב CNNים מודרניים משתמשים ב-3x3 בלבד.</li>
@@ -3491,9 +3924,263 @@ model.fit(..., callbacks=[callback])</div>
     </div>
     <div class="term-short">פעולת pooling שמסכמת את כל המפה הספטרלית למספר אחד (ממוצע או מקסימום) לכל ערוץ.</div>
     <div class="term-long">
-      <strong>מקדים את החומר — נלמד בהרצאה 7.</strong>
       <strong>שימוש:</strong> בקצה רשת CNN — במקום Flatten + Dense ענקי, משתמשים ב-Global Average Pooling להפחתה דרסטית של פרמטרים.
       <strong>יתרונות:</strong> פחות overfit, מודל קל יותר, אינווריאנט לגודל הקלט (בגבולות).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Convolution</span>
+      <span class="term-he">— פעולת קונבולוציה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">פעולה מתמטית שמחליקה Kernel (פילטר) קטן על תמונה, ולכל מיקום מחשבת סכום משוקלל של הערכים — מייצרת תמונה חדשה (feature map) שמדגישה תבניות מסוימות.</div>
+    <div class="term-long">
+      <strong>הצעדים בפעולה:</strong>
+      <ol>
+        <li>בוחרים פיקסל בתמונה.</li>
+        <li>לוקחים חלון בגודל ה-Kernel (3x3 או 5x5) סביבו.</li>
+        <li>מכפילים איבר-איבר עם ה-Kernel.</li>
+        <li>סוכמים את כל המכפלות → ערך אחד.</li>
+        <li>זה הופך לפיקסל המרכזי ב-feature map.</li>
+        <li>חוזרים לכל פיקסל בתמונה.</li>
+      </ol>
+      <strong>חשיבות:</strong> זוהי הפעולה הבסיסית של CNN. במקום שכבת Dense שמחברת כל פיקסל לכל נוירון, Convolution מחברת רק חלון קטן ושומרת על מבנה מרחבי.
+      <strong>הקשר:</strong> טכנית, ב-DL הפעולה היא cross-correlation, אבל השם "convolution" השתרש.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Kernel / Filter</span>
+      <span class="term-he">— פילטר / קרנל</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">מטריצה קטנה של מספרים (משקלות) שמיושמת על התמונה כפעולת Convolution. כל Kernel מזהה תבנית מסוימת — קצה אנכי, קצה אופקי, פינה, צבע מסוים.</div>
+    <div class="term-long">
+      <strong>פילטרים קלאסיים:</strong>
+      <ul>
+        <li><strong>Sobel-x:</strong> [[-1,0,1],[-2,0,2],[-1,0,1]] — קצוות אנכיים.</li>
+        <li><strong>Sobel-y:</strong> [[-1,-2,-1],[0,0,0],[1,2,1]] — קצוות אופקיים.</li>
+        <li><strong>Sharpen:</strong> [[0,-1,0],[-1,5,-1],[0,-1,0]] — חידוד.</li>
+        <li><strong>Box Blur:</strong> מטריצה של 1/9 — טשטוש.</li>
+      </ul>
+      <strong>תובנה מרכזית:</strong> ב-CNN <em>הפילטרים נלמדים אוטומטית</em> דרך Backpropagation. הרשת "ממציאה" את Sobel ופילטרים אחרים בעצמה — בלי שלימדנו אותה!
+      <strong>בקוד:</strong> שכבת <code style="direction:ltr;display:inline-block">Conv2D(32, (3,3))</code> מגדירה 32 פילטרים בגודל 3×3.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Stride</span>
+      <span class="term-he">— צעד הפילטר</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">בכמה פיקסלים מזיזים את ה-Kernel בכל צעד החלקה על התמונה. ברירת מחדל: 1 (פיקסל אחד בכל פעם). Stride גדול = feature map קטן.</div>
+    <div class="term-long">
+      <strong>השפעות של Stride:</strong>
+      <ul>
+        <li><strong>Stride=1:</strong> מזיזים פיקסל אחד בכל פעם — feature map בגודל מלא.</li>
+        <li><strong>Stride=2:</strong> מדלגים על פיקסל בכל פעם — feature map בחצי הגודל.</li>
+        <li><strong>Stride גדול:</strong> פחות חישוב, פחות פרמטרים, אבל פחות מידע.</li>
+      </ul>
+      <strong>בקוד:</strong> <code style="direction:ltr;display:inline-block">Conv2D(32, (3,3), strides=2)</code>
+      <strong>חלופה:</strong> במקום stride גדול, נפוץ להשתמש ב-stride=1 + Pooling layer (יותר גמיש).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Padding</span>
+      <span class="term-he">— ריפוד תמונה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">הוספת "מסגרת" של פיקסלים סביב התמונה לפני Convolution, כדי שהפילטר יוכל לעבוד גם על פיקסלי הקצה.</div>
+    <div class="term-long">
+      <strong>שלוש גישות לטיפול בקצוות:</strong>
+      <ul>
+        <li><strong>Crop / Valid Padding</strong> (<code style="direction:ltr;display:inline-block">padding='valid'</code>) — אין ריפוד, פיקסלי הקצה לא נכנסים. תמונת פלט קטנה יותר.</li>
+        <li><strong>Same Padding</strong> (<code style="direction:ltr;display:inline-block">padding='same'</code>) — מוסיפים אפסים מסביב כך שתמונת הפלט באותו גודל. <em>הסטנדרט המודרני</em>.</li>
+        <li><strong>Extension</strong> — מעתיקים את ערכי הקצה החוצה במקום אפסים. פחות נפוץ.</li>
+      </ul>
+      <strong>חישוב צורת הפלט:</strong> עם padding=same ו-stride=1 — הצורה לא משתנה. עם padding=valid ו-Kernel 3×3 — יורדים 2 פיקסלים בכל מימד.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Feature Map / Activation Map</span>
+      <span class="term-he">— מפת תכונות</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">תמונת הפלט שיוצאת אחרי הפעלת Kernel יחיד על תמונת קלט. כל Conv2D עם N פילטרים מייצר N feature maps — כל אחד מדגיש תבנית שונה.</div>
+    <div class="term-long">
+      <strong>אינטואיציה:</strong> אם פילטר זוהה תבנית מסוימת באזור מסוים בתמונה — הערך באותו מיקום ב-feature map יהיה גבוה. אם לא — נמוך.
+      <strong>צורה:</strong> תמונת קלט (H, W, 3) → אחרי Conv2D(32 filters) → (H, W, 32). כל מהשכבות הבאות עובדות על הצורה הזו.
+      <strong>שדה ראייה (Receptive Field):</strong> פיקסל ב-feature map "רואה" אזור 3×3 בקלט. אחרי 2 שכבות Conv 3×3 → שדה ראייה 5×5. אחרי 3 שכבות → 7×7. ככל שיורדים בעומק — שדה הראייה גדל.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Conv2D Layer</span>
+      <span class="term-he">— שכבת קונבולוציה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">השכבה הבסיסית של CNN ב-Keras. מפעילה N פילטרים על הקלט ומחזירה N feature maps.</div>
+    <div class="term-long">
+      <strong>סינטקס מלא:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal">layers.Conv2D(filters=32, kernel_size=(3,3),
+              strides=1, padding='same',
+              activation='relu')</div>
+      <strong>פרמטרים:</strong>
+      <ul>
+        <li><strong>filters:</strong> כמה פילטרים → כמה ערוצים בפלט.</li>
+        <li><strong>kernel_size:</strong> 3 או (3,3) — גודל הפילטר.</li>
+        <li><strong>strides:</strong> 1 (סטנדרט) או 2 להפחתת מימדים.</li>
+        <li><strong>padding:</strong> 'same' או 'valid'.</li>
+        <li><strong>activation:</strong> בדרך כלל 'relu'.</li>
+      </ul>
+      <strong>חישוב פרמטרים:</strong> לכל פילטר: <code style="direction:ltr;display:inline-block">kernel_h × kernel_w × input_channels + 1</code> (+1 ל-bias). למשל פילטר 3×3 על RGB = 28 פרמטרים. ל-32 פילטרים = 896 פרמטרים בלבד.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Pooling Layer</span>
+      <span class="term-he">— שכבת איחוד / דגימה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">שכבה שמקטינה את גודל ה-feature maps. לוקחת חלון (לרוב 2×2), מסכמת אותו לערך אחד, וממשיכה. מטרה: הפחתת מימדים, מניעת overfit, יציבות לתזוזה.</div>
+    <div class="term-long">
+      <strong>שני סוגים מרכזיים:</strong>
+      <ul>
+        <li><strong>Max Pooling:</strong> לוקח את הערך המקסימלי בחלון. <em>הסטנדרט במודרני</em> — שומר על הסיגנל החזק ביותר.</li>
+        <li><strong>Average Pooling:</strong> לוקח את הממוצע. פחות נפוץ — "מרכך" מידע.</li>
+      </ul>
+      <strong>צורה לאחר 2×2 Max Pooling עם stride=2:</strong> (H,W,C) → (H/2, W/2, C). העומק לא משתנה, כי pooling פועל על כל ערוץ בנפרד.
+      <strong>הוא לא לומד פרמטרים</strong> — אין לו משקלות. רק פעולה דטרמיניסטית.
+      <strong>בקוד:</strong> <code style="direction:ltr;display:inline-block">layers.MaxPooling2D(pool_size=(2,2))</code>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Translation Invariance</span>
+      <span class="term-he">— אינווריאנטיות לתזוזה</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">תכונה שאומרת: הרשת תזהה את אותו אובייקט גם אם הוא מופיע במיקום שונה בתמונה. ב-CNN זה מובנה — הודות ל-weight sharing ול-Max Pooling.</div>
+    <div class="term-long">
+      <strong>למה ב-CNN זה מובנה:</strong>
+      <ol>
+        <li><strong>Weight sharing:</strong> אותו פילטר מופעל על כל אזור בתמונה. אם הוא לומד לזהות "אוזן" בפינה אחת — הוא יזהה גם בפינה השנייה.</li>
+        <li><strong>Max Pooling:</strong> בוחר את הערך המקסימלי בחלון. אם התבנית "זזה" קצת בתוך החלון — עדיין נבחרת.</li>
+      </ol>
+      <strong>מה לא מובנה:</strong> Rotation Invariance ו-Scale Invariance. הפתרון: <strong>Data Augmentation</strong>.
+      <strong>הקבלה:</strong> ב-MLP אין Translation Invariance בכלל — אם רואים אותו אובייקט במיקום אחר, הרשת צריכה ללמוד מחדש את כל הפיקסלים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="cv">
+    <div class="term-head">
+      <span class="term-en">Data Augmentation</span>
+      <span class="term-he">— הגדלת נתונים</span>
+      <span class="term-cat">Computer Vision</span>
+    </div>
+    <div class="term-short">יצירת ואריאציות אוטומטיות של תמונות האימון (סיבוב, היפוך, חיתוך, שינוי בהירות) כדי להגדיל את גודל הסט האפקטיבי ולשפר הכללה.</div>
+    <div class="term-long">
+      <strong>טכניקות סטנדרטיות:</strong>
+      <ul>
+        <li><strong>Rotation:</strong> סיבוב אקראי ±15-30°.</li>
+        <li><strong>Translation:</strong> הזזה לימין/שמאל.</li>
+        <li><strong>Horizontal Flip:</strong> היפוך מראה (טוב לחיות; לא טוב לאותיות).</li>
+        <li><strong>Zoom / Crop:</strong> חיתוך אקראי + הגדלה.</li>
+        <li><strong>Color Jitter:</strong> שינוי בהירות, ניגודיות, רוויה.</li>
+        <li><strong>CutOut, MixUp, CutMix:</strong> טכניקות מתקדמות להחלפת חלקי תמונה.</li>
+      </ul>
+      <strong>שתי תועלות:</strong>
+      <ol>
+        <li><strong>Rotation/Scale Invariance:</strong> מה ש-CNN לא יודע אוטומטית — ללמד ע"י דוגמאות.</li>
+        <li><strong>מניעת Overfit:</strong> המודל רואה תמונות "חדשות" בכל epoch.</li>
+      </ol>
+      <strong>בקוד Keras:</strong>
+      <div class="formula" style="direction:ltr;text-align:left;font-family:Consolas,monospace;font-style:normal;white-space:pre">aug = keras.Sequential([
+    layers.RandomFlip("horizontal"),
+    layers.RandomRotation(0.1),
+    layers.RandomZoom(0.1),
+])</div>
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">AlexNet (2012)</span>
+      <span class="term-he">— הארכיטקטורה שפתחה את עידן ה-DL</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">CNN ראשונה שניצחה בתחרות ImageNet ב-2012 בפער עצום (16% שגיאה לעומת 26% של המקום השני). נחשבת לנקודת המהפך של DL.</div>
+    <div class="term-long">
+      <strong>פיתחו:</strong> Alex Krizhevsky, Ilya Sutskever, Geoffrey Hinton (Toronto).
+      <strong>חידושים מרכזיים:</strong>
+      <ul>
+        <li>שימוש ראשון ב-<strong>ReLU</strong> במקום sigmoid — הרבה יותר מהיר ופחות vanishing gradients.</li>
+        <li>שימוש ראשון ב-<strong>Dropout</strong> — הפחתת overfit.</li>
+        <li>שימוש ראשון ב-<strong>2 GPUs</strong> במקביל לאימון.</li>
+        <li>פילטרים גדולים יחסית: 11×11 ו-5×5.</li>
+      </ul>
+      <strong>גודל:</strong> 8 שכבות (5 Conv + 3 FC), 60M פרמטרים, אומן שבוע.
+      <strong>השפעה:</strong> מאז 2012 — כל מודלי הזיהוי הפכו ל-DL.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">VGG (2014)</span>
+      <span class="term-he">— ארכיטקטורה אלגנטית עם פילטרים קטנים</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">משפחת CNNs מאוקספורד שהוכיחה: עומק > רוחב. משתמשת רק ב-Conv 3×3 ו-MaxPool 2×2 — פשוט אבל יעיל.</div>
+    <div class="term-long">
+      <strong>פיתחו:</strong> Visual Geometry Group, Oxford.
+      <strong>גרסאות:</strong> VGG-16 (16 שכבות), VGG-19 (19 שכבות).
+      <strong>חידוש מרכזי:</strong> שתי שכבות Conv 3×3 רצופות נותנות שדה ראייה כמו 5×5, אבל עם פחות פרמטרים ויותר אקטיבציות לא-לינאריות. זה ביסס את העיקרון "העדף עומק על רוחב".
+      <strong>חיסרון:</strong> 138M פרמטרים — מודל כבד שדורש זיכרון רב.
+      <strong>שימושים פרקטיים היום:</strong> בעיקר כ-feature extractor ל-Transfer Learning.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">Skip Connection (Residual Connection)</span>
+      <span class="term-he">— קישור-דילוג</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">מנגנון שמוסיף את הקלט של שכבה ישירות לפלט של שכבה אחרי-הבאה (קיצור-דרך). פותר את בעיית vanishing gradients ברשתות עמוקות מאוד.</div>
+    <div class="term-long">
+      <strong>הנוסחה:</strong>
+      <div class="formula">y = F(x) + x</div>
+      <strong>איפה x הוא הקלט ו-F(x) הוא מה ששתי שכבות עושות עליו.</strong>
+      <strong>למה זה עובד:</strong>
+      <ol>
+        <li><strong>מסלול ישיר לגרדיאנט:</strong> בזמן Backprop הגרדיאנט יכול לעבור דרך ה-+ ישירות לאחור — לא נחלש דרך עשרות שכבות.</li>
+        <li><strong>ברירת מחדל היא Identity:</strong> אם השכבה לא צריכה לעשות כלום, היא יכולה ללמוד F(x)≈0 ופשוט להעביר את x. הפיצוי קל יותר ללמידה.</li>
+      </ol>
+      <strong>איפה משתמשים:</strong> ResNet (2015), Transformers, Diffusion Models — כמעט בכל ארכיטקטורה מודרנית.
+      <strong>השפעה:</strong> איפשר לעלות מ-30 שכבות (לפני) ל-152 שכבות (ResNet-152) ואף 1000+ שכבות בניסויים.
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>
