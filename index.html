@@ -24,6 +24,9 @@
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   html, body { margin: 0; padding: 0; }
+
+  /* Bidi isolation — prevents English/numbers inside Hebrew text from being reordered */
+  strong, em, code, .en, kbd, samp { unicode-bidi: isolate; }
   body {
     font-family: "Segoe UI", "Heebo", "Assistant", system-ui, -apple-system, sans-serif;
     background: linear-gradient(180deg, var(--c-bg) 0%, #ecf2fc 100%);
@@ -3139,7 +3142,7 @@ plt.plot(range(1, len(truncated_mae_history) + 1), truncated_mae_history)</div>
 
   <h3>8. Pooling Layers — הקטנת המימדים</h3>
   <div class="card">
-    <p>אחרי שכבת Conv שמוסיפה פילטרים — מספר ה-feature maps גדל, ויש סיכון ל-overfit. <strong>Pooling</strong> פותר את זה: דחיסת המידע במחיר של אובדן רזולוציה.</p>
+    <p>לאחר שכבת קונבולוציה (<strong>Conv</strong>) עם N פילטרים, נוצרות N מפות תכונות (<strong>feature maps</strong>) — כל אחת באותו גודל מרחבי כמו הקלט. ככל שמספר הערוצים גדל, גדל גם הסיכון להתאמת יתר. שכבת <strong>Pooling</strong> מצמצמת את הגודל המרחבי של כל feature map (לרוב פי 4 עם חלון 2×2) — מספר הערוצים נשאר זהה, אבל סך הערכים קטן משמעותית. התוצאה: פחות פרמטרים בשכבות הבאות, פחות overfit, ויותר מהירות.</p>
 
     <h4>Max Pooling</h4>
     <p>חלון (לרוב 2×2), stride 2, ולוקחים את <em>הערך המקסימלי</em> בכל חלון:</p>
