@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" font-family="Segoe UI, Arial, sans-serif">
+  <text x="440" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1f3a68">CNN מ-Scratch — התקדמות ה-shape דרך 11 שכבות</text>
+  <text x="440" y="50" text-anchor="middle" font-size="13" fill="#6b7280">מתוך <tspan font-family="Consolas, monospace">model.summary()</tspan> של הקוד (cell 16). סך פרמטרים: 991,041</text>
+
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <!-- Layer columns - 11 boxes, evenly spaced -->
+  <!-- column positions: 10, 90, 170, 250, 330, 410, 490, 570, 650, 730, 810 with width 70  -->
+
+  <!-- Input: 180x180x3 -->
+  <g>
+    <rect x="10" y="120" width="70" height="100" fill="#e0e7ff" stroke="#1f3a68" stroke-width="1.5" rx="4"/>
+    <text x="45" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#1f3a68">Input</text>
+    <text x="45" y="170" text-anchor="middle" font-size="11" fill="#1f3a68">180</text>
+    <text x="45" y="186" text-anchor="middle" font-size="11" fill="#1f3a68">×180</text>
+    <text x="45" y="202" text-anchor="middle" font-size="11" fill="#1f3a68">×3</text>
+  </g>
+
+  <!-- Rescaling -->
+  <g>
+    <rect x="90" y="130" width="70" height="80" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5" rx="4"/>
+    <text x="125" y="148" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">Rescale</text>
+    <text x="125" y="162" text-anchor="middle" font-size="9" fill="#166534">/255</text>
+    <text x="125" y="184" text-anchor="middle" font-size="10" fill="#166534">180×180</text>
+    <text x="125" y="198" text-anchor="middle" font-size="10" fill="#166534">×3</text>
+  </g>
+
+  <!-- Conv2D 32 + Pool -->
+  <g>
+    <rect x="170" y="115" width="70" height="110" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" rx="4"/>
+    <text x="205" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">Conv2D 32</text>
+    <text x="205" y="144" text-anchor="middle" font-size="9" fill="#92400e">3×3 + MaxPool</text>
+    <text x="205" y="166" text-anchor="middle" font-size="11" fill="#92400e">89×89</text>
+    <text x="205" y="180" text-anchor="middle" font-size="11" fill="#92400e">×32</text>
+    <text x="205" y="208" text-anchor="middle" font-size="10" fill="#92400e">896 p.</text>
+  </g>
+
+  <!-- Conv2D 64 + Pool -->
+  <g>
+    <rect x="250" y="115" width="70" height="110" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" rx="4"/>
+    <text x="285" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">Conv2D 64</text>
+    <text x="285" y="144" text-anchor="middle" font-size="9" fill="#92400e">3×3 + MaxPool</text>
+    <text x="285" y="166" text-anchor="middle" font-size="11" fill="#92400e">43×43</text>
+    <text x="285" y="180" text-anchor="middle" font-size="11" fill="#92400e">×64</text>
+    <text x="285" y="208" text-anchor="middle" font-size="10" fill="#92400e">18,496 p.</text>
+  </g>
+
+  <!-- Conv2D 128 + Pool -->
+  <g>
+    <rect x="330" y="115" width="70" height="110" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" rx="4"/>
+    <text x="365" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#9a3412">Conv2D 128</text>
+    <text x="365" y="144" text-anchor="middle" font-size="9" fill="#9a3412">3×3 + MaxPool</text>
+    <text x="365" y="166" text-anchor="middle" font-size="11" fill="#9a3412">20×20</text>
+    <text x="365" y="180" text-anchor="middle" font-size="11" fill="#9a3412">×128</text>
+    <text x="365" y="208" text-anchor="middle" font-size="10" fill="#9a3412">73,856 p.</text>
+  </g>
+
+  <!-- Conv2D 256 + Pool -->
+  <g>
+    <rect x="410" y="115" width="70" height="110" fill="#fecaca" stroke="#dc2626" stroke-width="1.5" rx="4"/>
+    <text x="445" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">Conv2D 256</text>
+    <text x="445" y="144" text-anchor="middle" font-size="9" fill="#991b1b">3×3 + MaxPool</text>
+    <text x="445" y="166" text-anchor="middle" font-size="11" fill="#991b1b">9×9</text>
+    <text x="445" y="180" text-anchor="middle" font-size="11" fill="#991b1b">×256</text>
+    <text x="445" y="208" text-anchor="middle" font-size="10" fill="#991b1b">295,168 p.</text>
+  </g>
+
+  <!-- Conv2D 256 (no pool) -->
+  <g>
+    <rect x="490" y="115" width="70" height="110" fill="#fecaca" stroke="#dc2626" stroke-width="1.5" rx="4"/>
+    <text x="525" y="132" text-anchor="middle" font-size="10" font-weight="700" fill="#991b1b">Conv2D 256</text>
+    <text x="525" y="144" text-anchor="middle" font-size="9" fill="#991b1b">3×3 (no pool)</text>
+    <text x="525" y="166" text-anchor="middle" font-size="11" fill="#991b1b">7×7</text>
+    <text x="525" y="180" text-anchor="middle" font-size="11" fill="#991b1b">×256</text>
+    <text x="525" y="208" text-anchor="middle" font-size="10" fill="#991b1b">590,080 p.</text>
+  </g>
+
+  <!-- Flatten -->
+  <g>
+    <rect x="570" y="135" width="70" height="70" fill="#e0e7ff" stroke="#4f46e5" stroke-width="1.5" rx="4"/>
+    <text x="605" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#3730a3">Flatten</text>
+    <text x="605" y="180" text-anchor="middle" font-size="11" fill="#3730a3">12,544</text>
+    <text x="605" y="195" text-anchor="middle" font-size="9" fill="#6366f1">(= 7×7×256)</text>
+  </g>
+
+  <!-- Dense 1 sigmoid -->
+  <g>
+    <rect x="650" y="140" width="70" height="60" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" rx="4"/>
+    <text x="685" y="160" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">Dense 1</text>
+    <text x="685" y="177" text-anchor="middle" font-size="10" fill="#1e40af">sigmoid</text>
+    <text x="685" y="192" text-anchor="middle" font-size="10" fill="#1e40af">→ p(dog)</text>
+  </g>
+
+  <!-- Output -->
+  <g>
+    <rect x="730" y="150" width="80" height="40" fill="#22c55e" stroke="#15803d" stroke-width="1.5" rx="4"/>
+    <text x="770" y="166" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">Binary</text>
+    <text x="770" y="180" text-anchor="middle" font-size="10" fill="#fff">cat / dog</text>
+  </g>
+
+  <!-- Connections -->
+  <g stroke="#475569" stroke-width="1.5" fill="none">
+    <line x1="80" y1="170" x2="90" y2="170" marker-end="url(#arr2)"/>
+    <line x1="160" y1="170" x2="170" y2="170" marker-end="url(#arr2)"/>
+    <line x1="240" y1="170" x2="250" y2="170" marker-end="url(#arr2)"/>
+    <line x1="320" y1="170" x2="330" y2="170" marker-end="url(#arr2)"/>
+    <line x1="400" y1="170" x2="410" y2="170" marker-end="url(#arr2)"/>
+    <line x1="480" y1="170" x2="490" y2="170" marker-end="url(#arr2)"/>
+    <line x1="560" y1="170" x2="570" y2="170" marker-end="url(#arr2)"/>
+    <line x1="640" y1="170" x2="650" y2="170" marker-end="url(#arr2)"/>
+    <line x1="720" y1="170" x2="730" y2="170" marker-end="url(#arr2)"/>
+  </g>
+
+  <!-- Annotation - shrinking spatial, growing depth -->
+  <g>
+    <text x="65" y="80" font-size="12" font-weight="600" fill="#475569">Spatial:</text>
+    <text x="125" y="80" font-size="11" fill="#1f3a68">180²</text>
+    <text x="205" y="80" font-size="11" fill="#92400e">89²</text>
+    <text x="285" y="80" font-size="11" fill="#92400e">43²</text>
+    <text x="365" y="80" font-size="11" fill="#9a3412">20²</text>
+    <text x="445" y="80" font-size="11" fill="#991b1b">9²</text>
+    <text x="525" y="80" font-size="11" fill="#991b1b">7²</text>
+    <text x="605" y="80" font-size="11" fill="#3730a3">—</text>
+    <text x="685" y="80" font-size="11" fill="#1e40af">—</text>
+
+    <text x="65" y="98" font-size="12" font-weight="600" fill="#475569">Depth:</text>
+    <text x="125" y="98" font-size="11" fill="#1f3a68">3</text>
+    <text x="205" y="98" font-size="11" fill="#92400e">32</text>
+    <text x="285" y="98" font-size="11" fill="#92400e">64</text>
+    <text x="365" y="98" font-size="11" fill="#9a3412">128</text>
+    <text x="445" y="98" font-size="11" fill="#991b1b">256</text>
+    <text x="525" y="98" font-size="11" fill="#991b1b">256</text>
+    <text x="605" y="98" font-size="11" fill="#3730a3">12,544</text>
+    <text x="685" y="98" font-size="11" fill="#1e40af">1</text>
+  </g>
+
+  <!-- Bottom: comment lines -->
+  <g>
+    <rect x="40" y="265" width="800" height="40" fill="#f9fafb" stroke="#d1d5db" rx="6"/>
+    <text x="440" y="285" text-anchor="middle" font-size="12" fill="#374151">📐 הכלל: <tspan font-family="Consolas, monospace">output = (input − kernel)/stride + 1</tspan>. עם <tspan font-family="Consolas, monospace">kernel=3, stride=1, padding=valid</tspan>: input −2.</text>
+    <text x="440" y="300" text-anchor="middle" font-size="12" fill="#374151">פירמידה הפוכה: ה-spatial מתכווץ (חיתוך+pool), ה-depth גדל (יותר פילטרים → יותר features).</text>
+  </g>
+
+  <!-- Parameter computation row -->
+  <g>
+    <rect x="40" y="320" width="800" height="60" fill="#fff7ed" stroke="#fb923c" rx="6"/>
+    <text x="60" y="340" font-size="12" font-weight="700" fill="#9a3412">📊 איך מחשבים פרמטרים לדוגמה (Conv2D 32):</text>
+    <text x="60" y="358" font-size="12" font-family="Consolas, monospace" fill="#9a3412">params = filters × (kernel_h × kernel_w × input_channels) + filters_bias</text>
+    <text x="60" y="374" font-size="12" font-family="Consolas, monospace" fill="#9a3412">             32 × (3 × 3 × 3)              + 32 = 864 + 32 = <tspan font-weight="700">896</tspan>  ✓</text>
+  </g>
+
+  <!-- Big takeaway -->
+  <text x="440" y="425" text-anchor="middle" font-size="13" font-weight="700" fill="#1f3a68">⚡ ‎12,544 ערכים יוצאים מ-Flatten — חלק עצום מהפרמטרים הוא ב-Dense הסופי לבדו!</text>
+  <text x="440" y="442" text-anchor="middle" font-size="12" fill="#6b7280">Dense(1) על 12,544 = 12,545 פרמטרים. סך הכל ברשת: 991,041 ≈ ‎1M.</text>
+</svg>
