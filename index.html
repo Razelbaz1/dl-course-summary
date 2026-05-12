@@ -4050,11 +4050,82 @@ model.compile(loss="binary_crossentropy",
       <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">11 שכבות. spatial מתכווץ (180²→7²), depth גדל (3→256). סך פרמטרים: 991,041.</div>
     </div>
 
+    <h4>📖 מילון מונחים — מה כל מילה במשוואה אומרת</h4>
+    <p>לפני שמסתכלים על הנוסחה <code>output = (input − kernel) / stride + 1</code> — נוודא שכל מונח ברור:</p>
+
+    <table class="compare">
+      <tr><th>מונח</th><th>הסבר</th><th>ערך אצלנו</th></tr>
+      <tr>
+        <td><code>spatial</code> <span style="color:var(--c-muted)">— "ממדי הרוחב והגובה"</span></td>
+        <td>הגודל הגיאומטרי של ה-tensor — <strong>גובה × רוחב</strong> (לא כולל ערוצים). לדוגמה ‎180×180.</td>
+        <td>180×180 בקלט → 7×7 בסוף</td>
+      </tr>
+      <tr>
+        <td><code>depth</code> <span style="color:var(--c-muted)">— "עומק / מספר ערוצים"</span></td>
+        <td>המימד השלישי של ה-tensor — <strong>ערוצי הצבע</strong> בקלט, או <strong>מספר ה-filters</strong> אחרי Conv2D.</td>
+        <td>3 בקלט (RGB) → 256 בסוף</td>
+      </tr>
+      <tr>
+        <td><code>kernel</code> / <code>filter</code></td>
+        <td>"חלון" קטן (לרוב 3×3 או 5×5) שמסתובב על התמונה ומחשב פעולה (convolution). <em>זה הדבר שהרשת לומדת.</em></td>
+        <td>3×3 בכל ‎Conv2D שלנו</td>
+      </tr>
+      <tr>
+        <td><code>kernel_h</code></td>
+        <td>הגובה של ה-kernel (kernel_<strong>h</strong>eight). בדרך כלל שווה ל-kernel_w (kernel ריבועי).</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td><code>kernel_w</code></td>
+        <td>הרוחב של ה-kernel (kernel_<strong>w</strong>idth).</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td><code>stride</code></td>
+        <td>בכמה פיקסלים ה-kernel "קופץ" בכל צעד. <code>stride=1</code> = קופץ ב-1 (חופף הרבה). <code>stride=2</code> = קופץ ב-2 (פחות חפיפה, יותר downsample).</td>
+        <td>1 (ברירת המחדל)</td>
+      </tr>
+      <tr>
+        <td><code>padding="valid"</code></td>
+        <td>אין מילוי בקצוות → ה-output קטן יותר מה-input (ב-<code>kernel − 1</code>).</td>
+        <td>זה מה שבחרנו</td>
+      </tr>
+      <tr>
+        <td><code>padding="same"</code></td>
+        <td>הוספת אפסים בקצוות → ה-output שומר על אותו גודל spatial של ה-input.</td>
+        <td>(לא בשימוש פה)</td>
+      </tr>
+      <tr>
+        <td><code>input_channels</code></td>
+        <td>‎depth של ה-input שנכנס לשכבה.</td>
+        <td>3 → 32 → 64 → 128 → 256</td>
+      </tr>
+      <tr>
+        <td><code>filters</code></td>
+        <td>‎depth של ה-output. הפרמטר העיקרי של <code>Conv2D</code> — כמה kernels שונים השכבה לומדת.</td>
+        <td>32 → 64 → 128 → 256 → 256</td>
+      </tr>
+      <tr>
+        <td><code>bias</code></td>
+        <td>קבוע נוסף שנוסף לכל filter (נוסחה: <code>output + bias</code>). יש <strong>bias אחד לכל filter</strong>, ולכן <code>+filters</code> בנוסחה.</td>
+        <td>32, 64, 128, 256, 256</td>
+      </tr>
+    </table>
+
     <div class="callout info">
       <strong>קוד-לחישוב — Conv2D הראשון:</strong> <code>filters=32, kernel=3×3, input=180×180×3</code>.
       <ul>
         <li>פרמטרים: <code>32 × (3 × 3 × 3) + 32 = 896</code> ✓</li>
-        <li>Output spatial (padding=valid): <code>180 − 3 + 1 = 178</code>. אחרי MaxPool 2×2: <code>178/2 = 89</code></li>
+        <li>Output spatial (padding=valid, stride=1): <code>180 − 3 + 1 = 178</code>. אחרי MaxPool 2×2: <code>178/2 = 89</code></li>
+      </ul>
+    </div>
+
+    <div class="callout success">
+      <strong>💡 איך לזכור את הנוסחה <code>output = (input − kernel) / stride + 1</code>:</strong>
+      <ul>
+        <li><strong>למה <code>− kernel</code>?</strong> ה-kernel "מבזבז" שולי תמונה כי הוא חייב להתאים כולו. עם kernel=3, השוליים של פיקסל מימין ושמאל אובדים → ‎"−2".</li>
+        <li><strong>למה <code>/ stride</code>?</strong> אם קופצים בקפיצות של 2, יש חצי כמות מיקומים שונים → מחלקים ב-stride.</li>
+        <li><strong>למה <code>+ 1</code>?</strong> כי גם בנקודת ההתחלה (פיקסל 0) ה-kernel מסיים את הספירה.</li>
       </ul>
     </div>
 

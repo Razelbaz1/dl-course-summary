@@ -138,10 +138,17 @@
     <text x="685" y="98" font-size="11" fill="#1e40af">1</text>
   </g>
 
-  <!-- Bottom: rule callout (foreignObject for native bidi) -->
-  <foreignObject x="40" y="260" width="800" height="55">
-    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:6px 12px; background:#f9fafb; border:1px solid #d1d5db; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#374151; font-size:12px; line-height:1.45;">
-      <div>📐 <strong>הכלל:</strong> <span dir="ltr" style="font-family:Consolas,monospace">output = (input − kernel) / stride + 1</span>. עם <span dir="ltr" style="font-family:Consolas,monospace">kernel=3, stride=1, padding=valid</span> → <span dir="ltr" style="font-family:Consolas,monospace">output = input − 2</span>.</div>
+  <!-- Bottom: rule callout (foreignObject — each line is its own block to avoid bidi mixing) -->
+  <foreignObject x="40" y="255" width="800" height="60">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:5px 12px; background:#f9fafb; border:1px solid #d1d5db; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#374151; font-size:12px; line-height:1.35;">
+      <div style="display:flex; gap:14px; align-items:baseline;">
+        <span style="font-weight:700;">📐 הכלל:</span>
+        <span dir="ltr" style="font-family:Consolas,monospace;">output = (input − kernel) / stride + 1</span>
+      </div>
+      <div style="display:flex; gap:14px; align-items:baseline;">
+        <span>עם kernel=3, stride=1, padding=valid:</span>
+        <span dir="ltr" style="font-family:Consolas,monospace;">output = input − 2</span>
+      </div>
       <div>פירמידה הפוכה: ה-spatial מתכווץ (חיתוך + pool), ה-depth גדל (יותר פילטרים → יותר features).</div>
     </div>
   </foreignObject>
