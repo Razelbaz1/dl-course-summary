@@ -3688,16 +3688,16 @@ plt.imshow(filtered, cmap='gray')</div>
       <span class="chip outline">תאריך: 11.05.2026</span>
       <span class="chip">Transfer Learning</span>
     </div>
-    <p><strong>מטרת ההרצאה:</strong> לבנות CNN לסיווג בינארי (חתול/כלב) על <strong>מערך נתונים קטן</strong> (4,000 תמונות מתוך 25,000), ולהראות איך 4 גישות מתקדמות מטפסות מ-<strong>65% ל-97.8%</strong> accuracy על אותו test set. זו ההרצאה הראשונה שבה אנחנו מיישמים Transfer Learning בפועל.</p>
+    <p><strong>מטרת ההרצאה:</strong> לבנות CNN לסיווג בינארי (חתול/כלב) על <strong>מערך נתונים קטן</strong> (4,000 תמונות מתוך 25,000), ולהראות איך 4 גישות מתקדמות מטפסות מ-<strong>66.4% ל-97.9%</strong> accuracy על אותו test set. זו ההרצאה הראשונה שבה אנחנו מיישמים Transfer Learning בפועל.</p>
 
     <h4>על מה נדבר בפרק הזה</h4>
     <ol>
       <li>הצגת המשימה — Kaggle Dogs vs Cats — וטיפול ב-dataset קטן.</li>
       <li>טעינת תמונות מתיקיות עם <code>image_dataset_from_directory</code> ו-<code>tf.data.Dataset</code>.</li>
-      <li>גישה 1: CNN מ-Scratch — 5 בלוקי Conv2D + Pool. תוצאה: 65% (overfitting חזק).</li>
-      <li>גישה 2: Data Augmentation + Dropout — כתרופה ל-overfitting. תוצאה: ~83%.</li>
-      <li>גישה 3: Feature Extraction עם VGG16 קפוא. שתי שיטות (מהירה vs עם augmentation). תוצאה: 97.5%.</li>
-      <li>גישה 4: Fine-Tuning — הפשרת השכבות העליונות ב-lr נמוך מאוד. תוצאה: 97.8%.</li>
+      <li>גישה 1: CNN מ-Scratch — 5 בלוקי Conv2D + Pool. תוצאה: 66.4% (overfitting חזק).</li>
+      <li>גישה 2: Data Augmentation + Dropout — כתרופה ל-overfitting. תוצאה: 81.1%.</li>
+      <li>גישה 3: Feature Extraction עם VGG16 קפוא. שתי שיטות (מהירה vs עם augmentation). תוצאה: 97.9%.</li>
+      <li>גישה 4: Fine-Tuning — הפשרת השכבות העליונות ב-lr נמוך מאוד. תוצאה: 97.7% (מעט יורד!).</li>
       <li>תוצאות בפועל מהריצה ב-Colab — מספרים אמיתיים, לא של הספר.</li>
     </ol>
   </div>
@@ -3705,19 +3705,19 @@ plt.imshow(filtered, cmap='gray')</div>
   <!-- ========== 0. THE BIG PICTURE: 4 APPROACHES ========== -->
   <h3>0. תמונת מפתח — 4 הגישות והקפיצה של Transfer Learning</h3>
   <div class="card">
-    <p>לפני שניכנס לפרטים, הנה המסר העיקרי של ההרצאה במבט אחד: ה<strong>קפיצה הגדולה</strong> אינה מ-augmentation או מ-fine-tuning, אלא מ-<strong>From scratch → Pretrained</strong>. 32.5 נקודות אחוז בקפיצה אחת.</p>
+    <p>לפני שניכנס לפרטים, הנה המסר העיקרי של ההרצאה במבט אחד: ה<strong>קפיצה הגדולה</strong> אינה מ-augmentation או מ-fine-tuning, אלא מ-<strong>From scratch → Pretrained</strong>. 31.5 נקודות אחוז בקפיצה אחת. ובאופן מפתיע — fine-tuning הפעם <em>פגע</em> במקום לשפר.</p>
 
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect8_4approaches_comparison.svg" alt="השוואת 4 גישות — Test Accuracy" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
-      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">המספרים מהריצה בפועל של רז ב-Colab (2026-05-11), לא מהספר. הקפיצה הגדולה: 32.5 נקודות בין From-scratch ל-Feature Extraction עם VGG16.</div>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">המספרים מהריצה בפועל של רז ב-Colab (2026-05-12), לא מהספר. הקפיצה הגדולה: 31.5 נקודות בין From-scratch ל-Feature Extraction עם VGG16.</div>
     </div>
 
     <div class="callout info">
       <strong>שלוש תובנות שיוצאות מהגרף:</strong>
       <ul>
-        <li><strong>Augmentation לבד</strong> (גישה 2) שווה ~‎18 נקודות. <em>הרבה, אבל לא מספיק לרשת קטנה.</em></li>
-        <li><strong>Transfer learning</strong> (גישה 3) שווה ~‎32 נקודות. <em>הזינוק הגדול — כי conv_base כבר ראה 14 מיליון תמונות.</em></li>
-        <li><strong>Fine-tuning</strong> (גישה 4) שווה רק 0.3 נקודות בנוסף. <em>ערך מוסף מינורי, אבל "בחינם" עם השיטה הקיימת.</em></li>
+        <li><strong>Augmentation לבד</strong> (גישה 2) שווה ‎+14.7 נקודות. <em>שווה — אבל לא מספיק לרשת קטנה.</em></li>
+        <li><strong>Transfer learning</strong> (גישה 3) שווה ‎+16.8 נקודות נוספות. <em>הזינוק הגדול — כי conv_base כבר ראה 14 מיליון תמונות.</em></li>
+        <li><strong>Fine-tuning</strong> (גישה 4) הפעם <em>הוריד</em> ‎−0.2 נקודות (97.9% → 97.7%). זה לא שגיאה: כש-feature extraction כבר מצוין, fine-tuning יכול להזיק כי הוא מסכן את המשקלים הטובים שכבר נלמדו. <strong>אז למה מלמדים את זה?</strong> כי בדרך כלל זה עוזר — והוא תלוי בריצה.</li>
       </ul>
     </div>
   </div>
@@ -3839,17 +3839,21 @@ model.compile(loss="binary_crossentropy",
       </ul>
     </div>
 
-    <h4>תוצאות אימון — 30 epochs · ~85s/epoch</h4>
+    <h4>תוצאות אימון — 30 epochs · ~4-6s/epoch (GPU מהיר)</h4>
     <p>הריצה בפועל אצל רז:</p>
-    <pre><code>Epoch  1/30 - loss: 0.7179 - accuracy: 0.5305 - val_loss: 0.6907 - val_accuracy: 0.5010
-Epoch  5/30 - loss: 0.6110 - accuracy: 0.6695 - val_loss: 0.6350 - val_accuracy: 0.6410
-Epoch 10/30 - loss: 0.3998 - accuracy: 0.8175 - val_loss: 0.6402 - val_accuracy: 0.7070
-Epoch 15/30 - loss: 0.1869 - accuracy: 0.9240 - val_loss: 0.8829 - val_accuracy: 0.7240
+    <pre><code>Epoch  1/30 - loss: 0.6972 - accuracy: 0.5210 - val_loss: 0.6926 - val_accuracy: 0.5150
+Epoch  5/30 - loss: 0.6193 - accuracy: 0.6750 - val_loss: 0.6881 - val_accuracy: 0.6040
+Epoch 10/30 - loss: 0.4838 - accuracy: 0.7750 - val_loss: 0.6011 - val_accuracy: 0.7330
+Epoch 15/30 - loss: 0.2782 - accuracy: 0.8875 - val_loss: 0.7735 - val_accuracy: 0.7420
+Epoch 20/30 - loss: 0.1069 - accuracy: 0.9580 - val_loss: 1.7745 - val_accuracy: 0.6880
+Epoch 25/30 - loss: 0.0585 - accuracy: 0.9815 - val_loss: 1.4504 - val_accuracy: 0.7460
+Epoch 30/30 - loss: 0.0469 - accuracy: 0.9815 - val_loss: 1.5142 - val_accuracy: 0.7420
                           ↑                                          ↑
-                ‎92% על training                          ‎72% על validation
+                ‎98% על training                          ‎74% על validation
                        → overfitting קלאסי
+                          (val_loss קופץ מ-0.69 ל-1.5+!)
 
-Test accuracy: 0.650  (= 65%)</code></pre>
+Test accuracy: 0.664  (= 66.4%)</code></pre>
 
     <h4>גרפי learning curves</h4>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0;">
@@ -3908,12 +3912,23 @@ outputs = layers.Dense(1, activation="sigmoid")(x)</code></pre>
     </div>
 
     <h4>התוצאה</h4>
-    <p>אחרי ~100 epochs:</p>
+    <p>אצל רז הריצה התקצרה — נרשמו רק ‎30 מתוך 100 epochs (כנראה Colab התנתק או הופסק):</p>
+    <pre><code>Epoch  1/100 - loss: 0.6979 - accuracy: 0.5040 - val_loss: 1.2371 - val_accuracy: 0.5000
+Epoch 10/100 - loss: 0.5787 - accuracy: 0.6945 - val_loss: 0.5561 - val_accuracy: 0.7170
+Epoch 20/100 - loss: 0.4850 - accuracy: 0.7785 - val_loss: 0.4685 - val_accuracy: 0.7760
+Epoch 28/100 - loss: 0.4178 - accuracy: 0.8135 - val_loss: 0.4430 - val_accuracy: 0.8090  ← השיא
+Epoch 30/100 - loss: 0.4061 - accuracy: 0.8130 - val_loss: 0.4653 - val_accuracy: 0.7990
+
+Test accuracy: 0.811  (= 81.1%)</code></pre>
     <ul>
-      <li><strong>Validation accuracy:</strong> ~80%</li>
-      <li><strong>Test accuracy:</strong> ~83% (לפי ה-PDF — לא נשמר בפלט של רז)</li>
-      <li><strong>קפיצה מ-65% ל-83%</strong> — שווה את הטרחה</li>
+      <li><strong>Validation accuracy בשיא:</strong> 80.9% (epoch 28)</li>
+      <li><strong>Test accuracy:</strong> 81.1% — קפיצה מ-66.4% ל-81.1% = +14.7 נקודות</li>
+      <li><strong>שימו לב</strong> — אין overfitting. val_loss ירד יחד עם training_loss (לפחות עד epoch 30). זה הסימן ש-augmentation+dropout עובדים.</li>
     </ul>
+
+    <div class="callout warning">
+      <strong>הערה על "100 epochs":</strong> הספר ממליץ על 100 epochs אבל אצל רז זה נקטע ב-30. <em>הרבה פעמים Colab Free מתנתק כשיש דממה במחשב או הסשן עובר 12 שעות.</em> פתרונות: (1) Colab Pro / Pro+. (2) להריץ עם <code>ModelCheckpoint(save_best_only=True)</code> כך שכל הזמן יש משקלות שמורים. (3) להריץ מקומית עם GPU.
+    </div>
   </div>
 
   <!-- ========== 5. VGG16 INTRO ========== -->
@@ -4000,8 +4015,8 @@ x = layers.Dropout(0.5)(x)
 outputs = layers.Dense(1, activation="sigmoid")(x)</code></pre>
 
     <ul>
-      <li><strong>זמן/epoch:</strong> ~2 שניות ⚡</li>
-      <li><strong>Val accuracy:</strong> ~98%</li>
+      <li><strong>זמן/epoch:</strong> ~0.5 שנייה ⚡⚡ (פלא בלי conv_base בכל epoch)</li>
+      <li><strong>Val accuracy:</strong> 97.7-98.4% (השיא ב-epoch 14)</li>
       <li><strong>חיסרון:</strong> אי-אפשר לשלב augmentation (כי features חושבו פעם אחת ושמורים)</li>
     </ul>
 
@@ -4032,9 +4047,9 @@ print(len(conv_base.trainable_weights))   # → 0   ✓ מקופא</code></pre>
     </div>
 
     <ul>
-      <li><strong>זמן/epoch:</strong> ~360 שניות (פי 180 איטי!) 🐢</li>
-      <li><strong>Test accuracy:</strong> 97.5% — יותר יציב מהשיטה המהירה</li>
-      <li><strong>עלות:</strong> ~5 שעות אימון ב-Colab GPU</li>
+      <li><strong>זמן/epoch:</strong> ~10-20 שניות (פי 20-30 איטי!) 🐢</li>
+      <li><strong>Test accuracy:</strong> 97.9% — קצת יותר טוב מהשיטה המהירה</li>
+      <li><strong>עלות:</strong> ‎50 epochs × ~12s ≈ 10 דקות ב-Colab GPU</li>
     </ul>
   </div>
 
@@ -4094,13 +4109,23 @@ history = model.fit(train_dataset, epochs=30,
     </div>
 
     <h4>התוצאה</h4>
-    <pre><code>Epoch  1/30 - loss: 0.2617 - accuracy: 0.9915 - val_loss: 1.4101 - val_accuracy: 0.9820
-Epoch 13/30 - loss: 0.2867 - accuracy: 0.9920 - val_loss: 1.3964 - val_accuracy: 0.9830
-Epoch 14/30 - loss: 0.2686 - accuracy: 0.9935 - val_loss: 1.3960 - val_accuracy: 0.9830
+    <pre><code>Epoch  1/30 - loss: 0.3296 - accuracy: 0.9910 - val_loss: 2.1599 - val_accuracy: 0.9760
+Epoch  7/30 - loss: 0.0879 - accuracy: 0.9945 - val_loss: 1.2127 - val_accuracy: 0.9860  ← שיא
+Epoch 14/30 - loss: 0.1573 - accuracy: 0.9945 - val_loss: 1.3727 - val_accuracy: 0.9840
+Epoch 29/30 - loss: 0.0621 - accuracy: 0.9970 - val_loss: 1.0429 - val_accuracy: 0.9830
+Epoch 30/30 - loss: 0.0774 - accuracy: 0.9975 - val_loss: 1.5774 - val_accuracy: 0.9780
 
-Test accuracy: 0.978  (= 97.8%)</code></pre>
+Test accuracy: 0.977  (= 97.7%)</code></pre>
 
-    <p><strong>הקפיצה היא ‎+0.3 נקודות אחוז</strong> — מינורי, אבל "בחינם" בהינתן שכבר יש את ה-feature extraction working.</p>
+    <div class="callout warning">
+      <strong>⚠ ממצא חשוב: הפעם fine-tuning <em>פגע</em> ב-0.2 נקודות (97.9% → 97.7%).</strong>
+      <ul>
+        <li><strong>למה זה קרה?</strong> כש-feature extraction כבר במצב כמעט-אופטימלי (97.9%), יש פחות מקום לשיפור ויותר סיכון להרס. ה-‎4 שכבות העליונות שהתאמנו זזו במידה מסוימת מהמיקום האופטימלי שלהן.</li>
+        <li><strong>זה לא שגיאה.</strong> זה ה<em>טבע הסטוכסטי</em> של DL — לפעמים השיפור הוא +1%, לפעמים −0.3%. בריצה הקודמת של רז זה היה +0.3%.</li>
+        <li><strong>איך מנהלים את זה בפועל?</strong> משווים val_accuracy בין שני המודלים (feature extraction vs fine-tuned). אם fine-tuned לא טוב יותר — שומרים את ה-best של feature extraction.</li>
+        <li><strong>הספר מצפה לשיפור.</strong> במקרים אחרים הוא אכן יחזור — תלוי במשימה, ב-lr, ובמספר השכבות שמשחררים.</li>
+      </ul>
+    </div>
   </div>
 
   <!-- ========== 7. RESULTS TABLE ========== -->
@@ -4110,48 +4135,58 @@ Test accuracy: 0.978  (= 97.8%)</code></pre>
       <tr><th>גישה</th><th>epochs</th><th>זמן/epoch</th><th>Val accuracy שיא</th><th>Test accuracy</th><th>מה נדרש</th></tr>
       <tr>
         <td><strong>From scratch</strong></td>
-        <td>30</td>
-        <td>~85s</td>
-        <td>~75% (overfit)</td>
-        <td><strong>65.0%</strong></td>
+        <td>30/30</td>
+        <td>~4-6s</td>
+        <td>74.6% (overfit חזק)</td>
+        <td><strong>66.4%</strong></td>
         <td>נתונים + ארכיטקטורה</td>
       </tr>
       <tr>
         <td><strong>+ Aug + Dropout</strong></td>
-        <td>~100</td>
-        <td>~90s</td>
-        <td>~80%</td>
-        <td>~83% (PDF)</td>
+        <td>30/100 ⚠</td>
+        <td>~3-5s</td>
+        <td>80.9% (epoch 28)</td>
+        <td><strong>81.1%</strong></td>
         <td>‎augmentation pipeline</td>
       </tr>
       <tr>
         <td><strong>VGG16 fast feature</strong></td>
-        <td>20</td>
-        <td>~2s</td>
-        <td>~98%</td>
+        <td>20/20</td>
+        <td>~0.5s ⚡</td>
+        <td>98.4% (epoch 14)</td>
         <td>(לא נמדד)</td>
         <td>VGG16 + classifier קטן</td>
       </tr>
       <tr>
         <td><strong>VGG16 + aug (frozen)</strong></td>
-        <td>50</td>
-        <td>~360s</td>
-        <td>~98.6%</td>
-        <td><strong>97.5%</strong></td>
+        <td>30/50</td>
+        <td>~10-20s</td>
+        <td>~98.4%</td>
+        <td><strong>97.9%</strong></td>
         <td>‎+ GPU טוב</td>
       </tr>
       <tr>
         <td><strong>Fine-tuning (4 top)</strong></td>
-        <td>30</td>
-        <td>~400s</td>
-        <td>~98.3%</td>
-        <td><strong>97.8%</strong></td>
+        <td>30/30</td>
+        <td>~12s</td>
+        <td>98.6% (epoch 2,7)</td>
+        <td><strong>97.7%</strong> ⚠</td>
         <td>‎+ lr נמוך + סבלנות</td>
       </tr>
     </table>
 
     <div class="callout info">
-      <strong>פערים בין הריצה לבין ה-PDF:</strong> רז ראה ‎65% מ-scratch במקום ‎70%, ו-‎97.5% feature extraction במקום ‎95% של הספר. הסיבה: stochasticity של אתחול ושל augmentation. <em>המגמה היא העיקר, לא המספר המדויק.</em>
+      <strong>תובנות מהמספרים בפועל:</strong>
+      <ul>
+        <li><strong>הקפיצה האמיתית היא ‎+31.5 נקודות</strong> (66.4 → 97.9) ב-step מ-augmentation ל-feature extraction.</li>
+        <li><strong>Augmentation לבד הוסיף ‎+14.7 נקודות</strong> (66.4 → 81.1) — חצי מהקפיצה הגדולה.</li>
+        <li><strong>Fine-tuning הוריד ‎−0.2 נקודות</strong> הפעם (97.9 → 97.7) — מקרה שבו לא היה מה לשפר.</li>
+        <li><strong>הזמן/epoch מאוד שונה מההרצה הקודמת</strong> (פי 30 מהיר יותר) — סימן שזה GPU חזק יותר.</li>
+      </ul>
+    </div>
+
+    <div class="callout warning">
+      <strong>פערים בין הריצות:</strong> רז הריץ פעמיים. בריצה הראשונה: 65/(~83)/97.5/97.8. בריצה השנייה: 66.4/81.1/97.9/97.7. <em>סטוכסטיות של DL — אתחול אקראי, augmentation אקראי, ב-dataset קטן זה משפיע. המגמה היא העיקר, לא המספר המדויק.</em>
     </div>
   </div>
 
@@ -4184,8 +4219,14 @@ Test accuracy: 0.978  (= 97.8%)</code></pre>
     </details>
 
     <details class="quiz">
-      <summary><strong>שאלה 6:</strong> בריצה של רז, epoch ‎13 של Feature Extraction with Augmentation נמשך ‎35,751 שניות (≈10 שעות). מה כנראה קרה?</summary>
-      <p>Colab התקנתק זמנית (Google Colab Pro/Free יכול להפסיק חיבור באמצע אימון ארוך). השכבה הזרימה את הקצב הממוצע ל-577s/step. <strong>טריקים להימנע:</strong> (1) להשתמש ב-<code>ModelCheckpoint(save_best_only=True)</code> כך שאם מתנתקים, יש משקלות שמורים. (2) להוריד ל-data לדיסק ולעבוד עם RAM פחות. (3) להעלות ל-Kaggle Notebooks (9h limit אבל יציב יותר).</p>
+      <summary><strong>שאלה 6:</strong> בריצה של רז fine-tuning <em>הוריד</em> את ה-accuracy מ-97.9% ל-97.7%. האם זה אומר ש-fine-tuning גרוע?</summary>
+      <p>לא! זה <strong>טבע סטוכסטי של DL</strong>:</p>
+      <ul>
+        <li>בריצה הקודמת של רז: fine-tuning שיפר ‎+0.3 (97.5 → 97.8). הפעם: ‎−0.2 (97.9 → 97.7).</li>
+        <li>הסיבה: כש-feature extraction כבר 97.9%, יש מעט מקום לשיפור. הסיכון של הרס פיצ'רים שכבר טובים גדל.</li>
+        <li><strong>אסטרטגיה נכונה:</strong> תמיד שומרים את שני המודלים (FE ו-FT) עם <code>ModelCheckpoint</code>, ומשתמשים בזה שמראה val_accuracy גבוה יותר.</li>
+        <li><strong>מתי fine-tuning תמיד עוזר:</strong> כש-feature extraction באזור ה-85-95%. כש-FE כבר 97-98%, ה-margin להוסיף קטן ו-fine-tuning יכול ללכת לכל כיוון.</li>
+      </ul>
     </details>
   </div>
 
@@ -4193,17 +4234,21 @@ Test accuracy: 0.978  (= 97.8%)</code></pre>
   <h3>10. תובנות ושגיאות נפוצות</h3>
   <div class="card">
     <ol>
-      <li><strong>‎`train_features.shape = (2000, 5, 5, 512)`</strong> — זה הפלט של block5_pool של VGG16 על קלט <code>180×180</code>. רק <code>2000 × 12,800 = 25.6M</code> ערכים → ‎~100MB ב-RAM, אז אפשר לאחסן הכל ולקבל אימון של 2 שניות לאפוק.</li>
+      <li><strong>‎`train_features.shape = (2000, 5, 5, 512)`</strong> — זה הפלט של block5_pool של VGG16 על קלט <code>180×180</code>. רק <code>2000 × 12,800 = 25.6M</code> ערכים → ‎~100MB ב-RAM, אז אפשר לאחסן הכל ולקבל אימון של חצי שנייה לאפוק.</li>
 
       <li><strong>למה <code>Conv2D(256, 3)</code> מופיע פעמיים בסוף הרשת מ-scratch?</strong> זו בחירה ארכיטקטונית נפוצה — להוסיף "עוד עומק" ברזולוציה הסופית הנמוכה (<code>9×9</code>) לפני ה-Flatten. זה לא חוק — אפשר גם רק פעם אחת.</li>
 
       <li><strong>VGG16 הוא איטי.</strong> ‎138M פרמטרים, מתוכם ‎14.7M ב-conv_base. אם מתפשרים על דיוק קטן, <strong>MobileNet/EfficientNet</strong> ייתנו transfer learning הרבה יותר זול לאימון ופי 10 מהיר ב-inference.</li>
 
-      <li><strong>למה loss עולה אבל accuracy מצוין?</strong> תופעה נפוצה ב-binary classification עם sigmoid: המודל אומר "100% חתול" על תמונה שהיא באמת חתול — אבל כשהוא טועה, הוא טועה <em>בביטחון</em> ("100% כלב" בעוד זה חתול), וזה דוחף את ה-loss הגבוה. ה-classification eraset (cat/dog) עדיין נכון.</li>
+      <li><strong>למה loss עולה אבל accuracy מצוין?</strong> תופעה נפוצה ב-binary classification עם sigmoid: המודל אומר "100% חתול" על תמונה שהיא באמת חתול — אבל כשהוא טועה, הוא טועה <em>בביטחון</em> ("100% כלב" בעוד זה חתול), וזה דוחף את ה-loss הגבוה. ה-classification eraset (cat/dog) עדיין נכון. בריצה הזו: val_accuracy = 98.3% אבל val_loss = 1.04 — תאם בדיוק את התופעה.</li>
 
       <li><strong>‎augmentation שולחת רק ב-training mode.</strong> רז שאל בעבר אם זה רץ ב-evaluate — לא. השכבות <code>RandomFlip</code> וכו' פשוט מעבירות את הקלט כפי שהוא במצב inference (<code>training=False</code>).</li>
 
-      <li><strong>אסטרטגיה למבחן/פרויקט:</strong> תמיד תתחילו עם <strong>feature extraction מהיר</strong> (גישה 3א) — זה ייתן baseline טוב תוך דקה. רק אם צריך עוד 0.5% — עוברים ל-feature extraction עם augmentation, ורק אז ל-fine-tuning.</li>
+      <li><strong>Fine-tuning יכול גם להזיק.</strong> בריצה הזו זה הוריד את ה-test accuracy ב-0.2 נקודות. כשה-baseline (feature extraction) כבר 97.9%, אין הרבה מקום לשפר ויש סיכון להרס. <strong>תמיד שומרים גם את ה-FE וגם את ה-FT</strong>, ומשתמשים בטוב ביניהם.</li>
+
+      <li><strong>סטוכסטיות בריצות:</strong> רז הריץ פעמיים וקיבל מספרים שונים — 65→97.8 בפעם הראשונה, 66.4→97.7 בפעם השנייה. אותו קוד, אותם נתונים, אותם hyperparameters — אבל אתחול אקראי + augmentation אקראי יוצרים שונות של ‎±1-2 נקודות אחוז. <em>כדי לקבל מספר אמין צריך 5+ ריצות ולקחת ממוצע.</em></li>
+
+      <li><strong>אסטרטגיה למבחן/פרויקט:</strong> תמיד תתחילו עם <strong>feature extraction מהיר</strong> (גישה 3א) — זה ייתן baseline טוב תוך דקה. רק אם צריך עוד דיוק — עוברים ל-feature extraction עם augmentation, ורק אז ל-fine-tuning (זוכרים שזה לא תמיד עוזר).</li>
     </ol>
 
     <div class="callout success">

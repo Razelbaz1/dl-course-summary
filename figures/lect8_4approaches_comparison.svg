@@ -19,7 +19,7 @@
   </defs>
 
   <text x="380" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1f3a68">4 גישות לסיווג Cats vs Dogs — Test Accuracy בפועל</text>
-  <text x="380" y="50" text-anchor="middle" font-size="13" fill="#6b7280">מתוך הריצה ב-Colab של רז (2026-05-11) על 4,000 תמונות</text>
+  <text x="380" y="50" text-anchor="middle" font-size="13" fill="#6b7280">מתוך הריצה האמיתית של רז ב-Colab (2026-05-12) על 4,000 תמונות</text>
 
   <!-- Y axis -->
   <line x1="80" y1="90" x2="80" y2="380" stroke="#9ca3af" stroke-width="1.5"/>
@@ -41,36 +41,41 @@
     <text x="73" y="94">100%</text>
   </g>
 
-  <!-- Bars: width = 90, gap = 70, start x = 130 -->
-  <!-- Bar 1: From scratch = 65.0% -> y = 380 - (65 * 2.9) = 380 - 188.5 = 191.5, height = 188.5 -->
-  <rect x="130" y="191.5" width="90" height="188.5" fill="url(#g1)" rx="4"/>
-  <text x="175" y="183" text-anchor="middle" font-size="15" font-weight="700" fill="#c0392b">65.0%</text>
+  <!-- Scale: 1% = 2.9 px. y_top = 380 - acc*2.9 -->
+
+  <!-- Bar 1: From scratch = 66.4% -> 380 - 192.56 = 187.44, h = 192.56 -->
+  <rect x="130" y="187.44" width="90" height="192.56" fill="url(#g1)" rx="4"/>
+  <text x="175" y="179" text-anchor="middle" font-size="15" font-weight="700" fill="#c0392b">66.4%</text>
   <text x="175" y="405" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">From scratch</text>
   <text x="175" y="422" text-anchor="middle" font-size="11" fill="#6b7280">5×Conv + Dense</text>
-  <text x="175" y="437" text-anchor="middle" font-size="11" fill="#6b7280">~85s/epoch</text>
+  <text x="175" y="437" text-anchor="middle" font-size="11" fill="#6b7280">~4s/epoch</text>
 
-  <!-- Bar 2: Augmentation ≈ 83% -> y = 380 - (83 * 2.9) = 380 - 240.7 = 139.3, height = 240.7 -->
-  <rect x="290" y="139.3" width="90" height="240.7" fill="url(#g2)" rx="4"/>
-  <text x="335" y="131" text-anchor="middle" font-size="15" font-weight="700" fill="#d35400">~83%</text>
+  <!-- Bar 2: Augmentation = 81.1% -> 380 - 235.19 = 144.81, h = 235.19 -->
+  <rect x="290" y="144.81" width="90" height="235.19" fill="url(#g2)" rx="4"/>
+  <text x="335" y="136" text-anchor="middle" font-size="15" font-weight="700" fill="#d35400">81.1%</text>
   <text x="335" y="405" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">+ Augmentation</text>
   <text x="335" y="422" text-anchor="middle" font-size="11" fill="#6b7280">+ Dropout 0.5</text>
-  <text x="335" y="437" text-anchor="middle" font-size="11" fill="#6b7280">~100 epochs</text>
+  <text x="335" y="437" text-anchor="middle" font-size="11" fill="#6b7280">‎30/100 epochs ⚠</text>
 
-  <!-- Bar 3: Feature extraction = 97.5% -> y = 380 - (97.5*2.9) = 380 - 282.75 = 97.25, height = 282.75 -->
-  <rect x="450" y="97.25" width="90" height="282.75" fill="url(#g3)" rx="4"/>
-  <text x="495" y="89" text-anchor="middle" font-size="15" font-weight="700" fill="#27ae60">97.5%</text>
+  <!-- Bar 3: Feature extraction = 97.9% -> 380 - 283.91 = 96.09, h = 283.91 -->
+  <rect x="450" y="96.09" width="90" height="283.91" fill="url(#g3)" rx="4"/>
+  <text x="495" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#27ae60">97.9%</text>
   <text x="495" y="405" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">VGG16 (frozen)</text>
   <text x="495" y="422" text-anchor="middle" font-size="11" fill="#6b7280">+ Augmentation</text>
-  <text x="495" y="437" text-anchor="middle" font-size="11" fill="#6b7280">~360s/epoch</text>
+  <text x="495" y="437" text-anchor="middle" font-size="11" fill="#6b7280">~12s/epoch</text>
 
-  <!-- Bar 4: Fine-tuning = 97.8% -> y = 380 - (97.8*2.9) = 380 - 283.62 = 96.38, height = 283.62 -->
-  <rect x="610" y="96.38" width="90" height="283.62" fill="url(#g4)" rx="4"/>
-  <text x="655" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#1f6fb5">97.8%</text>
+  <!-- Bar 4: Fine-tuning = 97.7% -> 380 - 283.33 = 96.67, h = 283.33 -->
+  <rect x="610" y="96.67" width="90" height="283.33" fill="url(#g4)" rx="4"/>
+  <text x="655" y="88" text-anchor="middle" font-size="15" font-weight="700" fill="#1f6fb5">97.7%</text>
   <text x="655" y="405" text-anchor="middle" font-size="13" font-weight="600" fill="#374151">Fine-tuning</text>
   <text x="655" y="422" text-anchor="middle" font-size="11" fill="#6b7280">last 4 layers</text>
   <text x="655" y="437" text-anchor="middle" font-size="11" fill="#6b7280">lr = 1e-5</text>
 
   <!-- Annotation: leap arrow -->
-  <path d="M 220 191 Q 300 100 450 97" stroke="#27ae60" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
-  <text x="335" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60">+32.5 נקודות אחוז ← Transfer Learning</text>
+  <path d="M 220 187 Q 300 100 450 96" stroke="#27ae60" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+  <text x="335" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60">+31.5 נקודות אחוז ← Transfer Learning</text>
+
+  <!-- Annotation: red arrow showing fine-tuning HURT -->
+  <path d="M 540 96 Q 575 75 610 96" stroke="#dc2626" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+  <text x="575" y="68" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626">−0.2 ⚠</text>
 </svg>
