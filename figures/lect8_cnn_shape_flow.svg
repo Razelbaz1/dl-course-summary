@@ -151,7 +151,7 @@
     <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:6px 12px; background:#fff7ed; border:1px solid #fb923c; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#9a3412; font-size:12px; line-height:1.45;">
       <div style="font-weight:700;">📊 איך מחשבים פרמטרים לדוגמה (Conv2D 32):</div>
       <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">params = filters × (kernel_h × kernel_w × input_channels) + filters_bias</div>
-      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 32 × (3 × 3 × 3) + 32 = 864 + 32 = <strong>896</strong> ✓</div>
+      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">&#160;&#160;&#160;&#160;&#160;= 32 × (3 × 3 × 3) + 32 = 864 + 32 = <strong>896</strong> ✓</div>
     </div>
   </foreignObject>
 
