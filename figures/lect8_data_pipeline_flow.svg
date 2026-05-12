@@ -150,51 +150,28 @@
     <text x="815" y="278" text-anchor="middle" font-size="11" font-weight="700" fill="#991b1b">prediction + loss + step</text>
   </g>
 
-  <!-- ============= LAZY CALLOUT ============= -->
-  <g>
-    <rect x="20" y="320" width="450" height="150" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" rx="6"/>
+  <!-- ============= LAZY CALLOUT (using foreignObject for native HTML/RTL handling) ============= -->
+  <foreignObject x="20" y="320" width="450" height="155">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:10px 14px; background:#fffbeb; border:2px solid #f59e0b; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#92400e; font-size:11px; line-height:1.45;">
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">🦥 Lazy Evaluation — הסוד של Dataset</div>
+      <div>ה-Dataset הוא רק "מתכון" — לא טוען שום נתון עד שהוא נדרש.</div>
+      <div>הקריאה האמיתית קורית רק בלולאה או ב-<span style="font-family:Consolas,monospace">model.fit()</span>.</div>
+      <div style="font-weight:700; margin-top:8px;">💡 למה זה קריטי לתמונות:</div>
+      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right; margin-top:2px;">25,000 × 180 × 180 × 3 × 4 bytes ≈ 9.7 GB</div>
+      <div>לא ייכנס ל-12 GB RAM של Colab Free!</div>
+    </div>
+  </foreignObject>
 
-    <!-- Title (RTL) -->
-    <text x="455" y="345" text-anchor="end" direction="rtl" font-size="13" font-weight="700" fill="#92400e">🦥 Lazy Evaluation — הסוד של Dataset</text>
-
-    <!-- Hebrew explanation lines (RTL) -->
-    <text x="455" y="368" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">ה-Dataset הוא רק "מתכון" — לא טוען שום נתון עד שהוא נדרש.</text>
-    <text x="455" y="385" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">הקריאה האמיתית קורית רק בלולאה או ב-model.fit().</text>
-
-    <!-- Subheading (RTL) -->
-    <text x="455" y="412" text-anchor="end" direction="rtl" font-size="11" font-weight="700" fill="#92400e">💡 למה זה קריטי לתמונות:</text>
-
-    <!-- Code-only line (LTR) -->
-    <text x="35" y="430" text-anchor="start" direction="ltr" font-size="11" fill="#92400e" font-family="Consolas, monospace">25,000 × 180 × 180 × 3 × 4 bytes ≈ 9.7 GB</text>
-
-    <!-- Hebrew conclusion (RTL) -->
-    <text x="455" y="450" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">לא ייכנס ל-12 GB RAM של Colab Free!</text>
-  </g>
-
-  <!-- ============= MAP CALLOUT ============= -->
-  <g>
-    <rect x="485" y="320" width="430" height="150" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" rx="6"/>
-
-    <!-- Title (RTL) -->
-    <text x="900" y="345" text-anchor="end" direction="rtl" font-size="13" font-weight="700" fill="#1e40af">🔧 .map() — transformation בדרך</text>
-
-    <!-- Code example (LTR) -->
-    <text x="500" y="368" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">dataset.map(lambda x: tf.reshape(x, (4, 4)))</text>
-
-    <!-- Hebrew explanation (RTL) -->
-    <text x="900" y="388" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">פעולה ש"מתחברת" ל-pipeline — רצה רק בכל element בלולאה.</text>
-
-    <!-- Subheading (RTL) -->
-    <text x="900" y="412" text-anchor="end" direction="rtl" font-size="11" font-weight="700" fill="#1e40af">שימושים נפוצים:</text>
-
-    <!-- 3 use cases — each split: bullet+code (LTR) and Hebrew (RTL) -->
-    <text x="500" y="430" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(preprocess_input)</text>
-    <text x="900" y="430" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— נרמול VGG16</text>
-
-    <text x="500" y="446" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(augment)</text>
-    <text x="900" y="446" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— augmentation לפני batch</text>
-
-    <text x="500" y="462" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(load_image)</text>
-    <text x="900" y="462" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— טעינת JPG מהדיסק</text>
-  </g>
+  <!-- ============= MAP CALLOUT (using foreignObject) ============= -->
+  <foreignObject x="485" y="320" width="430" height="155">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:10px 14px; background:#eff6ff; border:2px solid #3b82f6; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#1e40af; font-size:11px; line-height:1.45;">
+      <div style="font-size:13px; font-weight:700; margin-bottom:6px;">🔧 .map() — transformation בדרך</div>
+      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">dataset.map(lambda x: tf.reshape(x, (4, 4)))</div>
+      <div style="margin-top:4px;">פעולה ש"מתחברת" ל-pipeline — רצה בכל element בלולאה.</div>
+      <div style="font-weight:700; margin-top:6px;">שימושים נפוצים:</div>
+      <div><span style="font-family:Consolas,monospace">.map(preprocess_input)</span> — נרמול VGG16</div>
+      <div><span style="font-family:Consolas,monospace">.map(augment)</span> — augmentation לפני batch</div>
+      <div><span style="font-family:Consolas,monospace">.map(load_image)</span> — טעינת JPG מהדיסק</div>
+    </div>
+  </foreignObject>
 </svg>
