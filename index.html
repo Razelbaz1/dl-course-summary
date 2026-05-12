@@ -162,6 +162,22 @@
     max-width: 100%;
   }
 
+  /* Code blocks — always LTR, monospace, with horizontal scroll for long lines */
+  pre {
+    background: #fff; border-right: 4px solid var(--c-primary);
+    padding: 12px 14px; margin: 8px 0; border-radius: 6px;
+    direction: ltr; text-align: left;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  pre code {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 13.5px; line-height: 1.55; color: #1e293b;
+    white-space: pre; display: block;
+  }
+  /* Inline <code> stays as-is, but keep its bidi-clean */
+  code { font-family: Consolas, "Courier New", monospace; direction: ltr; unicode-bidi: embed; }
+
   /* Quiz */
   .quiz-q {
     background: linear-gradient(90deg, #eaf2ff 0%, #f0f7ff 100%);
@@ -300,6 +316,7 @@
 
     /* קוד וקטעי-קוד עם פונט מעט קטן יותר */
     .formula { font-size: 13.5px; }
+    pre code { font-size: 12.5px; }
 
     /* Inputs ב-16px למניעת זום אוטומטי ב-iOS */
     .glossary-controls input { font-size: 16px; padding: 11px 14px; }
