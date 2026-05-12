@@ -1,6 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 480" font-family="Segoe UI, Arial, sans-serif">
   <text x="440" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#1f3a68">Fine-Tuning — 5 השלבים הקפדניים</text>
-  <text x="440" y="46" text-anchor="middle" font-size="13" fill="#6b7280">מתוך עמוד 47 של ה-PDF · התוצאה הסופית: 97.8% test accuracy</text>
+  <foreignObject x="40" y="34" width="800" height="22">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#6b7280; font-size:13px; line-height:1.4;">
+      מתוך עמוד 47 של ה-PDF. תוצאה אחרי שלב 3 (Feature Extraction): 97.9% · תוצאה אחרי שלב 5 (Fine-Tuning): 97.7%.
+    </div>
+  </foreignObject>
 
   <defs>
     <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -15,12 +19,20 @@
   <g>
     <circle cx="80" cy="100" r="22" fill="#1f3a68"/>
     <text x="80" y="106" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">1</text>
-    <text x="120" y="92" font-size="13" font-weight="700" fill="#1f3a68">בנייה — Custom head על conv_base מאומן</text>
+    <foreignObject x="115" y="76" width="380" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#1f3a68; font-size:13px; font-weight:700;">
+        בנייה — Custom Head מעל ה-conv_base המאומן
+      </div>
+    </foreignObject>
     <rect x="120" y="100" width="350" height="40" fill="#dcfce7" stroke="#16a34a" rx="4"/>
     <text x="295" y="118" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#166534">conv_base = VGG16(weights="imagenet", include_top=False)</text>
     <text x="295" y="133" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#166534">head: Flatten → Dense 256 → Dropout → Dense 1</text>
-    <text x="730" y="116" text-anchor="middle" font-size="11" fill="#6b7280">📦 ‎14.7M + 3.3M params</text>
-    <text x="730" y="132" text-anchor="middle" font-size="10" fill="#6b7280">conv_base + head</text>
+    <foreignObject x="600" y="100" width="260" height="40">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#6b7280; font-size:11px; line-height:1.45; text-align:center;">
+        <div>📦 14.7M + 3.3M params</div>
+        <div style="font-size:10px;">conv_base + head</div>
+      </div>
+    </foreignObject>
   </g>
 
   <!-- Arrow down 1->2 -->
@@ -30,13 +42,25 @@
   <g>
     <circle cx="80" cy="180" r="22" fill="#1f3a68"/>
     <text x="80" y="186" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">2</text>
-    <text x="120" y="172" font-size="13" font-weight="700" fill="#1f3a68">קפיאה — כל ה-conv_base = frozen</text>
+    <foreignObject x="115" y="156" width="380" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#1f3a68; font-size:13px; font-weight:700;">
+        קפיאה — כל ה-conv_base מוגדר כ-frozen
+      </div>
+    </foreignObject>
     <rect x="120" y="180" width="350" height="40" fill="url(#frozen5)" stroke="#1e40af" rx="4" opacity="0.25"/>
     <rect x="120" y="180" width="350" height="40" fill="none" stroke="#1e40af" rx="4"/>
     <text x="295" y="198" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#1e3a8a">conv_base.trainable = False</text>
-    <text x="295" y="213" text-anchor="middle" font-size="10" fill="#1e3a8a">⚠ חובה לפני model.compile()!</text>
-    <text x="730" y="196" text-anchor="middle" font-size="11" fill="#6b7280">🧊 ‎0 trainable weights</text>
-    <text x="730" y="212" text-anchor="middle" font-size="10" fill="#6b7280">ב-conv_base</text>
+    <foreignObject x="120" y="202" width="350" height="20">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#1e3a8a; font-size:10px;">
+        ⚠ חובה לפני <span dir="ltr" style="font-family:Consolas,monospace">model.compile()</span>!
+      </div>
+    </foreignObject>
+    <foreignObject x="600" y="180" width="260" height="40">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#6b7280; font-size:11px; line-height:1.45; text-align:center;">
+        <div>🧊 0 trainable weights</div>
+        <div style="font-size:10px;">בתוך ה-conv_base</div>
+      </div>
+    </foreignObject>
   </g>
 
   <line x1="80" y1="205" x2="80" y2="240" stroke="#1f3a68" stroke-width="2" marker-end="url(#arr5)"/>
@@ -45,12 +69,24 @@
   <g>
     <circle cx="80" cy="260" r="22" fill="#1f3a68"/>
     <text x="80" y="266" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">3</text>
-    <text x="120" y="252" font-size="13" font-weight="700" fill="#1f3a68">אימון רק ה-head (Feature extraction)</text>
+    <foreignObject x="115" y="236" width="380" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#1f3a68; font-size:13px; font-weight:700;">
+        אימון ה-head בלבד (זהו Feature Extraction)
+      </div>
+    </foreignObject>
     <rect x="120" y="260" width="350" height="40" fill="#fef9c3" stroke="#ca8a04" rx="4"/>
     <text x="295" y="278" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#854d0e">optimizer = RMSprop(lr=1e-3, default)</text>
-    <text x="295" y="293" text-anchor="middle" font-size="10" fill="#854d0e">‎50 epochs · רק head לומד פיצ'רים → cat/dog</text>
-    <text x="730" y="276" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">→ test 97.5%</text>
-    <text x="730" y="292" text-anchor="middle" font-size="10" fill="#6b7280">(זה השלב הקודם)</text>
+    <foreignObject x="120" y="282" width="350" height="20">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#854d0e; font-size:10px;">
+        50 epochs · רק ה-head לומד למפות features ל-cat/dog
+      </div>
+    </foreignObject>
+    <foreignObject x="600" y="260" width="260" height="40">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; line-height:1.45; text-align:center;">
+        <div style="color:#166534; font-size:11px; font-weight:600;">⇐ test 97.9%</div>
+        <div style="color:#6b7280; font-size:10px;">(זה השלב הקודם)</div>
+      </div>
+    </foreignObject>
   </g>
 
   <line x1="80" y1="285" x2="80" y2="320" stroke="#1f3a68" stroke-width="2" marker-end="url(#arr5)"/>
@@ -59,12 +95,20 @@
   <g>
     <circle cx="80" cy="340" r="22" fill="#dc2626"/>
     <text x="80" y="346" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">4</text>
-    <text x="120" y="332" font-size="13" font-weight="700" fill="#9a3412">הפשרה — Unfreeze 4 שכבות עליונות (top of conv_base)</text>
+    <foreignObject x="115" y="316" width="380" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#9a3412; font-size:13px; font-weight:700;">
+        הפשרה — Unfreeze ל-4 השכבות העליונות של ה-conv_base
+      </div>
+    </foreignObject>
     <rect x="120" y="340" width="350" height="40" fill="#fed7aa" stroke="#ea580c" rx="4"/>
     <text x="295" y="358" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#9a3412">conv_base.trainable = True</text>
     <text x="295" y="373" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#9a3412">for layer in conv_base.layers[:-4]: layer.trainable = False</text>
-    <text x="730" y="356" text-anchor="middle" font-size="11" fill="#6b7280">🔓 ‎4 שכבות עליונות</text>
-    <text x="730" y="372" text-anchor="middle" font-size="10" fill="#6b7280">‎(Block 5)</text>
+    <foreignObject x="600" y="340" width="260" height="40">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#6b7280; font-size:11px; line-height:1.45; text-align:center;">
+        <div>🔓 4 שכבות עליונות</div>
+        <div style="font-size:10px;">(Block 5 של VGG16)</div>
+      </div>
+    </foreignObject>
   </g>
 
   <line x1="80" y1="365" x2="80" y2="400" stroke="#1f3a68" stroke-width="2" marker-end="url(#arr5)"/>
@@ -73,55 +117,80 @@
   <g>
     <circle cx="80" cy="420" r="22" fill="#22c55e"/>
     <text x="80" y="426" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">5</text>
-    <text x="120" y="412" font-size="13" font-weight="700" fill="#166534">אימון משותף ב-learning rate נמוך מאוד</text>
+    <foreignObject x="115" y="396" width="380" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; color:#166534; font-size:13px; font-weight:700;">
+        אימון משותף עם learning rate נמוך מאוד
+      </div>
+    </foreignObject>
     <rect x="120" y="420" width="350" height="40" fill="#dcfce7" stroke="#16a34a" rx="4"/>
     <text x="295" y="438" text-anchor="middle" font-size="11" font-family="Consolas, monospace" fill="#166534">RMSprop(learning_rate=<tspan font-weight="700">1e-5</tspan>)</text>
-    <text x="295" y="453" text-anchor="middle" font-size="10" fill="#166534">‎30 epochs · top conv layers + head מתעדכנים יחד בעדינות</text>
-    <text x="730" y="436" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d">→ test 97.8%</text>
-    <text x="730" y="452" text-anchor="middle" font-size="10" fill="#16a34a">+0.3 נקודות אחוז</text>
+    <foreignObject x="120" y="442" width="350" height="20">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#166534; font-size:10px;">
+        30 epochs · ה-top conv layers וה-head מתעדכנים יחד בעדינות
+      </div>
+    </foreignObject>
+    <foreignObject x="600" y="420" width="260" height="40">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="font-family:'Segoe UI',Arial,sans-serif; line-height:1.45; text-align:center;">
+        <div style="color:#1e40af; font-size:11px; font-weight:700;">⇐ test 97.7%</div>
+        <div style="color:#dc2626; font-size:10px;">−0.2 נקודות אחוז (ירידה!)</div>
+      </div>
+    </foreignObject>
   </g>
 
-  <!-- Right side: Why low lr? Box -->
-  <g>
-    <rect x="500" y="100" width="370" height="200" fill="#fff7ed" stroke="#fb923c" rx="6"/>
-    <text x="685" y="125" text-anchor="middle" font-size="14" font-weight="700" fill="#9a3412">למה lr = 1e-5 ולא 1e-3 הרגיל?</text>
+  <!-- Right side: Why low lr? Box (foreignObject — clean Hebrew/code bidi) -->
+  <foreignObject x="500" y="80" width="370" height="225">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:10px 14px; background:#fff7ed; border:1px solid #fb923c; border-radius:6px; font-family:'Segoe UI',Arial,sans-serif; color:#9a3412; font-size:11px; line-height:1.45;">
+      <div style="font-size:13px; font-weight:700; text-align:center; margin-bottom:6px;">למה lr = 1e-5 ולא 1e-3 הרגיל?</div>
 
-    <text x="520" y="150" font-size="11" font-weight="700" fill="#9a3412">1. המשקלים כבר טובים</text>
-    <text x="520" y="167" font-size="10" fill="#9a3412">conv_base אומן על 1.4M תמונות ImageNet — שינוי חזק יהרוס</text>
-    <text x="520" y="180" font-size="10" fill="#9a3412">את ה-features שלמד (catastrophic forgetting).</text>
+      <div style="font-weight:700; margin-top:6px;">1. המשקלים כבר טובים</div>
+      <div style="font-size:10.5px;">ה-conv_base כבר אומן על 1.4M תמונות ב-ImageNet. שינוי חזק יהרוס את ה-features שלמד (catastrophic forgetting).</div>
 
-    <text x="520" y="205" font-size="11" font-weight="700" fill="#9a3412">2. ההתקדמות הנותרת קטנה</text>
-    <text x="520" y="222" font-size="10" fill="#9a3412">הרי conv_base כבר יודע "חתול" ו"כלב" — הוא ראה אותם</text>
-    <text x="520" y="235" font-size="10" fill="#9a3412">ב-ImageNet. צריך רק התאמה עדינה.</text>
+      <div style="font-weight:700; margin-top:6px;">2. ההתקדמות הנותרת קטנה</div>
+      <div style="font-size:10.5px;">ה-conv_base כבר "מכיר" חתולים וכלבים מתוך ImageNet — נדרשת רק התאמה עדינה לדומיין הספציפי.</div>
 
-    <text x="520" y="260" font-size="11" font-weight="700" fill="#9a3412">3. למה רק 4 שכבות?</text>
-    <text x="520" y="277" font-size="10" fill="#9a3412">השכבות התחתונות (Block 1-3) לומדות פיצ'רים גנריים</text>
-    <text x="520" y="290" font-size="10" fill="#9a3412">(קצוות, מרקמים) שטובים לכל משימה. השכבות העליונות</text>
-    <text x="520" y="303" font-size="10" fill="#9a3412">לומדות פיצ'רים סמנטיים — שם כדאי להתאים.</text>
-  </g>
+      <div style="font-weight:700; margin-top:6px;">3. למה רק 4 שכבות עליונות?</div>
+      <div style="font-size:10.5px;">השכבות התחתונות (Block 1-3) לומדות פיצ'רים גנריים — קצוות, מרקמים — שטובים לכל משימה. השכבות העליונות (Block 5) הן שלומדות פיצ'רים סמנטיים, ושם משתלם להתאים.</div>
+    </div>
+  </foreignObject>
 
-  <!-- Improvement chart -->
+  <!-- Comparison chart: in THIS run, fine-tuning hurt by 0.2pp -->
   <g>
     <rect x="500" y="320" width="370" height="140" fill="#f8fafc" stroke="#94a3b8" rx="6"/>
-    <text x="685" y="342" text-anchor="middle" font-size="13" font-weight="700" fill="#1f3a68">תוצאות מצטברות</text>
+    <foreignObject x="510" y="328" width="350" height="20">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#1f3a68; font-size:13px; font-weight:700;">
+        השוואת שני המודלים
+      </div>
+    </foreignObject>
 
     <line x1="520" y1="430" x2="850" y2="430" stroke="#475569" stroke-width="1.5"/>
 
-    <!-- bar After step 3: 97.5 -->
-    <rect x="540" y="380" width="80" height="50" fill="#16a34a" rx="3"/>
-    <text x="580" y="370" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">97.5%</text>
-    <text x="580" y="448" text-anchor="middle" font-size="11" fill="#166534">אחרי שלב 3</text>
-    <text x="580" y="460" text-anchor="middle" font-size="10" fill="#6b7280">(feature extraction)</text>
+    <!-- bar After step 3: 97.9% (HIGHER bar now) -->
+    <rect x="540" y="372" width="80" height="58" fill="#16a34a" rx="3"/>
+    <text x="580" y="362" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">97.9%</text>
+    <foreignObject x="540" y="436" width="80" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; line-height:1.3;">
+        <div style="color:#166534; font-size:11px;">אחרי שלב 3</div>
+        <div style="color:#6b7280; font-size:9.5px;">(feature extraction)</div>
+      </div>
+    </foreignObject>
 
-    <!-- bar After step 5: 97.8 -->
+    <!-- bar After step 5: 97.7% (LOWER bar now) -->
     <rect x="660" y="376" width="80" height="54" fill="#1f6fb5" rx="3"/>
-    <text x="700" y="366" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">97.8%</text>
-    <text x="700" y="448" text-anchor="middle" font-size="11" fill="#1e40af">אחרי שלב 5</text>
-    <text x="700" y="460" text-anchor="middle" font-size="10" fill="#6b7280">(fine-tuning)</text>
+    <text x="700" y="366" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">97.7%</text>
+    <foreignObject x="660" y="436" width="80" height="22">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; line-height:1.3;">
+        <div style="color:#1e40af; font-size:11px;">אחרי שלב 5</div>
+        <div style="color:#6b7280; font-size:9.5px;">(fine-tuning)</div>
+      </div>
+    </foreignObject>
 
-    <!-- delta arrow -->
-    <path d="M 620 392 L 660 388" stroke="#dc2626" stroke-width="2" marker-end="url(#arr5)"/>
-    <text x="785" y="395" font-size="11" font-weight="700" fill="#dc2626">+0.3</text>
-    <text x="785" y="410" font-size="10" fill="#dc2626">נקודות</text>
+    <!-- delta arrow: points DOWN (decrease) -->
+    <path d="M 620 376 L 660 380" stroke="#dc2626" stroke-width="2" marker-end="url(#arr5)"/>
+    <foreignObject x="755" y="378" width="80" height="42">
+      <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="text-align:center; font-family:'Segoe UI',Arial,sans-serif; color:#dc2626; line-height:1.3;">
+        <div style="font-size:11px; font-weight:700;">−0.2</div>
+        <div style="font-size:10px;">נקודות (ירידה!)</div>
+      </div>
+    </foreignObject>
   </g>
 </svg>
