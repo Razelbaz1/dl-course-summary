@@ -3802,18 +3802,220 @@ train_dataset = image_dataset_from_directory(
 # פלט:
 # data batch shape: (32, 180, 180, 3)
 # labels batch shape: (32,)</code></pre>
+  </div>
 
-    <h4>‎4 פעולות שימושיות על Dataset</h4>
+  <!-- ========== A. WHY DATASET? ========== -->
+  <h4 style="margin-top: 24px;">A. למה צריך Dataset object בכלל?</h4>
+  <div class="card">
+    <p>ביחידות 3-6 עבדנו עם MNIST/Boston/Reuters/IMDB — כל אחד מהם dataset קטן יחסית (~50MB) שהסבנו ל-NumPy והעברנו ישירות ל-<code>model.fit()</code>. למה לא נמשיך כך?</p>
+
+    <h5>חישוב הזיכרון — Cats vs Dogs המלא</h5>
     <table class="compare">
-      <tr><th>פעולה</th><th>מה היא עושה</th><th>דוגמה מהקוד</th></tr>
-      <tr><td><code>.batch(n)</code></td><td>קבוצת n אובייקטים → batch אחד</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(1000, 16) &nbsp;→&nbsp; batches of (32, 16)</span></td></tr>
-      <tr><td><code>.map(fn)</code></td><td>הפעלת פונקציה על כל element</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">map(lambda x: tf.reshape(x, (4,4))) &nbsp;→&nbsp; shape (16,) becomes (4, 4)</span></td></tr>
-      <tr><td><code>.shuffle(buf)</code></td><td>ערבוב סדר ה-elements</td><td>חשוב לפני אימון!</td></tr>
-      <tr><td>iteration</td><td>for loop רגיל (Dataset הוא iterator)</td><td>גם <code>fit()</code> עובד ישר עם זה</td></tr>
+      <tr><th>פריט</th><th>חישוב</th><th>תוצאה</th></tr>
+      <tr><td>גודל תמונה אחת ב-180×180×3</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">180 × 180 × 3 × 4 bytes (float32)</span></td><td>~389 KB</td></tr>
+      <tr><td>‎4,000 תמונות (ה-subset שלנו)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">4,000 × 389 KB</span></td><td>~1.5 GB</td></tr>
+      <tr><td>‎25,000 תמונות (ה-dataset המלא)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">25,000 × 389 KB</span></td><td>‎~9.7 GB</td></tr>
+      <tr><td>‎עם תמונות בגודל מלא (500×500)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">25,000 × 3 MB</span></td><td>~75 GB ❌</td></tr>
     </table>
 
+    <p>ל-Colab Free יש <strong>12 GB RAM</strong>. גם ה-subset הקטן (1.5 GB כ-NumPy) ניתן לטעון, אבל עם תמונות מלאות זה בלתי-אפשרי.</p>
+
+    <h5>‎3 הבעיות שה-Dataset object פותר</h5>
+    <ol>
+      <li><strong>זיכרון:</strong> טוען רק את ה-batch הנוכחי לזיכרון, לא את כל ה-dataset.</li>
+      <li><strong>GPU starvation:</strong> GPU מהיר פי 100 מ-CPU. אם ה-CPU טוען נתונים באיטיות, ה-GPU "מחכה". <code>prefetch</code> מבצע טעינה מקבילית — בזמן שה-GPU מעבד batch N, ה-CPU כבר טוען batch N+1.</li>
+      <li><strong>גודל ה-dataset לא מוגבל:</strong> אפשר לאמן על TB של נתונים בלי לדאוג ל-RAM.</li>
+    </ol>
+
+    <div class="callout info">
+      <strong>הקשר חשוב:</strong> בכל ה-frameworks המודרניים של DL יש Dataset object דומה — PyTorch מציע <code>DataLoader</code>, JAX מציע <code>Grain</code>. הרעיון זהה: <em>הפרדה בין ייצור הנתונים (CPU) לבין הצריכה (GPU)</em>.
+    </div>
+  </div>
+
+  <!-- ========== B. STEP-BY-STEP IN THE NOTEBOOK ========== -->
+  <h4 style="margin-top: 24px;">B. הניסוי במחברת — צעד-צעד עם המספרים</h4>
+  <div class="card">
+    <p>כדי להבין מה <code>tf.data.Dataset</code> עושה, המחברת מתחילה בדוגמה מינימלית עם NumPy אקראי (1000 וקטורים, כל אחד באורך 16). זה לא Cats vs Dogs — זו "סנדבוקס" להבנת ה-API.</p>
+
+    <table class="compare">
+      <tr><th>שלב</th><th>הקוד</th><th>הפלט בפועל</th><th>מה זה אומר</th></tr>
+      <tr>
+        <td>1. יצירת NumPy</td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace;font-size:12px">np.random.normal(<br>&nbsp;&nbsp;size=(1000, 16))</span></td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(1000, 16)</span></td>
+        <td>מטריצה: ‎1000 שורות × 16 עמודות. כל שורה היא "דוגמה".</td>
+      </tr>
+      <tr>
+        <td>2. הפיכה ל-Dataset</td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace;font-size:12px">tf.data.Dataset<br>&nbsp;&nbsp;.from_tensor_slices(<br>&nbsp;&nbsp;&nbsp;&nbsp;random_numbers)</span></td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(16,)<br>(16,)<br>(16,) ...</span></td>
+        <td><strong>הציר הראשון "נחתך"</strong> — עכשיו יש 1000 elements, כל אחד וקטור באורך 16. זה כמו <code>list(zip(*matrix))</code> רעיונית.</td>
+      </tr>
+      <tr>
+        <td>3. קיבוץ ל-batches</td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace;font-size:12px">dataset.batch(32)</span></td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(32, 16)<br>(32, 16)<br>(32, 16) ...</span></td>
+        <td><strong>32 elements מקובצים</strong> חזרה למטריצה. שים לב — זה לא קוד שמוסיף ציר חדש, זה <em>מצמצם</em> את מספר ה-elements.</td>
+      </tr>
+      <tr>
+        <td>4. טרנספורמציה</td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace;font-size:12px">dataset.map(<br>&nbsp;&nbsp;lambda x:<br>&nbsp;&nbsp;tf.reshape(x, (4, 4)))</span></td>
+        <td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(4, 4)<br>(4, 4)<br>(4, 4) ...</span></td>
+        <td>הפעלת פונקציה <em>על כל element</em>. הוקטור באורך 16 הופך למטריצה ‎4×4 (סך הערכים זהה: 16).</td>
+      </tr>
+    </table>
+
+    <p style="margin-top: 12px;">ה-shape ב-Cats vs Dogs המלא הוא <span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(32, 180, 180, 3)</span> — אותו רעיון, רק ש"דוגמה אחת" היא תמונה 4-מימדית במקום וקטור.</p>
+  </div>
+
+  <!-- ========== C. PIPELINE VISUAL ========== -->
+  <h4 style="margin-top: 24px;">C. הזרימה הוויזואלית של הנתונים</h4>
+  <div class="card">
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect8_data_pipeline_flow.svg" alt="זרימת נתונים ב-tf.data.Dataset" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 750px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">‎4 שלבים: NumPy → Dataset → Batched → Model. הצבעים מציגים את מצב הנתונים בכל שלב.</div>
+    </div>
+
+    <h5>שני העולמות של Dataset</h5>
+    <p>חשוב להבחין בין שתי דרכים ליצור Dataset:</p>
+    <table class="compare">
+      <tr><th></th><th>‎<code>from_tensor_slices</code> (המחברת)</th><th>‎<code>image_dataset_from_directory</code> (אימון אמיתי)</th></tr>
+      <tr><td><strong>מקור הנתונים</strong></td><td>NumPy שכבר ב-RAM</td><td>קבצי JPG בדיסק</td></tr>
+      <tr><td><strong>זיכרון</strong></td><td>גדל לפי גודל ה-NumPy</td><td>קבוע — רק batch אחד</td></tr>
+      <tr><td><strong>תאים מתאימים</strong></td><td>נתונים קטנים, ניסויים</td><td>תמונות, אודיו, קבצים גדולים</td></tr>
+      <tr><td><strong>מהירות גישה</strong></td><td>מיידית (כבר ב-RAM)</td><td>תלוי בדיסק (SSD מומלץ)</td></tr>
+    </table>
+  </div>
+
+  <!-- ========== D. BATCH SIZE ========== -->
+  <h4 style="margin-top: 24px;">D. למה <code>batch_size = 32</code>? המסחר הכבד של DL</h4>
+  <div class="card">
+    <p>זו אחת הבחירות הכי חשובות בכל אימון. אבל למה ‎32 ולא ‎1 או ‎1000?</p>
+
+    <table class="compare">
+      <tr><th>batch_size</th><th>גרדיאנט</th><th>זיכרון</th><th>מהירות epoch</th><th>שם הגישה</th></tr>
+      <tr>
+        <td><strong>1</strong></td>
+        <td>רועש מאוד (דוגמה אחת)</td>
+        <td>מינימלי</td>
+        <td>איטי (לא מנצל GPU)</td>
+        <td>‎Pure SGD</td>
+      </tr>
+      <tr>
+        <td><strong>32-128</strong> ⭐</td>
+        <td>איזון טוב (rolling average)</td>
+        <td>סביר (1-4 GB GPU)</td>
+        <td>מהיר (מנצל GPU)</td>
+        <td><strong>Mini-batch SGD</strong></td>
+      </tr>
+      <tr>
+        <td><strong>2000</strong> (כל הסט)</td>
+        <td>מדויק (ממוצע מלא)</td>
+        <td>ענקי (לא תמיד אפשרי)</td>
+        <td>איטי לכל צעד</td>
+        <td>Full-batch GD</td>
+      </tr>
+    </table>
+
+    <h5>למה לא ‎1?</h5>
+    <p>גרדיאנט מדוגמה אחת רועש מאוד — הוא יכול להצביע לכל כיוון. הרבה צעדים רועשים = "ריקוד אקראי" שלוקח הרבה זמן עד שמתכנס. בנוסף, GPU מודרני מבצע פעולות מטריצות במקביל — batch קטן מאוד משאיר אותו "רעב".</p>
+
+    <h5>למה לא 1000?</h5>
+    <p>גרדיאנט מדויק מאוד "תקוע במינימום מקומי" — אם הגרדיאנט אפס בנקודה כלשהי, אין שום רעש שיוציא אותך משם. שינויים קטנים בכיוון (בזכות הרעש של mini-batch) הם <em>טובים</em> לבריחה ממינימה מקומיים.</p>
+
+    <h5>למה <strong>חזקות של 2</strong> (16, 32, 64, 128)?</h5>
+    <p>זיכרון GPU מיועל למיוונים שהם חזקות של 2 (אלו ה-warps של CUDA). batch של 64 רץ יעיל יותר מ-batch של 50, גם אם תאורטית 50 קטן יותר.</p>
+
+    <div class="callout info">
+      <strong>כלל אצבע:</strong>
+      <ul>
+        <li>תמונות ב-CNN בינוני: <strong>32</strong> (default אצל Chollet)</li>
+        <li>תמונות גדולות (512+): <strong>16 או 8</strong> — מוגבל בזיכרון GPU</li>
+        <li>NLP/Transformers: <strong>32-128</strong></li>
+        <li>אם רואים OOM error → להוריד batch</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== E. SHUFFLE ========== -->
+  <h4 style="margin-top: 24px;">E. למה <code>shuffle</code> חיוני — ומתי <em>לא</em> לעשות אותו</h4>
+  <div class="card">
+    <p>תרחיש: ה-train set שלנו מסודר לפי קטגוריה — קודם 1000 חתולים, אחר כך 1000 כלבים. אם נאמן בלי shuffle:</p>
+
+    <pre><code># בלי shuffle:
+# Batch 1-31: כולם cat → הרשת לומדת "תמיד תגיד cat" → val_accuracy = 50%
+# Batch 32-63: כולם dog → הרשת לומדת "תמיד תגיד dog" → val_accuracy = 50%
+# בסוף epoch: הרשת זוכרת רק את הקטגוריה האחרונה!
+
+# עם shuffle:
+# Batch 1: 15 cat + 17 dog → גרדיאנט מאוזן → לימוד אמיתי</code></pre>
+
+    <h5>איך עובד buffer ב-shuffle</h5>
+    <p><code>dataset.shuffle(buffer_size=1000)</code> ממלא buffer של ‎1000 elements, ובוחר אקראית מתוכם בכל פעם. כלל אצבע: <strong>buffer_size = גודל ה-dataset</strong> — כך שכל element יכול להיות בכל מיקום. אם זיכרון לא מספיק, ‎10,000 מספיק לרוב.</p>
+
+    <div class="callout warning">
+      <strong>‎חוקי-זהב של shuffle:</strong>
+      <ul>
+        <li>✅ <strong>Train set:</strong> תמיד shuffle, בכל epoch מחדש (Keras עושה את זה אוטומטית).</li>
+        <li>❌ <strong>Validation set:</strong> אל תערבב — אתה רוצה לקבל את אותו loss כל פעם להשוואה.</li>
+        <li>❌ <strong>Test set:</strong> אל תערבב — מדידה סופית פעם אחת.</li>
+        <li>⚠ <strong>Time series:</strong> אסור לערבב — הסדר הוא חלק מהמשמעות!</li>
+      </ul>
+    </div>
+
+    <h5>טריק חשוב — סדר הפעולות</h5>
+    <pre><code># ❌ שגוי — קודם batch אז shuffle:
+dataset.batch(32).shuffle(1000)   # ערבב batches אבל בתוך batch הסדר נשאר
+
+# ✅ נכון — קודם shuffle אז batch:
+dataset.shuffle(1000).batch(32)   # ערבב elements ואז קבץ</code></pre>
+  </div>
+
+  <!-- ========== F. TIPS ========== -->
+  <h4 style="margin-top: 24px;">F. ‎5 טיפים פרקטיים לעבודה עם Dataset</h4>
+  <div class="card">
+    <ol>
+      <li>
+        <strong><code>.prefetch(tf.data.AUTOTUNE)</code> — תמיד.</strong>
+        <pre><code>train_dataset = train_dataset.prefetch(tf.data.AUTOTUNE)</code></pre>
+        מבצע טעינה של ה-batch הבא <em>במקביל</em> לעיבוד ה-batch הנוכחי ע"י המודל. שיפור מהירות של 20-50% בחינם. <code>AUTOTUNE</code> נותן ל-TF לבחור את ה-buffer האידיאלי לבד.
+      </li>
+
+      <li>
+        <strong><code>.cache()</code> — אם ה-dataset נכנס ל-RAM.</strong>
+        <pre><code>train_dataset = train_dataset.cache().shuffle(1000).batch(32)</code></pre>
+        אחרי ה-epoch הראשון, כל ה-dataset נשמר ב-RAM (או על דיסק). מהאפוק השני והלאה, אין צורך לטעון תמונות מהדיסק. <strong>אזהרה:</strong> אם ה-dataset לא נכנס ל-RAM, השתמש ב-<code>.cache("filename")</code> לקבצי cache בדיסק.
+      </li>
+
+      <li>
+        <strong><code>num_parallel_calls=tf.data.AUTOTUNE</code> ב-<code>map</code>.</strong>
+        <pre><code>dataset.map(preprocess_fn, num_parallel_calls=tf.data.AUTOTUNE)</code></pre>
+        מפעיל את ה-map על מספר ליבות CPU במקביל. קריטי כש-<code>preprocess_fn</code> כבד (augmentation, resize).
+      </li>
+
+      <li>
+        <strong>הסדר הנכון של pipeline:</strong>
+        <pre><code>dataset = (raw_dataset
+    .shuffle(buffer_size=10000)        # 1. ערבב elements
+    .map(preprocess, num_parallel_calls=tf.data.AUTOTUNE)  # 2. עבד
+    .batch(32)                          # 3. קבץ ל-batches
+    .prefetch(tf.data.AUTOTUNE))        # 4. prefetch אחרון</code></pre>
+        ‎ה-prefetch תמיד אחרון. ה-shuffle לפני ה-batch (ראינו ב-§E). ה-map אחרי shuffle כדי שכל epoch תקבל augmentation שונה לאותה תמונה.
+      </li>
+
+      <li>
+        <strong>בדיקת תקינות לפני אימון:</strong>
+        <pre><code># הצץ ב-batch אחד לפני fit() — חוסך שעות של דיבוג
+for images, labels in dataset.take(1):
+    print(f"Images: {images.shape}, dtype: {images.dtype}")
+    print(f"Labels: {labels.shape}, range: [{labels.min()}, {labels.max()}]")
+    print(f"Image values range: [{images.numpy().min()}, {images.numpy().max()}]")</code></pre>
+        אם רואים <code>dtype=uint8</code> במקום <code>float32</code>, או טווח ערכים ‎[0, 255] במקום ‎[0, 1] — יש בעיית pre-processing.
+      </li>
+    </ol>
+
     <div class="callout success">
-      <strong>למה זה חשוב?</strong> ב-MNIST/Boston הסבנו את כל ה-dataset ל-NumPy בזיכרון. עם 2000 תמונות 180×180×3 = 388MB — עוד אפשר. עם 25,000 תמונות בגודל מלא (לפעמים 500×500×3) זה כבר עשרות GB ולא יכנס ל-RAM. <code>tf.data.Dataset</code> פותר את זה דרך טעינה lazy.
+      <strong>מסר ל-DL בכלל:</strong> רוב הזמן באימון לא הולך על "חישוב המודל" אלא על <em>טעינת הנתונים</em>. pipeline איטי = GPU שמחכה ל-CPU = בזבוז של GPU יקר. ‎4 טיפים אלה (prefetch, cache, parallel map, סדר נכון) הם ההבדל בין אימון של 8 שעות לבין 30 דקות על אותו GPU.
     </div>
   </div>
 
