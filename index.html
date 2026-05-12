@@ -3705,11 +3705,11 @@ plt.imshow(filtered, cmap='gray')</div>
   <!-- ========== 0. THE BIG PICTURE: 4 APPROACHES ========== -->
   <h3>0. תמונת מפתח — 4 הגישות והקפיצה של Transfer Learning</h3>
   <div class="card">
-    <p>לפני שניכנס לפרטים, הנה המסר העיקרי של ההרצאה במבט אחד: ה<strong>קפיצה הגדולה</strong> אינה מ-augmentation או מ-fine-tuning, אלא מ-<strong>From scratch → Pretrained</strong>. 31.5 נקודות אחוז בקפיצה אחת. ובאופן מפתיע — fine-tuning הפעם <em>פגע</em> במקום לשפר.</p>
+    <p>לפני שניכנס לפרטים, הנה המסר העיקרי של ההרצאה במבט אחד: ה<strong>קפיצה הגדולה</strong> אינה מ-augmentation או מ-fine-tuning, אלא במעבר מאימון <strong>From scratch</strong> לשימוש ברשת <strong>Pretrained</strong> — 31.5 נקודות אחוז בקפיצה אחת. ובאופן מפתיע — fine-tuning הפעם <em>פגע</em> במקום לשפר.</p>
 
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect8_4approaches_comparison.svg" alt="השוואת 4 גישות — Test Accuracy" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
-      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">המספרים מהריצה בפועל של רז ב-Colab (2026-05-12), לא מהספר. הקפיצה הגדולה: 31.5 נקודות בין From-scratch ל-Feature Extraction עם VGG16.</div>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">תוצאות הריצה הסופיות מהמחברת (2026-05-12), לא מהספר. הקפיצה הגדולה: 31.5 נקודות בין From-scratch ל-Feature Extraction עם VGG16.</div>
     </div>
 
     <div class="callout info">
@@ -3727,7 +3727,7 @@ plt.imshow(filtered, cmap='gray')</div>
   <div class="card">
     <p>בשנת 2013 Kaggle ערכה תחרות מפורסמת — לסווג 25,000 תמונות של חתולים וכלבים. ב-2013 קל היה לקבל 80% עם MLP פשוט; היום, עם CNN ו-transfer learning, מגיעים ל-99%+.</p>
 
-    <p><strong>ההחלטה של רז:</strong> במקום להשתמש בכל 25,000 התמונות, ניקח <strong>subset קטן של 4,000</strong>. למה? כי המטרה של ההרצאה היא <em>"איך לעבוד עם dataset קטן"</em> — וזה היה החלק החשוב בספר של Chollet.</p>
+    <p><strong>ההחלטה במחברת:</strong> במקום להשתמש בכל 25,000 התמונות, ניקח <strong>subset קטן של 4,000</strong>. למה? כי המטרה של ההרצאה היא <em>"איך לעבוד עם dataset קטן"</em> — וזה היה החלק החשוב בספר של Chollet.</p>
 
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect8_dataset_split.svg" alt="חלוקת dataset של Kaggle Dogs vs Cats" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
@@ -3840,7 +3840,7 @@ model.compile(loss="binary_crossentropy",
     </div>
 
     <h4>תוצאות אימון — 30 epochs · ~4-6s/epoch (GPU מהיר)</h4>
-    <p>הריצה בפועל אצל רז:</p>
+    <p>הריצה בפועל מהמחברת:</p>
     <pre><code>Epoch  1/30 - loss: 0.6972 - accuracy: 0.5210 - val_loss: 0.6926 - val_accuracy: 0.5150
 Epoch  5/30 - loss: 0.6193 - accuracy: 0.6750 - val_loss: 0.6881 - val_accuracy: 0.6040
 Epoch 10/30 - loss: 0.4838 - accuracy: 0.7750 - val_loss: 0.6011 - val_accuracy: 0.7330
@@ -3912,7 +3912,7 @@ outputs = layers.Dense(1, activation="sigmoid")(x)</code></pre>
     </div>
 
     <h4>התוצאה</h4>
-    <p>אצל רז הריצה התקצרה — נרשמו רק ‎30 מתוך 100 epochs (כנראה Colab התנתק או הופסק):</p>
+    <p>הריצה התקצרה — נרשמו רק ‎30 מתוך 100 epochs (כנראה Colab התנתק או הופסק):</p>
     <pre><code>Epoch  1/100 - loss: 0.6979 - accuracy: 0.5040 - val_loss: 1.2371 - val_accuracy: 0.5000
 Epoch 10/100 - loss: 0.5787 - accuracy: 0.6945 - val_loss: 0.5561 - val_accuracy: 0.7170
 Epoch 20/100 - loss: 0.4850 - accuracy: 0.7785 - val_loss: 0.4685 - val_accuracy: 0.7760
@@ -3927,7 +3927,7 @@ Test accuracy: 0.811  (= 81.1%)</code></pre>
     </ul>
 
     <div class="callout warning">
-      <strong>הערה על "100 epochs":</strong> הספר ממליץ על 100 epochs אבל אצל רז זה נקטע ב-30. <em>הרבה פעמים Colab Free מתנתק כשיש דממה במחשב או הסשן עובר 12 שעות.</em> פתרונות: (1) Colab Pro / Pro+. (2) להריץ עם <code>ModelCheckpoint(save_best_only=True)</code> כך שכל הזמן יש משקלות שמורים. (3) להריץ מקומית עם GPU.
+      <strong>הערה על "100 epochs":</strong> הספר ממליץ על 100 epochs אבל בריצה זו זה נקטע ב-30. <em>הרבה פעמים Colab Free מתנתק כשיש דממה במחשב או הסשן עובר 12 שעות.</em> פתרונות: (1) Colab Pro / Pro+. (2) להריץ עם <code>ModelCheckpoint(save_best_only=True)</code> כך שכל הזמן יש משקלות שמורים. (3) להריץ מקומית עם GPU.
     </div>
   </div>
 
@@ -4121,7 +4121,7 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
       <strong>⚠ ממצא חשוב: הפעם fine-tuning <em>פגע</em> ב-0.2 נקודות (97.9% → 97.7%).</strong>
       <ul>
         <li><strong>למה זה קרה?</strong> כש-feature extraction כבר במצב כמעט-אופטימלי (97.9%), יש פחות מקום לשיפור ויותר סיכון להרס. ה-‎4 שכבות העליונות שהתאמנו זזו במידה מסוימת מהמיקום האופטימלי שלהן.</li>
-        <li><strong>זה לא שגיאה.</strong> זה ה<em>טבע הסטוכסטי</em> של DL — לפעמים השיפור הוא +1%, לפעמים −0.3%. בריצה הקודמת של רז זה היה +0.3%.</li>
+        <li><strong>זה לא שגיאה.</strong> זה ה<em>טבע הסטוכסטי</em> של DL — לפעמים השיפור הוא +1%, לפעמים −0.3%. בריצה קודמת של אותו קוד זה היה +0.3%.</li>
         <li><strong>איך מנהלים את זה בפועל?</strong> משווים val_accuracy בין שני המודלים (feature extraction vs fine-tuned). אם fine-tuned לא טוב יותר — שומרים את ה-best של feature extraction.</li>
         <li><strong>הספר מצפה לשיפור.</strong> במקרים אחרים הוא אכן יחזור — תלוי במשימה, ב-lr, ובמספר השכבות שמשחררים.</li>
       </ul>
@@ -4186,7 +4186,7 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
     </div>
 
     <div class="callout warning">
-      <strong>פערים בין הריצות:</strong> רז הריץ פעמיים. בריצה הראשונה: 65/(~83)/97.5/97.8. בריצה השנייה: 66.4/81.1/97.9/97.7. <em>סטוכסטיות של DL — אתחול אקראי, augmentation אקראי, ב-dataset קטן זה משפיע. המגמה היא העיקר, לא המספר המדויק.</em>
+      <strong>פערים בין הריצות:</strong> אותו קוד הורץ פעמיים. בריצה הראשונה: 65/(~83)/97.5/97.8. בריצה השנייה: 66.4/81.1/97.9/97.7. <em>סטוכסטיות של DL — אתחול אקראי, augmentation אקראי, ב-dataset קטן זה משפיע. המגמה היא העיקר, לא המספר המדויק.</em>
     </div>
   </div>
 
@@ -4204,7 +4204,7 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
     </details>
 
     <details class="quiz">
-      <summary><strong>שאלה 3:</strong> ב-CNN של רז, <code>Conv2D(32, 3)</code> ראשון לוקח <code>(180, 180, 3)</code> ומחזיר <code>(178, 178, 32)</code>. למה זה ולא <code>(180, 180, 32)</code>?</summary>
+      <summary><strong>שאלה 3:</strong> ב-CNN שראינו, <code>Conv2D(32, 3)</code> ראשון לוקח <code>(180, 180, 3)</code> ומחזיר <code>(178, 178, 32)</code>. למה זה ולא <code>(180, 180, 32)</code>?</summary>
       <p>ברירת המחדל של <code>Conv2D</code> ב-Keras היא <code>padding="valid"</code> (ללא padding). עם <code>kernel=3</code>: <code>output = 180 − 3 + 1 = 178</code>. הערוצים <code>32</code> הם <code>filters</code>. סך פרמטרים: <code>32 × (3×3×3) + 32 = 896</code> — תואם את <code>model.summary()</code>.</p>
     </details>
 
@@ -4219,10 +4219,10 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
     </details>
 
     <details class="quiz">
-      <summary><strong>שאלה 6:</strong> בריצה של רז fine-tuning <em>הוריד</em> את ה-accuracy מ-97.9% ל-97.7%. האם זה אומר ש-fine-tuning גרוע?</summary>
+      <summary><strong>שאלה 6:</strong> בריצה הזו fine-tuning <em>הוריד</em> את ה-accuracy מ-97.9% ל-97.7%. האם זה אומר ש-fine-tuning גרוע?</summary>
       <p>לא! זה <strong>טבע סטוכסטי של DL</strong>:</p>
       <ul>
-        <li>בריצה הקודמת של רז: fine-tuning שיפר ‎+0.3 (97.5 → 97.8). הפעם: ‎−0.2 (97.9 → 97.7).</li>
+        <li>בריצה הקודמת של אותו קוד: fine-tuning שיפר ‎+0.3 (97.5 → 97.8). הפעם: ‎−0.2 (97.9 → 97.7).</li>
         <li>הסיבה: כש-feature extraction כבר 97.9%, יש מעט מקום לשיפור. הסיכון של הרס פיצ'רים שכבר טובים גדל.</li>
         <li><strong>אסטרטגיה נכונה:</strong> תמיד שומרים את שני המודלים (FE ו-FT) עם <code>ModelCheckpoint</code>, ומשתמשים בזה שמראה val_accuracy גבוה יותר.</li>
         <li><strong>מתי fine-tuning תמיד עוזר:</strong> כש-feature extraction באזור ה-85-95%. כש-FE כבר 97-98%, ה-margin להוסיף קטן ו-fine-tuning יכול ללכת לכל כיוון.</li>
@@ -4242,11 +4242,11 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
 
       <li><strong>למה loss עולה אבל accuracy מצוין?</strong> תופעה נפוצה ב-binary classification עם sigmoid: המודל אומר "100% חתול" על תמונה שהיא באמת חתול — אבל כשהוא טועה, הוא טועה <em>בביטחון</em> ("100% כלב" בעוד זה חתול), וזה דוחף את ה-loss הגבוה. ה-classification eraset (cat/dog) עדיין נכון. בריצה הזו: val_accuracy = 98.3% אבל val_loss = 1.04 — תאם בדיוק את התופעה.</li>
 
-      <li><strong>‎augmentation שולחת רק ב-training mode.</strong> רז שאל בעבר אם זה רץ ב-evaluate — לא. השכבות <code>RandomFlip</code> וכו' פשוט מעבירות את הקלט כפי שהוא במצב inference (<code>training=False</code>).</li>
+      <li><strong>‎augmentation שולחת רק ב-training mode.</strong> שאלה נפוצה — האם זה רץ גם ב-<code>evaluate()</code>? לא. השכבות <code>RandomFlip</code> וכו' פשוט מעבירות את הקלט כפי שהוא במצב inference (<code>training=False</code>).</li>
 
       <li><strong>Fine-tuning יכול גם להזיק.</strong> בריצה הזו זה הוריד את ה-test accuracy ב-0.2 נקודות. כשה-baseline (feature extraction) כבר 97.9%, אין הרבה מקום לשפר ויש סיכון להרס. <strong>תמיד שומרים גם את ה-FE וגם את ה-FT</strong>, ומשתמשים בטוב ביניהם.</li>
 
-      <li><strong>סטוכסטיות בריצות:</strong> רז הריץ פעמיים וקיבל מספרים שונים — 65→97.8 בפעם הראשונה, 66.4→97.7 בפעם השנייה. אותו קוד, אותם נתונים, אותם hyperparameters — אבל אתחול אקראי + augmentation אקראי יוצרים שונות של ‎±1-2 נקודות אחוז. <em>כדי לקבל מספר אמין צריך 5+ ריצות ולקחת ממוצע.</em></li>
+      <li><strong>סטוכסטיות בריצות:</strong> אותו קוד הורץ פעמיים וקיבל מספרים שונים — 65→97.8 בפעם הראשונה, 66.4→97.7 בפעם השנייה. אותו קוד, אותם נתונים, אותם hyperparameters — אבל אתחול אקראי + augmentation אקראי יוצרים שונות של ‎±1-2 נקודות אחוז. <em>כדי לקבל מספר אמין צריך 5+ ריצות ולקחת ממוצע.</em></li>
 
       <li><strong>אסטרטגיה למבחן/פרויקט:</strong> תמיד תתחילו עם <strong>feature extraction מהיר</strong> (גישה 3א) — זה ייתן baseline טוב תוך דקה. רק אם צריך עוד דיוק — עוברים ל-feature extraction עם augmentation, ורק אז ל-fine-tuning (זוכרים שזה לא תמיד עוזר).</li>
     </ol>
