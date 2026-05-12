@@ -138,22 +138,28 @@
     <text x="685" y="98" font-size="11" fill="#1e40af">1</text>
   </g>
 
-  <!-- Bottom: comment lines -->
-  <g>
-    <rect x="40" y="265" width="800" height="40" fill="#f9fafb" stroke="#d1d5db" rx="6"/>
-    <text x="440" y="285" text-anchor="middle" font-size="12" fill="#374151">📐 הכלל: <tspan font-family="Consolas, monospace">output = (input − kernel)/stride + 1</tspan>. עם <tspan font-family="Consolas, monospace">kernel=3, stride=1, padding=valid</tspan>: input −2.</text>
-    <text x="440" y="300" text-anchor="middle" font-size="12" fill="#374151">פירמידה הפוכה: ה-spatial מתכווץ (חיתוך+pool), ה-depth גדל (יותר פילטרים → יותר features).</text>
-  </g>
+  <!-- Bottom: rule callout (foreignObject for native bidi) -->
+  <foreignObject x="40" y="260" width="800" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:6px 12px; background:#f9fafb; border:1px solid #d1d5db; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#374151; font-size:12px; line-height:1.45;">
+      <div>📐 <strong>הכלל:</strong> <span dir="ltr" style="font-family:Consolas,monospace">output = (input − kernel) / stride + 1</span>. עם <span dir="ltr" style="font-family:Consolas,monospace">kernel=3, stride=1, padding=valid</span> → <span dir="ltr" style="font-family:Consolas,monospace">output = input − 2</span>.</div>
+      <div>פירמידה הפוכה: ה-spatial מתכווץ (חיתוך + pool), ה-depth גדל (יותר פילטרים → יותר features).</div>
+    </div>
+  </foreignObject>
 
-  <!-- Parameter computation row -->
-  <g>
-    <rect x="40" y="320" width="800" height="60" fill="#fff7ed" stroke="#fb923c" rx="6"/>
-    <text x="60" y="340" font-size="12" font-weight="700" fill="#9a3412">📊 איך מחשבים פרמטרים לדוגמה (Conv2D 32):</text>
-    <text x="60" y="358" font-size="12" font-family="Consolas, monospace" fill="#9a3412">params = filters × (kernel_h × kernel_w × input_channels) + filters_bias</text>
-    <text x="60" y="374" font-size="12" font-family="Consolas, monospace" fill="#9a3412">             32 × (3 × 3 × 3)              + 32 = 864 + 32 = <tspan font-weight="700">896</tspan>  ✓</text>
-  </g>
+  <!-- Parameter computation row (foreignObject) -->
+  <foreignObject x="40" y="320" width="800" height="68">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:6px 12px; background:#fff7ed; border:1px solid #fb923c; border-radius:6px; font-family:'Segoe UI', Arial, sans-serif; color:#9a3412; font-size:12px; line-height:1.45;">
+      <div style="font-weight:700;">📊 איך מחשבים פרמטרים לדוגמה (Conv2D 32):</div>
+      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">params = filters × (kernel_h × kernel_w × input_channels) + filters_bias</div>
+      <div dir="ltr" style="font-family:Consolas,monospace; text-align:right;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 32 × (3 × 3 × 3) + 32 = 864 + 32 = <strong>896</strong> ✓</div>
+    </div>
+  </foreignObject>
 
-  <!-- Big takeaway -->
-  <text x="440" y="425" text-anchor="middle" font-size="13" font-weight="700" fill="#1f3a68">⚡ ‎12,544 ערכים יוצאים מ-Flatten — חלק עצום מהפרמטרים הוא ב-Dense הסופי לבדו!</text>
-  <text x="440" y="442" text-anchor="middle" font-size="12" fill="#6b7280">Dense(1) על 12,544 = 12,545 פרמטרים. סך הכל ברשת: 991,041 ≈ ‎1M.</text>
+  <!-- Big takeaway (foreignObject) -->
+  <foreignObject x="40" y="395" width="800" height="55">
+    <div xmlns="http://www.w3.org/1999/xhtml" dir="rtl" style="box-sizing:border-box; width:100%; height:100%; padding:4px 12px; font-family:'Segoe UI', Arial, sans-serif; text-align:center; line-height:1.5;">
+      <div style="font-size:13px; font-weight:700; color:#1f3a68;">⚡ 12,544 ערכים יוצאים מ-Flatten — חלק עצום מהפרמטרים הוא ב-Dense הסופי לבדו!</div>
+      <div style="font-size:12px; color:#6b7280;">Dense(1) על 12,544 = 12,545 פרמטרים. סך הכל ברשת: 991,041 ≈ 1M.</div>
+    </div>
+  </foreignObject>
 </svg>

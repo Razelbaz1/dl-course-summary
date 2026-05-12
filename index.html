@@ -4058,6 +4058,73 @@ model.compile(loss="binary_crossentropy",
       </ul>
     </div>
 
+    <h4>קריאת <code>model.summary()</code> — מה מסתתר בכל שורה</h4>
+    <p>הטבלה שמדפיסה Keras מתארת את הרשת שכבה-אחר-שכבה. ‎3 העמודות שלה:</p>
+    <table class="compare">
+      <tr><th>עמודה</th><th>מה היא אומרת</th></tr>
+      <tr><td><strong>Layer (type)</strong></td><td>שם השכבה (אוטומטי או מותאם) ועוצב הסוג שלה: <code>InputLayer</code>, <code>Rescaling</code>, <code>Conv2D</code>, <code>MaxPooling2D</code>, <code>Flatten</code>, <code>Dense</code>.</td></tr>
+      <tr><td><strong>Output Shape</strong></td><td>ה-shape של ה-tensor <em>שיוצא</em> מהשכבה. הראשון תמיד <code>None</code> = batch size דינמי (כי הרשת לא תלויה במספר הדוגמאות ב-batch).</td></tr>
+      <tr><td><strong>Param #</strong></td><td>כמה משקלים <em>שניתנים לאימון</em> יש בשכבה. אצל <code>Rescaling</code>, <code>MaxPooling2D</code>, <code>Flatten</code> זה תמיד 0 — הן רק "מעצבות" tensor בלי משקלים.</td></tr>
+    </table>
+
+    <h4>חישוב מפורט — איך מגיעים ל-991,041 פרמטרים</h4>
+    <p>הנוסחה הכללית לחישוב פרמטרים בשכבת <code>Conv2D</code>:</p>
+    <pre><code>params = filters × (kernel_h × kernel_w × input_channels) + filters
+                              ↑                                ↑
+                       מטריצת המשקלים                    bias (אחד לכל filter)</code></pre>
+
+    <p>ל-<code>Dense</code> זה פשוט יותר:</p>
+    <pre><code>params = output_units × input_units + output_units
+                ↑                            ↑
+            המשקלים                       biases</code></pre>
+
+    <table class="compare">
+      <tr><th>#</th><th>שכבה</th><th>Output Shape</th><th>חישוב</th><th>Params</th></tr>
+      <tr><td>1</td><td><code>InputLayer</code></td><td>(None, 180, 180, 3)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">— (placeholder)</span></td><td>0</td></tr>
+      <tr><td>2</td><td><code>Rescaling</code></td><td>(None, 180, 180, 3)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">— (חלוקה ב-255, אין משקלים)</span></td><td>0</td></tr>
+      <tr><td>3</td><td><code>Conv2D</code> (32)</td><td>(None, 178, 178, 32)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">32 × (3 × 3 × 3) + 32</span></td><td><strong>896</strong></td></tr>
+      <tr><td>4</td><td><code>MaxPooling2D</code></td><td>(None, 89, 89, 32)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">— (downsample)</span></td><td>0</td></tr>
+      <tr><td>5</td><td><code>Conv2D</code> (64)</td><td>(None, 87, 87, 64)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">64 × (3 × 3 × 32) + 64</span></td><td><strong>18,496</strong></td></tr>
+      <tr><td>6</td><td><code>MaxPooling2D</code></td><td>(None, 43, 43, 64)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">—</span></td><td>0</td></tr>
+      <tr><td>7</td><td><code>Conv2D</code> (128)</td><td>(None, 41, 41, 128)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">128 × (3 × 3 × 64) + 128</span></td><td><strong>73,856</strong></td></tr>
+      <tr><td>8</td><td><code>MaxPooling2D</code></td><td>(None, 20, 20, 128)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">—</span></td><td>0</td></tr>
+      <tr><td>9</td><td><code>Conv2D</code> (256)</td><td>(None, 18, 18, 256)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">256 × (3 × 3 × 128) + 256</span></td><td><strong>295,168</strong></td></tr>
+      <tr><td>10</td><td><code>MaxPooling2D</code></td><td>(None, 9, 9, 256)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">—</span></td><td>0</td></tr>
+      <tr><td>11</td><td><code>Conv2D</code> (256)</td><td>(None, 7, 7, 256)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">256 × (3 × 3 × 256) + 256</span></td><td><strong>590,080</strong></td></tr>
+      <tr><td>12</td><td><code>Flatten</code></td><td>(None, 12544)</td><td><span dir="ltr" style="display:inline-block;color:#9ca3af">— (7 × 7 × 256 = 12,544)</span></td><td>0</td></tr>
+      <tr><td>13</td><td><code>Dense</code> (1)</td><td>(None, 1)</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">1 × 12,544 + 1</span></td><td><strong>12,545</strong></td></tr>
+      <tr style="background: #fef3c7;"><td colspan="4" style="text-align:left;"><strong>Total trainable parameters</strong></td><td><strong>991,041</strong></td></tr>
+    </table>
+
+    <h5>בדיקה — סכימה ידנית</h5>
+    <pre><code>     896    (Conv2D 32)
++ 18,496    (Conv2D 64)
++ 73,856    (Conv2D 128)
++ 295,168   (Conv2D 256)
++ 590,080   (Conv2D 256)
++ 12,545    (Dense 1)
+─────────
+= 991,041   ✓</code></pre>
+
+    <div class="callout warning">
+      <strong>תובנה חשובה — איפה "הולכים" הפרמטרים?</strong>
+      <ul>
+        <li><strong>‎60% מהפרמטרים</strong> נמצאים בשכבת <code>Conv2D</code> האחרונה לבדה (‎590K מתוך ‎991K).</li>
+        <li>למה? כי <em>‎input_channels × filters</em> גדל פי 2 בכל בלוק. בסוף יש <code>256 × (3 × 3 × 256) ≈ 590K</code>.</li>
+        <li>‎<code>Flatten</code> ו-<code>MaxPooling</code> הם "חינמיים" — הם רק משנים shape בלי משקלים.</li>
+        <li>‎<code>Dense(1)</code> הסופי "רק" 12,545 פרמטרים — קטן יחסית למה שאפשר היה לצפות מ-12,544 קלטים.</li>
+      </ul>
+    </div>
+
+    <div class="callout info">
+      <strong>השוואה כמותית — למה CNN חסכוני יותר מ-MLP על אותה תמונה?</strong> בואו נדמיין רשת MLP פשוטה לאותה משימה:
+      <ul>
+        <li><strong>MLP:</strong> Flatten ל-<code>180 × 180 × 3 = 97,200</code> נוירונים, ‎Dense של 512 → <code>97,200 × 512 ≈ 49.8M</code> פרמטרים <em>בשכבה הראשונה לבד!</em></li>
+        <li><strong>CNN שלנו:</strong> ‎991K פרמטרים <em>בכל הרשת</em>. <strong>פי 50 פחות.</strong></li>
+        <li>הסיבה — <strong>Weight sharing:</strong> אותו פילטר ‎3×3 מופעל על כל התמונה. לומדים פעם אחת, משתמשים בכל מקום.</li>
+      </ul>
+    </div>
+
     <h4>תוצאות אימון — 30 epochs · ~4-6s/epoch (GPU מהיר)</h4>
     <p>הריצה בפועל מהמחברת:</p>
     <pre><code>Epoch  1/30 - loss: 0.6972 - accuracy: 0.5210 - val_loss: 0.6926 - val_accuracy: 0.5150
