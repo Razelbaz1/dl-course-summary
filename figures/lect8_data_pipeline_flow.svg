@@ -152,27 +152,49 @@
 
   <!-- ============= LAZY CALLOUT ============= -->
   <g>
-    <rect x="20" y="320" width="430" height="140" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" rx="6"/>
-    <text x="40" y="345" font-size="13" font-weight="700" fill="#92400e">🦥 Lazy Evaluation — הסוד של Dataset</text>
-    <text x="40" y="368" font-size="11" fill="#92400e">‎הקוד <tspan font-family="Consolas, monospace">dataset = tf.data.Dataset.from_tensor_slices(...)</tspan> <strong>לא טוען כלום</strong>.</text>
-    <text x="40" y="385" font-size="11" fill="#92400e">הוא רק בונה "מתכון" של איך לקבל את הנתונים. הקריאה האמיתית מהזיכרון / דיסק</text>
-    <text x="40" y="402" font-size="11" fill="#92400e">קורית רק כשעוברים בלולאה (או כש-<tspan font-family="Consolas, monospace">model.fit()</tspan> מבקש).</text>
+    <rect x="20" y="320" width="450" height="150" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" rx="6"/>
 
-    <text x="40" y="425" font-size="11" font-weight="700" fill="#92400e">💡 למה זה קריטי לתמונות:</text>
-    <text x="40" y="442" font-size="11" fill="#92400e">‎25,000 תמונות × 180×180×3 × 4 bytes = ‎9.7GB. לא ייכנס ל-RAM של Colab Free (12GB)!</text>
-    <text x="40" y="456" font-size="11" fill="#92400e">‎Dataset מהדיסק רק את ה-batch הנוכחי + הבא (prefetch). RAM נשאר נקי.</text>
+    <!-- Title (RTL) -->
+    <text x="455" y="345" text-anchor="end" direction="rtl" font-size="13" font-weight="700" fill="#92400e">🦥 Lazy Evaluation — הסוד של Dataset</text>
+
+    <!-- Hebrew explanation lines (RTL) -->
+    <text x="455" y="368" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">ה-Dataset הוא רק "מתכון" — לא טוען שום נתון עד שהוא נדרש.</text>
+    <text x="455" y="385" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">הקריאה האמיתית קורית רק בלולאה או ב-model.fit().</text>
+
+    <!-- Subheading (RTL) -->
+    <text x="455" y="412" text-anchor="end" direction="rtl" font-size="11" font-weight="700" fill="#92400e">💡 למה זה קריטי לתמונות:</text>
+
+    <!-- Code-only line (LTR) -->
+    <text x="35" y="430" text-anchor="start" direction="ltr" font-size="11" fill="#92400e" font-family="Consolas, monospace">25,000 × 180 × 180 × 3 × 4 bytes ≈ 9.7 GB</text>
+
+    <!-- Hebrew conclusion (RTL) -->
+    <text x="455" y="450" text-anchor="end" direction="rtl" font-size="11" fill="#92400e">לא ייכנס ל-12 GB RAM של Colab Free!</text>
   </g>
 
   <!-- ============= MAP CALLOUT ============= -->
   <g>
-    <rect x="470" y="320" width="445" height="140" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" rx="6"/>
-    <text x="490" y="345" font-size="13" font-weight="700" fill="#1e40af">🔧 .map() — transformation בדרך</text>
-    <text x="490" y="368" font-size="11" fill="#1e40af">לדוגמה: <tspan font-family="Consolas, monospace">dataset.map(lambda x: tf.reshape(x, (4, 4)))</tspan></text>
-    <text x="490" y="385" font-size="11" fill="#1e40af">פעולה ש"מתחברת" ל-pipeline — לא רצה עכשיו, אלא בכל פעם שלוקחים element.</text>
+    <rect x="485" y="320" width="430" height="150" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" rx="6"/>
 
-    <text x="490" y="408" font-size="11" font-weight="700" fill="#1e40af">דוגמאות שימוש נפוצות:</text>
-    <text x="490" y="425" font-size="11" fill="#1e40af">‎• <tspan font-family="Consolas, monospace">.map(preprocess_input)</tspan> — נרמול VGG16</text>
-    <text x="490" y="441" font-size="11" fill="#1e40af">‎• <tspan font-family="Consolas, monospace">.map(augment)</tspan> — augmentation לפני batch</text>
-    <text x="490" y="457" font-size="11" fill="#1e40af">‎• <tspan font-family="Consolas, monospace">.map(load_image)</tspan> — טעינת JPG מהדיסק</text>
+    <!-- Title (RTL) -->
+    <text x="900" y="345" text-anchor="end" direction="rtl" font-size="13" font-weight="700" fill="#1e40af">🔧 .map() — transformation בדרך</text>
+
+    <!-- Code example (LTR) -->
+    <text x="500" y="368" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">dataset.map(lambda x: tf.reshape(x, (4, 4)))</text>
+
+    <!-- Hebrew explanation (RTL) -->
+    <text x="900" y="388" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">פעולה ש"מתחברת" ל-pipeline — רצה רק בכל element בלולאה.</text>
+
+    <!-- Subheading (RTL) -->
+    <text x="900" y="412" text-anchor="end" direction="rtl" font-size="11" font-weight="700" fill="#1e40af">שימושים נפוצים:</text>
+
+    <!-- 3 use cases — each split: bullet+code (LTR) and Hebrew (RTL) -->
+    <text x="500" y="430" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(preprocess_input)</text>
+    <text x="900" y="430" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— נרמול VGG16</text>
+
+    <text x="500" y="446" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(augment)</text>
+    <text x="900" y="446" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— augmentation לפני batch</text>
+
+    <text x="500" y="462" text-anchor="start" direction="ltr" font-size="11" fill="#1e40af" font-family="Consolas, monospace">• .map(load_image)</text>
+    <text x="900" y="462" text-anchor="end" direction="rtl" font-size="11" fill="#1e40af">— טעינת JPG מהדיסק</text>
   </g>
 </svg>
