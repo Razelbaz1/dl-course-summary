@@ -3806,8 +3806,8 @@ train_dataset = image_dataset_from_directory(
     <h4>‎4 פעולות שימושיות על Dataset</h4>
     <table class="compare">
       <tr><th>פעולה</th><th>מה היא עושה</th><th>דוגמה מהקוד</th></tr>
-      <tr><td><code>.batch(n)</code></td><td>קבוצת n אובייקטים → batch אחד</td><td><code>(1000,16)</code> → <code>(32, 16)</code> per batch</td></tr>
-      <tr><td><code>.map(fn)</code></td><td>הפעלת פונקציה על כל element</td><td><code>map(lambda x: tf.reshape(x, (4,4)))</code> → <code>(16,)</code> ל-<code>(4,4)</code></td></tr>
+      <tr><td><code>.batch(n)</code></td><td>קבוצת n אובייקטים → batch אחד</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">(1000, 16) &nbsp;→&nbsp; batches of (32, 16)</span></td></tr>
+      <tr><td><code>.map(fn)</code></td><td>הפעלת פונקציה על כל element</td><td><span dir="ltr" style="display:inline-block;font-family:Consolas,monospace">map(lambda x: tf.reshape(x, (4,4))) &nbsp;→&nbsp; shape (16,) becomes (4, 4)</span></td></tr>
       <tr><td><code>.shuffle(buf)</code></td><td>ערבוב סדר ה-elements</td><td>חשוב לפני אימון!</td></tr>
       <tr><td>iteration</td><td>for loop רגיל (Dataset הוא iterator)</td><td>גם <code>fit()</code> עובד ישר עם זה</td></tr>
     </table>
