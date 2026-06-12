@@ -406,6 +406,47 @@
     /* פינות חכמות יותר */
     .card { border-radius: 10px; padding: 14px; }
   }
+
+  /* ============================================================
+     הדפסה — A4: כל הפרקים ברצף, פרק לכל עמוד, הכל פתוח
+     ============================================================ */
+  @media print {
+    @page { size: A4; margin: 14mm 12mm; }
+
+    body { background: #fff; font-size: 12.5px; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* הסתרת רכיבי ניווט ואינטראקציה */
+    nav.tabs, #tabs-reopen, #toc-button, #toc-panel, #to-top,
+    header.top .top-actions, .glossary-controls, .toggle-hint { display: none !important; }
+
+    header.top { position: static; box-shadow: none; padding: 0 0 10px; }
+    main { max-width: none; padding: 0; }
+
+    /* כל הלשוניות מוצגות; כל פרק מתחיל בעמוד חדש */
+    .tab-panel { display: block !important; animation: none; break-before: page; page-break-before: always; }
+    .tab-panel:first-of-type { break-before: auto; page-break-before: auto; }
+
+    /* פתיחת תוכן מתקפל (details נפתחים גם ב-JS ב-beforeprint) */
+    .term-long { display: block !important; }
+
+    /* מניעת חיתוך אלמנטים באמצע בין עמודים */
+    .card, .quiz-q, .term-card, .callout, .formula, pre, img, svg,
+    table.compare tr { break-inside: avoid; page-break-inside: avoid; }
+    h2.section, h3, h4 { break-after: avoid; page-break-after: avoid; }
+
+    /* קוד, נוסחאות וטבלאות — שבירת שורות במקום גלילה אופקית */
+    pre, .formula { overflow: visible; }
+    table.compare { display: table; overflow: visible; }
+    pre code { white-space: pre-wrap; word-break: break-word; font-size: 11px; }
+    .formula { font-size: 12px; }
+
+    /* תמונות ו-SVG — להתאים לרוחב עמוד A4 (ביטול min-width) */
+    img { min-width: 0 !important; max-width: 100% !important; }
+
+    .card, .term-card, table.compare { box-shadow: none; }
+    a { color: inherit; text-decoration: none; }
+  }
 </style>
 </head>
 <body>
@@ -6462,6 +6503,23 @@ train_dataset = image_dataset_from_directory(
   // Expand / collapse all (within active tab)
   function expandAll(){ document.querySelectorAll('.tab-panel.active details').forEach(d => d.open = true); }
   function collapseAll(){ document.querySelectorAll('.tab-panel.active details').forEach(d => d.open = false); }
+
+  // Print support — open everything before printing, restore state after
+  let _printDetailsState = null;
+  window.addEventListener('beforeprint', () => {
+    const all = document.querySelectorAll('details');
+    _printDetailsState = [...all].map(d => d.open);
+    all.forEach(d => d.open = true);
+    // show all glossary cards regardless of active search/filter
+    document.querySelectorAll('.term-card').forEach(c => c.style.display = '');
+  });
+  window.addEventListener('afterprint', () => {
+    if (_printDetailsState) {
+      document.querySelectorAll('details').forEach((d, i) => d.open = _printDetailsState[i]);
+      _printDetailsState = null;
+    }
+    if (typeof filterGlossary === 'function') filterGlossary();
+  });
 
   // TOC
   function rebuildTOC(){
