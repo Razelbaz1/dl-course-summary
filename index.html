@@ -91,37 +91,52 @@
     box-shadow: 0 4px 10px rgba(37,99,235,.3);
   }
 
-  /* Collapse toggle */
+  /* Collapse toggle — slim ghost chevron that blends into the tabs bar */
   #tabs-toggle {
     margin-inline-start: auto;
-    background: var(--c-bg-2); color: var(--c-primary);
-    border: 1px solid var(--c-border);
-    width: 34px; height: 34px; border-radius: 50%;
-    cursor: pointer; font-size: 13px; font-weight: 700;
+    background: transparent; color: var(--c-muted);
+    border: 1px solid transparent;
+    width: 30px; height: 30px; border-radius: 8px; padding: 0;
+    cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center;
-    transition: all .2s;
+    transition: background .2s, color .2s, border-color .2s;
   }
-  #tabs-toggle:hover { background: var(--c-chip); transform: scale(1.05); }
-  #tabs-toggle::before { content: "▲"; }
+  #tabs-toggle:hover { background: var(--c-bg-2); color: var(--c-primary); border-color: var(--c-border); }
+  #tabs-toggle:active { background: var(--c-chip); }
+  /* CSS chevron (pointing up = "collapse") drawn from two borders */
+  #tabs-toggle::before {
+    content: ""; width: 8px; height: 8px; margin-top: 3px;
+    border-left: 2px solid currentColor; border-top: 2px solid currentColor;
+    border-radius: 1px;
+    transform: rotate(45deg);
+  }
 
   /* Collapsed state — hide entire tabs bar */
   nav.tabs.collapsed { display: none; }
 
-  /* Floating reopen button (visible only when tabs are collapsed) */
+  /* Reopen handle — a small tab peeking from the very top edge when collapsed */
   #tabs-reopen {
     position: fixed;
-    top: 14px; right: 14px;
+    top: 0; left: 50%;
+    transform: translate(-50%, -58%);   /* mostly tucked above the edge; only a nub peeks */
     z-index: 70;
     background: var(--c-primary); color: #fff;
-    border: none; width: 46px; height: 46px;
-    border-radius: 50%; cursor: pointer;
-    font-size: 22px; line-height: 1;
-    display: none; align-items: center; justify-content: center;
-    box-shadow: 0 6px 18px rgba(30,58,138,.35);
-    transition: transform .15s, background .2s;
+    border: none; width: 58px; height: 30px;
+    border-radius: 0 0 14px 14px;        /* a tab hanging down from the top */
+    cursor: pointer; padding: 0 0 4px;
+    display: none; align-items: flex-end; justify-content: center;
+    box-shadow: 0 4px 12px rgba(30,58,138,.28);
+    transition: transform .22s ease, background .2s;
   }
-  #tabs-reopen:hover { background: var(--c-primary-2); transform: scale(1.06); }
+  #tabs-reopen:hover { transform: translate(-50%, 0); background: var(--c-primary-2); }
   #tabs-reopen.visible { display: inline-flex; }
+  /* CSS chevron (pointing down = "pull to reveal tabs") */
+  #tabs-reopen::before {
+    content: ""; width: 9px; height: 9px; margin-bottom: 2px;
+    border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+    border-radius: 1px;
+    transform: rotate(45deg);
+  }
 
   main { padding: 26px 24px 80px; max-width: 1180px; margin: 0 auto; }
 
@@ -6467,7 +6482,7 @@ train_dataset = image_dataset_from_directory(
 
 </main>
 
-<button id="tabs-reopen" type="button" title="הצג לשוניות" aria-label="הצג לשוניות">☰</button>
+<button id="tabs-reopen" type="button" title="הצג לשוניות" aria-label="הצג לשוניות"></button>
 
 <button id="toc-button" onclick="toggleTOC()" title="תוכן עניינים">☰</button>
 <div id="toc-panel">
