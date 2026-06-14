@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="rsCell" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/></linearGradient>
+    <marker id="ar9g" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d35400"/></marker>
+    <marker id="ar9gG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#27ae60"/></marker>
+    <marker id="ar9gX" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#cbd5e1"/></marker>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">הפרמטר return_sequences — שני מצבי פלט</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">אותה שכבה בדיוק (SimpleRNN/LSTM/GRU), הבדל בלבד במה שמוחזר</text>
+
+  <!-- divider -->
+  <line x1="410" y1="60" x2="410" y2="370" stroke="#c7dbf7" stroke-width="1" stroke-dasharray="4,4"/>
+
+  <!-- ===== LEFT: return_sequences=False ===== -->
+  <text x="205" y="80" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">return_sequences = False</text>
+  <text x="205" y="98" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">רק הפלט של נקודת הזמן האחרונה</text>
+  <g>
+    <rect x="50"  y="170" width="56" height="50" rx="8" fill="url(#rsCell)"/><text x="78"  y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t1</text>
+    <rect x="135" y="170" width="56" height="50" rx="8" fill="url(#rsCell)"/><text x="163" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t2</text>
+    <rect x="220" y="170" width="56" height="50" rx="8" fill="url(#rsCell)"/><text x="248" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">…</text>
+    <rect x="305" y="170" width="56" height="50" rx="8" fill="url(#rsCell)" stroke="#27ae60" stroke-width="2.5"/><text x="333" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t120</text>
+    <line x1="106" y1="195" x2="135" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <line x1="191" y1="195" x2="220" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <line x1="276" y1="195" x2="305" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <!-- discarded outputs (gray) -->
+    <line x1="78"  y1="170" x2="78"  y2="148" stroke="#cbd5e1" stroke-width="1.6" marker-end="url(#ar9gX)"/>
+    <line x1="163" y1="170" x2="163" y2="148" stroke="#cbd5e1" stroke-width="1.6" marker-end="url(#ar9gX)"/>
+    <line x1="248" y1="170" x2="248" y2="148" stroke="#cbd5e1" stroke-width="1.6" marker-end="url(#ar9gX)"/>
+    <text x="120" y="140" text-anchor="middle" font-size="10" fill="#94a3b8" direction="rtl">נזרקים</text>
+    <!-- kept output (green) -->
+    <line x1="333" y1="170" x2="333" y2="140" stroke="#27ae60" stroke-width="2.2" marker-end="url(#ar9gG)"/>
+    <text x="333" y="132" text-anchor="middle" font-size="11" fill="#27ae60" font-weight="700">✓</text>
+  </g>
+  <rect x="120" y="250" width="170" height="34" rx="8" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="205" y="272" text-anchor="middle" font-size="13" font-weight="700" fill="#27ae60">(None, 16)</text>
+  <text x="205" y="304" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">(batch_size, output_features)</text>
+  <text x="205" y="334" text-anchor="middle" font-size="11" fill="#1e3a8a" direction="rtl">ברירת המחדל · לשכבה אחרונה</text>
+
+  <!-- ===== RIGHT: return_sequences=True ===== -->
+  <text x="615" y="80" text-anchor="middle" font-size="14" font-weight="700" fill="#1e3a8a">return_sequences = True</text>
+  <text x="615" y="98" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">רצף פלטים מלא — לכל נקודת זמן</text>
+  <g>
+    <rect x="460" y="170" width="56" height="50" rx="8" fill="url(#rsCell)" stroke="#27ae60" stroke-width="2.5"/><text x="488" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t1</text>
+    <rect x="545" y="170" width="56" height="50" rx="8" fill="url(#rsCell)" stroke="#27ae60" stroke-width="2.5"/><text x="573" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t2</text>
+    <rect x="630" y="170" width="56" height="50" rx="8" fill="url(#rsCell)" stroke="#27ae60" stroke-width="2.5"/><text x="658" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">…</text>
+    <rect x="715" y="170" width="56" height="50" rx="8" fill="url(#rsCell)" stroke="#27ae60" stroke-width="2.5"/><text x="743" y="200" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">t120</text>
+    <line x1="516" y1="195" x2="545" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <line x1="601" y1="195" x2="630" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <line x1="686" y1="195" x2="715" y2="195" stroke="#d35400" stroke-width="1.8" marker-end="url(#ar9g)"/>
+    <!-- all outputs kept (green) -->
+    <line x1="488" y1="170" x2="488" y2="140" stroke="#27ae60" stroke-width="2.2" marker-end="url(#ar9gG)"/>
+    <line x1="573" y1="170" x2="573" y2="140" stroke="#27ae60" stroke-width="2.2" marker-end="url(#ar9gG)"/>
+    <line x1="658" y1="170" x2="658" y2="140" stroke="#27ae60" stroke-width="2.2" marker-end="url(#ar9gG)"/>
+    <line x1="743" y1="170" x2="743" y2="140" stroke="#27ae60" stroke-width="2.2" marker-end="url(#ar9gG)"/>
+    <text x="615" y="132" text-anchor="middle" font-size="10" fill="#27ae60" font-weight="700" direction="rtl">כולם נשמרים ✓</text>
+  </g>
+  <rect x="530" y="250" width="170" height="34" rx="8" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="615" y="272" text-anchor="middle" font-size="13" font-weight="700" fill="#27ae60">(None, 120, 16)</text>
+  <text x="615" y="304" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">(batch, timesteps, features)</text>
+  <text x="615" y="334" text-anchor="middle" font-size="11" fill="#1e3a8a" direction="rtl">חובה בשכבות ביניים בערימה (stacking)</text>
+
+  <!-- bottom note -->
+  <rect x="60" y="378" width="700" height="42" rx="8" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="410" y="397" text-anchor="middle" font-size="12" fill="#1e3a8a" direction="rtl">כלל אצבע: בעֵרֵמה (stacked RNN) כל שכבת ביניים צריכה <tspan font-family="Consolas,monospace" font-weight="700">return_sequences=True</tspan></text>
+  <text x="410" y="414" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">כדי שהשכבה הבאה תקבל רצף מלא (טנזור תלת-ממדי) ולא רק וקטור בודד.</text>
+</svg>

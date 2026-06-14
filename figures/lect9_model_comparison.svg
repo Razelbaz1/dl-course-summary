@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="mGray" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#64748b"/><stop offset="100%" stop-color="#94a3b8"/></linearGradient>
+    <linearGradient id="mRed"  x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#d35400"/><stop offset="100%" stop-color="#f39c12"/></linearGradient>
+    <linearGradient id="mRed2" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#c0392b"/><stop offset="100%" stop-color="#e74c3c"/></linearGradient>
+    <linearGradient id="mBlue" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#1f6fb5"/><stop offset="100%" stop-color="#3498db"/></linearGradient>
+    <linearGradient id="mGreen" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#27ae60"/><stop offset="100%" stop-color="#2ecc71"/></linearGradient>
+  </defs>
+
+  <text x="380" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">השוואת המודלים — Test MAE (נמוך יותר = טוב יותר)</text>
+  <text x="380" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">תוצאות הריצה במחברת · חיזוי טמפרטורה 24 שעות קדימה</text>
+
+  <!-- axes -->
+  <line x1="80" y1="90" x2="80" y2="380" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="80" y1="380" x2="720" y2="380" stroke="#9ca3af" stroke-width="1.5"/>
+
+  <!-- gridlines + Y labels (MAE 0..3.5) -->
+  <g font-size="11" fill="#6b7280" text-anchor="end">
+    <line x1="80" y1="380"   x2="720" y2="380"   stroke="#e5e7eb"/><text x="73" y="384">0.0</text>
+    <line x1="80" y1="338.6" x2="720" y2="338.6" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="342">0.5</text>
+    <line x1="80" y1="297.1" x2="720" y2="297.1" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="301">1.0</text>
+    <line x1="80" y1="255.7" x2="720" y2="255.7" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="259">1.5</text>
+    <line x1="80" y1="214.3" x2="720" y2="214.3" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="218">2.0</text>
+    <line x1="80" y1="172.9" x2="720" y2="172.9" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="176">2.5</text>
+    <line x1="80" y1="131.4" x2="720" y2="131.4" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="135">3.0</text>
+    <line x1="80" y1="90"    x2="720" y2="90"    stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="73" y="94">3.5</text>
+  </g>
+  <text x="34" y="240" text-anchor="middle" font-size="12" fill="#475569" transform="rotate(-90 34 240)">Test MAE (°C)</text>
+
+  <!-- baseline reference line at MAE 2.62 -> y=162.9 -->
+  <line x1="80" y1="162.9" x2="720" y2="162.9" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="715" y="157" text-anchor="end" font-size="11" font-weight="700" fill="#c0392b" direction="rtl">קו הבייסליין 2.62 — צריך לרדת מתחתיו</text>
+
+  <!-- Bars: scale 1 MAE = 82.86px, y_top = 380 - MAE*82.86 -->
+  <!-- Baseline 2.62 -->
+  <rect x="104" y="162.9" width="80" height="217.1" fill="url(#mGray)" rx="4"/>
+  <text x="144" y="155" text-anchor="middle" font-size="14" font-weight="700" fill="#475569">2.62</text>
+  <text x="144" y="400" text-anchor="middle" font-size="12" font-weight="600" fill="#374151" direction="rtl">בייסליין</text>
+  <text x="144" y="416" text-anchor="middle" font-size="10" fill="#6b7280" direction="rtl">ללא ML</text>
+
+  <!-- Dense 2.74 -->
+  <rect x="232" y="153.0" width="80" height="227.0" fill="url(#mRed)" rx="4"/>
+  <text x="272" y="145" text-anchor="middle" font-size="14" font-weight="700" fill="#d35400">2.74</text>
+  <text x="272" y="400" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">Dense</text>
+  <text x="272" y="416" text-anchor="middle" font-size="10" fill="#6b7280" direction="rtl">Flatten+FC ✗</text>
+
+  <!-- Conv1D 3.14 -->
+  <rect x="360" y="119.8" width="80" height="260.2" fill="url(#mRed2)" rx="4"/>
+  <text x="400" y="112" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">3.14</text>
+  <text x="400" y="400" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">Conv1D</text>
+  <text x="400" y="416" text-anchor="middle" font-size="10" fill="#6b7280" direction="rtl">הכי גרוע ✗</text>
+
+  <!-- LSTM 2.60 -->
+  <rect x="488" y="164.6" width="80" height="215.4" fill="url(#mBlue)" rx="4"/>
+  <text x="528" y="157" text-anchor="middle" font-size="14" font-weight="700" fill="#1f6fb5">2.60</text>
+  <text x="528" y="400" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">LSTM</text>
+  <text x="528" y="416" text-anchor="middle" font-size="10" fill="#6b7280" direction="rtl">ראשון שעבר ✓</text>
+
+  <!-- GRU 2.46 -->
+  <rect x="616" y="176.2" width="80" height="203.8" fill="url(#mGreen)" rx="4"/>
+  <text x="656" y="168" text-anchor="middle" font-size="14" font-weight="700" fill="#27ae60">2.46</text>
+  <text x="656" y="400" text-anchor="middle" font-size="12" font-weight="600" fill="#374151">Stacked GRU</text>
+  <text x="656" y="416" text-anchor="middle" font-size="10" fill="#6b7280" direction="rtl">הטוב ביותר ✓✓</text>
+
+  <!-- insight box -->
+  <rect x="80" y="432" width="640" height="30" rx="8" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="400" y="452" text-anchor="middle" font-size="12" fill="#1e3a8a" direction="rtl">המסר: Dense ו-CNN <tspan font-weight="700" fill="#c0392b">לא ניצחו</tspan> את הבייסליין — רק רשתות recurrent (LSTM/GRU) ש"זוכרות" סדר הצליחו.</text>
+</svg>

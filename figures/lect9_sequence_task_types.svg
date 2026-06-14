@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="inG" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#c0392b"/><stop offset="100%" stop-color="#e74c3c"/>
+    </linearGradient>
+    <linearGradient id="hiG" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#1e3a8a"/><stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="ouG" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#27ae60"/><stop offset="100%" stop-color="#2ecc71"/>
+    </linearGradient>
+    <marker id="ar9a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">סוגי בעיות סדרתיות — Feedforward מול Sequential</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">אדום = קלט (x) · כחול = מצב נסתר (state) · ירוק = פלט (y)</text>
+
+  <!-- legend row positions: panels at x-centers 130, 320, 510, 700 ; top y=70 -->
+
+  <!-- ===== Panel 1: one-to-one (feedforward) ===== -->
+  <g>
+    <rect x="105" y="78" width="40" height="40" rx="5" fill="url(#inG)"/>
+    <rect x="105" y="158" width="40" height="40" rx="5" fill="url(#hiG)"/>
+    <rect x="105" y="238" width="40" height="40" rx="5" fill="url(#ouG)"/>
+    <line x1="125" y1="118" x2="125" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="125" y1="198" x2="125" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <text x="125" y="305" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">one-to-one</text>
+    <text x="125" y="325" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">Feedforward</text>
+    <text x="125" y="343" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">חיזוי קבלת מועמד</text>
+  </g>
+
+  <!-- ===== Panel 2: one-to-many ===== -->
+  <g>
+    <rect x="280" y="78" width="40" height="40" rx="5" fill="url(#inG)"/>
+    <g fill="url(#hiG)">
+      <rect x="250" y="158" width="34" height="40" rx="5"/>
+      <rect x="295" y="158" width="34" height="40" rx="5"/>
+      <rect x="340" y="158" width="34" height="40" rx="5"/>
+    </g>
+    <g fill="url(#ouG)">
+      <rect x="250" y="238" width="34" height="40" rx="5"/>
+      <rect x="295" y="238" width="34" height="40" rx="5"/>
+      <rect x="340" y="238" width="34" height="40" rx="5"/>
+    </g>
+    <line x1="300" y1="118" x2="300" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="284" y1="178" x2="293" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="329" y1="178" x2="338" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="267" y1="198" x2="267" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="312" y1="198" x2="312" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="357" y1="198" x2="357" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <text x="312" y="305" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">one-to-many</text>
+    <text x="312" y="325" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">חילול מנגינה</text>
+    <text x="312" y="343" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">מספר ← סדרת תווים</text>
+  </g>
+
+  <!-- ===== Panel 3: many-to-one ===== -->
+  <g>
+    <g fill="url(#inG)">
+      <rect x="450" y="78" width="34" height="40" rx="5"/>
+      <rect x="495" y="78" width="34" height="40" rx="5"/>
+      <rect x="540" y="78" width="34" height="40" rx="5"/>
+    </g>
+    <g fill="url(#hiG)">
+      <rect x="450" y="158" width="34" height="40" rx="5"/>
+      <rect x="495" y="158" width="34" height="40" rx="5"/>
+      <rect x="540" y="158" width="34" height="40" rx="5"/>
+    </g>
+    <rect x="540" y="238" width="34" height="40" rx="5" fill="url(#ouG)"/>
+    <line x1="467" y1="118" x2="467" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="512" y1="118" x2="512" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="557" y1="118" x2="557" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="484" y1="178" x2="493" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="529" y1="178" x2="538" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="557" y1="198" x2="557" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <text x="512" y="305" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">many-to-one</text>
+    <text x="512" y="325" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">ניתוח רגש · חיזוי טמפ'</text>
+    <text x="512" y="343" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">סדרה ← ערך יחיד</text>
+  </g>
+
+  <!-- ===== Panel 4: many-to-many ===== -->
+  <g>
+    <g fill="url(#inG)">
+      <rect x="640" y="78" width="34" height="40" rx="5"/>
+      <rect x="685" y="78" width="34" height="40" rx="5"/>
+      <rect x="730" y="78" width="34" height="40" rx="5"/>
+    </g>
+    <g fill="url(#hiG)">
+      <rect x="640" y="158" width="34" height="40" rx="5"/>
+      <rect x="685" y="158" width="34" height="40" rx="5"/>
+      <rect x="730" y="158" width="34" height="40" rx="5"/>
+    </g>
+    <g fill="url(#ouG)">
+      <rect x="640" y="238" width="34" height="40" rx="5"/>
+      <rect x="685" y="238" width="34" height="40" rx="5"/>
+      <rect x="730" y="238" width="34" height="40" rx="5"/>
+    </g>
+    <line x1="657" y1="118" x2="657" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="702" y1="118" x2="702" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="747" y1="118" x2="747" y2="156" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="674" y1="178" x2="683" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="719" y1="178" x2="728" y2="178" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="657" y1="198" x2="657" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="702" y1="198" x2="702" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <line x1="747" y1="198" x2="747" y2="236" stroke="#475569" stroke-width="1.6" marker-end="url(#ar9a)"/>
+    <text x="702" y="305" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">many-to-many</text>
+    <text x="702" y="325" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">תרגום · ניתוח וידאו</text>
+    <text x="702" y="343" text-anchor="middle" font-size="11" fill="#6b7280" direction="rtl">סדרה ← סדרה</text>
+  </g>
+
+  <!-- bottom note -->
+  <rect x="60" y="372" width="700" height="42" rx="8" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="410" y="389" text-anchor="middle" font-size="12" fill="#1e3a8a" direction="rtl">בדוגמת חיזוי הטמפרטורה אנו ב-<tspan font-weight="700">many-to-one</tspan>: 120 שעות נתונים ← טמפרטורה אחת בעוד 24 שעות.</text>
+  <text x="410" y="406" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">ב-Feedforward הקלט והפלט יחידים — אין משמעות לזמן או לסדר.</text>
+</svg>

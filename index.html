@@ -502,6 +502,7 @@
   <button data-tab="lect6">6 · Keras בפועל</button>
   <button data-tab="lect7">7 · CNN</button>
   <button data-tab="lect8">8 · Cats vs Dogs</button>
+  <button data-tab="lect9">9 · Sequence Models</button>
   <button data-tab="glossary">מילון מושגים</button>
   <button id="tabs-toggle" type="button" title="הסתר/הצג את שאר הלשוניות" aria-label="צמצום לשוניות"></button>
 </nav>
@@ -4685,6 +4686,345 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
   </div>
 </section>
 
+<section id="lect9" class="tab-panel">
+  <h2 class="section">הרצאה 9 — Sequence Models (A): חיזוי סדרות זמן</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 9</span>
+      <span class="chip outline">67 שקפים</span>
+      <span class="chip outline">Jena Climate</span>
+      <span class="chip">RNN · LSTM · GRU</span>
+      <span class="chip">מבוסס Chollet פרק 10</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> זו ההרצאה הראשונה על <strong>נתונים סדרתיים</strong> (sequence data). דרך משימה אחת — <strong>חיזוי הטמפרטורה בעוד 24 שעות</strong> — נבין למה רשתות רגילות ו-CNN <em>לא</em> מתאימות לסדרות זמן, ולמה רשתות recurrent (RNN/LSTM/GRU) כן. נריץ 5 מודלים מתחרים ונראה שרק רשתות ש"זוכרות סדר" מצליחות לעבור את הבייסליין.</p>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>סוגי בעיות סדרתיות: many-to-one, one-to-many, many-to-many.</li>
+      <li>הנתונים: Jena Climate — 420,451 דגימות, 14 מדדי מז"א, כל 10 דקות, 2009–2016.</li>
+      <li>הכנת נתונים סדרתיים: חיתוך חלונות זמן עם <code>timeseries_dataset_from_array</code>, נרמול ופיצול כרונולוגי.</li>
+      <li>בייסליין ללא ML ("מחר = היום") — הרף שצריך לעבור (Test MAE 2.62).</li>
+      <li>מודל Dense ומודל Conv1D — ושניהם נכשלים. למה?</li>
+      <li>RNN — האינטואיציה, מימוש NumPy, ו-Keras (<code>SimpleRNN</code>, <code>return_sequences</code>).</li>
+      <li>LSTM ו-GRU — פתרון ה-vanishing gradient עם carry track ושערים.</li>
+      <li>שיפורים: recurrent dropout, stacking, bidirectional.</li>
+    </ol>
+  </div>
+
+  <!-- ========== 0. BIG PICTURE ========== -->
+  <h3>0. תמונת מפתח — תחרות המודלים</h3>
+  <div class="card">
+    <p>לפני הפרטים, הנה המסר המרכזי של ההרצאה במבט אחד: על אותה משימה בדיוק, <strong>מודל Dense ומודל CNN לא הצליחו אפילו לנצח בייסליין טיפשי</strong> ("הטמפרטורה בעוד 24 שעות = הטמפרטורה עכשיו"). רק רשתות recurrent, שמעבדות את הרצף לפי הסדר ו"זוכרות" מה שראו, ירדו מתחת לרף.</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_model_comparison.svg" alt="השוואת מודלים — Test MAE" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">Test MAE של כל המודלים. נמוך יותר = טוב יותר. הקו האדום המקווקו = רף הבייסליין (2.62).</div>
+    </div>
+
+    <div class="callout info">
+      <strong>שלוש תובנות מהגרף:</strong>
+      <ul>
+        <li><strong>Dense (2.74)</strong> ו-<strong>Conv1D (3.14)</strong> גרועים מהבייסליין — הם מתעלמים מסדר הזמן.</li>
+        <li><strong>LSTM (2.60)</strong> הוא הראשון שעובר את הרף — בקושי, אבל עובר.</li>
+        <li><strong>Stacked GRU (2.46)</strong> הוא הטוב ביותר. עדיין שיפור צנוע — כי לדאטה הזה יש גבול אמיתי (צריך תחנות נוספות כדי לחזות טוב יותר).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== 1. SEQUENCE TASK TYPES ========== -->
+  <h3>1. סוגי בעיות סדרתיות</h3>
+  <div class="card">
+    <p>עד עכשיו עבדנו עם רשתות <strong>feedforward</strong>: קלט יחיד נכנס, פלט יחיד יוצא, אין משמעות לזמן או לסדר. בנתונים סדרתיים יש <strong>רצף</strong> של קלטים ו/או רצף של פלטים — וזה משנה הכל.</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_sequence_task_types.svg" alt="סוגי בעיות סדרתיות" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">ארבעת הארכיטיפים. דוגמת הטמפרטורה היא many-to-one: 120 שעות נתונים ← טמפרטורה אחת.</div>
+    </div>
+
+    <ul>
+      <li><strong>many-to-one</strong> — ניתוח רגש ("ספר מדהים" → חיובי), חיזוי טמפרטורה.</li>
+      <li><strong>one-to-many</strong> — חילול מנגינה (מספר → סדרת תווים).</li>
+      <li><strong>many-to-many</strong> — תרגום משפטים, ניתוח פעילות מווידאו.</li>
+    </ul>
+  </div>
+
+  <!-- ========== 2. DATA ========== -->
+  <h3>2. הנתונים — Jena Climate</h3>
+  <div class="card">
+    <p>הדאטה: מדידות מתחנת מזג אוויר במכון מקס-פלאנק ביֵנה, גרמניה. <strong>14 מדדים</strong> (טמפרטורה, לחץ, לחות, כיוון רוח...) שנדגמו <strong>כל 10 דקות</strong> לאורך 2009–2016 — בסך הכל 420,451 שורות.</p>
+
+    <pre><code>import pandas as pd
+df = pd.read_csv("jena_climate_2009_2016.csv")
+
+temperature = df["T (degC)"].to_numpy()    # עמודת המטרה
+raw_data    = df.iloc[:, 1:].to_numpy()    # כל 14 המדדים (כולל הטמפ' עצמה!)</code></pre>
+
+    <div class="callout info">
+      <strong>למה <code>raw_data</code> כולל גם את הטמפרטורה?</strong> כי הטמפרטורה של עכשיו היא feature מצוין לחיזוי הטמפרטורה בעתיד. אנחנו לא "מרמים" — המטרה (<code>temperature[delay]</code>) היא ערך עתידי, לא הערך הנוכחי.
+    </div>
+
+    <p>מסתכלים על הנתונים — רואים מחזוריות בשתי סקאלות:</p>
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:280px; background:#fff; padding:10px; border-radius:8px; border:1px solid var(--c-border); text-align:center; overflow-x:auto;">
+        <img src="figures/lect9_temperature_full.png" alt="טמפרטורה לאורך 8 שנים" style="max-width:100%; height:auto; border-radius:6px;"/>
+        <div style="margin-top:6px; font-size:12px; color:var(--c-muted);">כל 8 השנים — מחזוריות שנתית ברורה (חורף/קיץ).</div>
+      </div>
+      <div style="flex:1; min-width:280px; background:#fff; padding:10px; border-radius:8px; border:1px solid var(--c-border); text-align:center; overflow-x:auto;">
+        <img src="figures/lect9_temperature_10days.png" alt="טמפרטורה ב-10 הימים הראשונים" style="max-width:100%; height:auto; border-radius:6px;"/>
+        <div style="margin-top:6px; font-size:12px; color:var(--c-muted);">10 ימים ראשונים (1440 דגימות) — מחזוריות יומית + תנודתיות גבוהה.</div>
+      </div>
+    </div>
+    <p style="margin-top:10px;">לחזות טמפרטורה ממוצעת לחודש הבא — קל. לחזות את הטמפרטורה <em>ברזולוציה של ימים</em> — קשה, כי יש הרבה יותר תנודתיות.</p>
+  </div>
+
+  <!-- ========== 3. DATA PREP ========== -->
+  <h3>3. הכנת הנתונים — נרמול, פיצול וחלונות</h3>
+  <div class="card">
+    <p><strong>פיצול כרונולוגי 50/25/25:</strong> ה-train הוא ה-50% הראשונים, אחריו validation (25%), ואחרון ה-test (25%).</p>
+    <div class="callout warning">
+      <strong>בסדרות זמן validation ו-test תמיד מאוחרים מה-train.</strong> אנחנו מנסים לחזות את העתיד — אז אסור לאמן על נתונים שמגיעים <em>אחרי</em> נתוני הבדיקה. אחרת זה <strong>data leakage</strong>.
+    </div>
+
+    <p><strong>נרמול</strong> — לפי ה-mean וה-std של ה-<u>training בלבד</u> (לא משתמשים בעתיד גם לנרמול):</p>
+    <pre><code>mean = raw_data[:num_train_samples].mean(axis=0)
+raw_data -= mean
+std = raw_data[:num_train_samples].std(axis=0)
+raw_data /= std</code></pre>
+
+    <p><strong>חלונות זמן</strong> — במקום ליצור ידנית רצפים חופפים (בזבוז זיכרון ענק), משתמשים בפונקציה שמייצרת אותם "on the fly":</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_windowing.svg" alt="חיתוך חלונות זמן" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">דוגמת צעצוע למעלה; הפרמטרים האמיתיים למטה.</div>
+    </div>
+
+    <pre><code>sampling_rate   = 6      # דגימה פעם בשעה (כל דגימה שישית)
+sequence_length = 120    # 5 ימים = 120 שעות אחורה
+delay = sampling_rate * (sequence_length + 24 - 1)   # המטרה: 24 שעות אחרי סוף הרצף
+batch_size = 256
+
+train_dataset = keras.utils.timeseries_dataset_from_array(
+    raw_data[:-delay],
+    targets=temperature[delay:],
+    sampling_rate=sampling_rate,
+    sequence_length=sequence_length,
+    shuffle=True, batch_size=batch_size,
+    start_index=0, end_index=num_train_samples)
+# val/test: אותו דבר עם start_index/end_index מאוחרים יותר</code></pre>
+
+    <p>כל batch שיוצא הוא tuple של <code>(samples, targets)</code> בצורה הבאה:</p>
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_tensor_shape.svg" alt="צורת הטנזור (256,120,14)" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">samples: (256, 120, 14) · targets: (256,)</div>
+    </div>
+  </div>
+
+  <!-- ========== 4. BASELINE ========== -->
+  <h3>4. בייסליין ללא ML — הרף לעבור</h3>
+  <div class="card">
+    <p>ההנחה הכי בסיסית: <strong>הטמפרטורה בעוד 24 שעות תהיה כמו עכשיו.</strong> ניקח מכל דגימה את השעה האחרונה, התכונה הראשונה (טמפ'), נבטל את הנרמול, ונחשב MAE.</p>
+    <pre><code>def evaluate_naive_method(dataset):
+    total_abs_err, samples_seen = 0., 0
+    for samples, targets in dataset:
+        preds = samples[:, -1, 1] * std[1] + mean[1]   # השעה האחרונה, תכונה 1
+        total_abs_err += np.sum(np.abs(preds - targets))
+        samples_seen  += samples.shape[0]
+    return total_abs_err / samples_seen
+
+# Validation MAE: 2.44   |   Test MAE: 2.62</code></pre>
+    <div class="callout info">
+      <strong>MAE של 2.62°C</strong> פירושו: אם פשוט מנחשים "כמו עכשיו" — טועים בממוצע ב-2.62 מעלות. כל מודל ML חייב לרדת מתחת לזה כדי להצדיק את קיומו.
+    </div>
+  </div>
+
+  <!-- ========== 5. DENSE ========== -->
+  <h3>5. מודל Dense — ונכשל</h3>
+  <div class="card">
+    <p>הניסיון הראשון: לשטח את הרצף (<code>Flatten</code>) ולהעביר דרך שכבות צפופות.</p>
+    <pre><code>inputs = keras.Input(shape=(sequence_length, raw_data.shape[-1]))
+x = layers.Flatten()(inputs)
+x = layers.Dense(16, activation="relu")(x)
+outputs = layers.Dense(1)(x)
+# Test MAE: 2.74  →  גרוע מהבייסליין!</code></pre>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_dense_mae_curves.png" alt="עקומות MAE — Dense" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 400px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">ה-training MAE יורד יפה, אבל ה-validation תקוע ואף עולה — overfitting + חוסר יכולת אמיתית.</div>
+    </div>
+    <div class="callout warning">
+      <strong>למה נכשל?</strong> ה-<code>Flatten</code> הורס את מבנה הזמן — 120 השעות הופכות לוקטור אחד ארוך, וכל נקודות הזמן "מתערבבות". המודל לא יודע מה מוקדם ומה מאוחר.
+    </div>
+  </div>
+
+  <!-- ========== 6. CONV1D ========== -->
+  <h3>6. מודל Conv1D — ונכשל אפילו יותר</h3>
+  <div class="card">
+    <p>אם יש מחזוריות — אולי CNN יזהה אותה? <code>Conv1D</code> מחליק חלון לאורך הרצף (במקום על תמונה דו-ממדית).</p>
+    <pre><code>inputs = keras.Input(shape=(sequence_length, raw_data.shape[-1]))
+x = layers.Conv1D(8, 24, activation="relu")(inputs)   # חלון של 24 שעות
+x = layers.MaxPooling1D(2)(x)
+x = layers.Conv1D(8, 12, activation="relu")(x)
+x = layers.MaxPooling1D(2)(x)
+x = layers.Conv1D(8, 6, activation="relu")(x)
+x = layers.GlobalAveragePooling1D()(x)
+outputs = layers.Dense(1)(x)
+# Test MAE: 3.14  →  הכי גרוע!</code></pre>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_conv1d_mae_curves.png" alt="עקומות MAE — Conv1D" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 400px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">גם ה-training MAE לא יורד נמוך — המודל פשוט לא מתאים לבעיה.</div>
+    </div>
+    <div class="callout warning">
+      <strong>למה נכשל?</strong> שתי סיבות: (1) מז"א <em>לא</em> מקיים <strong>translation invariance</strong> — נתוני בוקר מתנהגים אחרת מנתוני לילה. (2) ב-CNN כל מקטע מטופל באותו אופן, ו-<code>MaxPooling</code> אפילו הורס את הסדר — אבל בסדרות זמן הסדר הוא הכל (נתונים מסוף הרצף חשובים יותר מההתחלה).
+    </div>
+  </div>
+
+  <!-- ========== 7. RNN INTRO ========== -->
+  <h3>7. RNN — רשת עם זיכרון</h3>
+  <div class="card">
+    <p>כל הרשתות עד כה היו <strong>חסרות זיכרון</strong> (stateless): כל קלט עובד בנפרד. אבל כשאנחנו קוראים משפט — קוראים אותו מילה אחרי מילה, ושומרים בזיכרון מה קראנו קודם. <strong>RNN</strong> מאמץ בדיוק את הרעיון הזה: הוא עובר על איברי הרצף אחד-אחד ושומר <strong>state</strong> — זיכרון של מה שראה עד עכשיו.</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_rnn_loop.svg" alt="לולאת RNN פרוסה בזמן" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">RNN הוא לולאת for: בכל צעד משלב את הקלט החדש עם ה-state מהצעד הקודם.</div>
+    </div>
+
+    <p>מימוש "צעצוע" ב-NumPy מבהיר את הרעיון:</p>
+    <pre><code>state_t = np.zeros((output_features,))
+for input_t in inputs:                       # עובר על נקודות הזמן
+    output_t = np.tanh(np.dot(W, input_t) + np.dot(U, state_t) + b)
+    successive_outputs.append(output_t)
+    state_t = output_t                       # ה-state מתעדכן בכל צעד</code></pre>
+    <div class="callout info">
+      ה-<code>state</code> מתאפס בין דגימות בלתי-תלויות (משפטים שונים, חלונות זמן שונים). בתוך דגימה אחת — הוא נשמר וזורם לאורך כל נקודות הזמן.
+    </div>
+  </div>
+
+  <!-- ========== 8. RETURN_SEQUENCES ========== -->
+  <h3>8. <code>return_sequences</code> — שני מצבי פלט</h3>
+  <div class="card">
+    <p>שכבות recurrent ב-Keras (<code>SimpleRNN</code>, <code>LSTM</code>, <code>GRU</code>) יכולות לרוץ בשני מצבים, שנקבעים ע"י הפרמטר <code>return_sequences</code>. ההבדל נראה זהה בקוד כמעט — אבל הצורה של הפלט שונה לגמרי, וזה קריטי.</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_return_sequences.svg" alt="return_sequences True מול False" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">False = רק הצעד האחרון (וקטור). True = כל הצעדים (רצף תלת-ממדי).</div>
+    </div>
+
+    <pre><code>steps, num_features = 120, 14
+inputs = keras.Input(shape=(steps, num_features))
+
+layers.SimpleRNN(16, return_sequences=False)(inputs)   # → (None, 16)
+layers.SimpleRNN(16, return_sequences=True)(inputs)     # → (None, 120, 16)</code></pre>
+
+    <div class="callout success">
+      <strong>למה זה חשוב לשני שקפים שנראים זהים?</strong> בשקפי ההרצאה 40 ו-41 הטקסט זהה לחלוטין — ההבדל היחיד הוא <em>איזה מצב פלט מודגש</em>. זו תזכורת ש"שקף כפול" יכול לשאת מסר שונה. כאן: בערימת שכבות (stacking) <strong>כל שכבת ביניים חייבת</strong> <code>return_sequences=True</code>, אחרת השכבה הבאה לא תקבל רצף לעבד.
+    </div>
+
+    <pre><code># ערימה: שכבות הביניים מחזירות רצף מלא, האחרונה רק וקטור
+x = layers.SimpleRNN(16, return_sequences=True)(inputs)
+x = layers.SimpleRNN(16, return_sequences=True)(x)
+outputs = layers.SimpleRNN(16)(x)            # return_sequences=False (ברירת מחדל) → (None, 16)</code></pre>
+  </div>
+
+  <!-- ========== 9. LSTM ========== -->
+  <h3>9. LSTM ו-GRU — פתרון ה-Vanishing Gradient</h3>
+  <div class="card">
+    <p>ב-<code>SimpleRNN</code> כמעט אף פעם לא משתמשים בפועל. הסיבה: הוא מסתכל על כל ההיסטוריה, מה שמוביל ל-<strong>vanishing gradient</strong> — סיגנלים מוקדמים נעלמים (כמו ב-feedforward עם הרבה שכבות). כדי לפתור זאת פותחו <strong>LSTM</strong> (Hochreiter &amp; Schmidhuber, 1997) ו-<strong>GRU</strong> (Cho et al., 2014).</p>
+
+    <p>הרעיון של LSTM: <strong>מסוע זיכרון</strong> (carry track) שפועל במקביל לרצף. מידע יכול "לקפוץ" אל המסוע בכל שלב ולחזור כשצריך — וכך סיגנלים מוקדמים לא נעלמים. רעיון דומה ל-<strong>residual connections</strong> ב-ResNet.</p>
+
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_lstm_architecture.svg" alt="ארכיטקטורת LSTM" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">LSTM = SimpleRNN + carry track (זיכרון ארוך טווח) + 3 שערים ששולטים מה לשכוח, מה ללמוד, ומה להוציא.</div>
+    </div>
+
+    <h4>הנוסחאות — איך מחשבים את הפלט ואת ה-carry</h4>
+    <div class="formula">output_t = sigmoid(dot(state_t, Uo) + dot(input_t, Wo) + dot(c_t, Vo) + bo)</div>
+    <div class="formula">i_t = sigmoid(dot(state_t, Ui) + dot(input_t, Wi) + bi)</div>
+    <div class="formula">f_t = sigmoid(dot(state_t, Uf) + dot(input_t, Wf) + bf)</div>
+    <div class="formula">k_t = tanh(dot(state_t, Uk) + dot(input_t, Wk) + bk)</div>
+    <div class="formula">c_(t+1) = i_t · k_t  +  c_t · f_t</div>
+    <p style="font-size:14px; color:var(--c-muted);">פירוש אינטואיטיבי: <strong>f_t</strong> = שער שכחה (מה לזרוק מהזיכרון), <strong>i_t · k_t</strong> = מידע חדש ללמוד, <strong>o_t</strong> = מה להוציא כפלט. ארבע קבוצות משקלים (W, U, b לכל שער) — לכן LSTM "כבד" יותר מ-SimpleRNN.</p>
+
+    <h4>LSTM על בעיית הטמפרטורה</h4>
+    <pre><code>inputs = keras.Input(shape=(sequence_length, raw_data.shape[-1]))
+x = layers.LSTM(16)(inputs)
+outputs = layers.Dense(1)(x)
+# Validation MAE: 2.39   |   Test MAE: 2.60   →  סוף סוף עוברים את הבייסליין!</code></pre>
+
+    <h4>GRU — אותו רעיון, פשוט יותר</h4>
+    <p><strong>GRU</strong> (Gated Recurrent Unit) דומה מאוד ל-LSTM אבל עם פחות שערים ופחות פרמטרים — לרוב מהיר יותר ובעל ביצועים דומים. בריצת המחברת מודל ה-GRU הערום נתן את התוצאה הטובה ביותר.</p>
+  </div>
+
+  <!-- ========== 10. IMPROVEMENTS ========== -->
+  <h3>10. שיפורים — Dropout, Stacking, Bidirectional</h3>
+  <div class="card">
+    <h4>Recurrent Dropout</h4>
+    <p>המודל התחיל overfitting כבר מ-epoch 6. אבל dropout רגיל <em>לפני</em> שכבת recurrent פוגע בתוצאות. המחקר (Yarin Gal) מצא שהדרך הנכונה: להחיל את <strong>אותה מסכת dropout על כל נקודות הזמן</strong> — וזה מה ש-<code>recurrent_dropout</code> עושה.</p>
+    <pre><code>x = layers.LSTM(32, recurrent_dropout=0.25)(inputs)
+x = layers.Dropout(0.5)(x)                  # dropout רגיל אחרי, לרגולריזציה של ה-Dense
+# Validation MAE: 2.27   |   Test MAE: 2.45   ·  פחות overfitting</code></pre>
+
+    <h4>Stacking — ערימת שכבות</h4>
+    <p>כלל אצבע: בונים מודל מורכב מספיק עד שמגיעים ל-overfitting, ורק אז נלחמים בו. אם <em>לא</em> מגיעים ל-overfitting — המודל לא הגיע לגבול היכולת. מוסיפים שכבות (לדוגמה, Google Translate בנוי מ-7 שכבות LSTM). כל שכבת ביניים חייבת <code>return_sequences=True</code>:</p>
+    <pre><code>x = layers.GRU(32, recurrent_dropout=0.5, return_sequences=True)(inputs)
+x = layers.GRU(32, recurrent_dropout=0.5)(x)
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(1)(x)
+# Test MAE: 2.46   ·  Stacked GRU — הטוב ביותר בריצה</code></pre>
+
+    <h4>Bidirectional — קריאה משני הכיוונים</h4>
+    <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+      <img src="figures/lect9_bidirectional.svg" alt="Bidirectional RNN" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">שתי שכבות — אחת קוראת קדימה, אחת אחורה — והייצוגים ממוזגים.</div>
+    </div>
+    <pre><code>x = layers.Bidirectional(layers.LSTM(16))(inputs)</code></pre>
+    <div class="callout warning">
+      <strong>בחיזוי טמפרטורה זה לא תרם</strong> — הסדר הכרונולוגי קריטי, וקריאה הפוכה רק מבלבלת. <strong>אבל ב-NLP (השיעור הבא) זה זוהר:</strong> מילה מקבלת משמעות גם ממילים שיבואו אחריה ("המדריך הרצה על הר הכרמל ועל בעלי החיים שחיים שם").
+    </div>
+  </div>
+
+  <!-- ========== 11. INSIGHTS ========== -->
+  <h3>11. תובנות ושגיאות נפוצות</h3>
+  <div class="card">
+    <ol>
+      <li><strong>למה מודל "חכם" מפסיד לבייסליין טיפש?</strong> כי הבייסליין מקודד ידע אמיתי על הבעיה (מחר דומה להיום), ומודל שמתעלם מהסדר פשוט לא לוכד את זה. <em>תמיד</em> מתחילים מבייסליין לא-ML כדי לדעת אם ה-ML באמת תורם.</li>
+      <li><strong>translation invariance זה ההבדל בין CNN ל-RNN.</strong> ב-CNN מניחים שתבנית חשובה לא משנה איפה היא נמצאת — נכון לתמונות, שגוי למז"א (בוקר ≠ לילה) ולסדר כרונולוגי.</li>
+      <li><strong>שני שקפים זהים בטקסט יכולים לשאת מסר שונה.</strong> שקפים 40/41 — אותו טקסט, אבל אחד מדגים <code>return_sequences=False</code> והשני <code>True</code>. תמיד לבדוק מה <em>מודגש/מצויר</em>, לא רק מה כתוב.</li>
+      <li><strong>RNN על CPU מהיר מ-GPU כשיש מעט פרמטרים.</strong> לולאת ה-for לא מנצלת מקביליות; ל-GPU כדאי <code>unroll=True</code> (פורס את הלולאה) אבל רק לרצפים קצרים (עד ~100) ובאורך קבוע ידוע מראש.</li>
+      <li><strong>הבדל בין שקפים למחברת:</strong> ב-PDF מופיע GRU עם Test MAE 2.39, במחברת 2.46. שונות סטוכסטית רגילה (אתחול אקראי + dropout) — אותו סיפור כמו בהרצאה 8.</li>
+      <li><strong>גבול אמיתי לבעיה:</strong> אי אפשר לשפר את הבייסליין בהרבה — לחיזוי טוב יותר צריך נתונים מתחנות סובבות. "DL זו יותר אומנות ממדע" — כל dataset ייחודי.</li>
+    </ol>
+
+    <div class="callout success">
+      <strong>גשר להרצאה הבאה:</strong> בחלק B (Sequence Models / DL for Text) נראה איך כל הכלים האלה — RNN, LSTM, GRU ובמיוחד <strong>Bidirectional</strong> — זוהרים על טקסט ושפה, יחד עם embeddings (Word2Vec/GloVe). שם, מה שלא עזר לטמפרטורה יהפוך לקריטי.
+    </div>
+  </div>
+
+  <!-- ========== 12. SLIDE MAP ========== -->
+  <h3>12. מיפוי שקף ← סעיף (לבדיקה מול ה-PDF)</h3>
+  <div class="card">
+    <p>טבלת בקרה: איזה שקף ב-PDF מכוסה בכל חלק של הפרק. כך אפשר לוודא שכלום לא נפל בין הכיסאות.</p>
+    <table>
+      <thead><tr><th>שקפים ב-PDF</th><th>נושא</th><th>סעיף בפרק</th></tr></thead>
+      <tbody>
+        <tr><td>2, 67</td><td>מבנה השיעור (agenda)</td><td>"על מה נדבר"</td></tr>
+        <tr><td>3–9</td><td>סוגי בעיות סדרתיות · feedforward vs sequential</td><td>§1</td></tr>
+        <tr><td>10–14</td><td>הבעיה · הנתונים · מחזוריות</td><td>§2</td></tr>
+        <tr><td>15–24</td><td>פיצול · נרמול · windowing · צורת טנזור</td><td>§3</td></tr>
+        <tr><td>25</td><td>בייסליין ללא ML</td><td>§4</td></tr>
+        <tr><td>26–27</td><td>מודל Dense</td><td>§5</td></tr>
+        <tr><td>28–31</td><td>מודל Conv1D · למה נכשל</td><td>§6</td></tr>
+        <tr><td>32–38</td><td>RNN — אינטואיציה · pseudocode · NumPy</td><td>§7</td></tr>
+        <tr><td>39–42</td><td>Recurrent layer ב-Keras · <code>return_sequences</code> · stacking</td><td>§8</td></tr>
+        <tr><td>43–53</td><td>SimpleRNN בעייתי · LSTM · נוסחאות · GRU</td><td>§9</td></tr>
+        <tr><td>54–66</td><td>recurrent dropout · stacking · bidirectional · שיפורים</td><td>§10</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="glossary" class="tab-panel">
   <h2 class="section">מילון מושגים — חי ומתעדכן</h2>
 
@@ -6464,6 +6804,152 @@ train_dataset = image_dataset_from_directory(
         <li>מותקן מראש כל מה שצריך — TF, Keras, PyTorch, NumPy, Pandas.</li>
       </ul>
       <strong>מגבלות:</strong> זמן ריצה מוגבל, מנותק אחרי תקופה לא פעילה, GPU "חינמי" יכול להיות זמין באופן לא צפוי.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- ============ Lecture 9 — Sequence Models concepts ============ -->
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">LSTM — Long Short-Term Memory</span>
+      <span class="term-he">— זיכרון ארוך-קצר טווח</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">וריאציה של RNN עם "מסוע זיכרון" (carry track) ושלושה שערים — פותרת את בעיית ה-vanishing gradient ושומרת מידע לטווח ארוך.</div>
+    <div class="term-long">
+      <strong>הרעיון:</strong> מקבילית ל-SimpleRNN רץ <em>carry track</em> (זיכרון ארוך-טווח, c). מידע יכול לקפוץ אל המסוע ולחזור כשצריך — כך סיגנלים מוקדמים לא נעלמים. רעיון דומה ל-residual connections ב-ResNet.
+      <strong>שלושת השערים:</strong>
+      <div class="formula">f_t = sigmoid(...)   — Forget: מה לזרוק מהזיכרון</div>
+      <div class="formula">i_t · k_t            — Learn: מידע חדש להוסיף</div>
+      <div class="formula">o_t = sigmoid(...)   — Use: מה להוציא כפלט</div>
+      <div class="formula">c_(t+1) = i_t · k_t  +  c_t · f_t</div>
+      <strong>היסטוריה:</strong> Hochreiter &amp; Schmidhuber, 1997. <strong>מחיר:</strong> 4 קבוצות משקלים (לעומת אחת ב-SimpleRNN) → כבד יותר. בבעיית הטמפרטורה הגיע ל-Test MAE 2.60.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">SimpleRNN</span>
+      <span class="term-he">— RNN פשוט</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">שכבת ה-RNN הבסיסית ב-Keras — לולאה שמעבירה state בין צעדי זמן. בפועל כמעט לא בשימוש בגלל vanishing gradient.</div>
+    <div class="term-long">
+      <strong>נוסחה:</strong>
+      <div class="formula">output_t = activation(dot(W, input_t) + dot(U, state_t) + b);  state_t = output_t</div>
+      <strong>קלט:</strong> <code>(batch_size, timesteps, input_features)</code>. <code>timesteps=None</code> מאפשר רצפים באורך משתנה.
+      <strong>החיסרון:</strong> מסתכל על כל ההיסטוריה → גרדיאנטים נעלמים ברצפים ארוכים (כמו feedforward עמוק). לכן עוברים ל-LSTM/GRU.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">return_sequences</span>
+      <span class="term-he">— מצב פלט של שכבת recurrent</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">פרמטר שקובע אם שכבת recurrent מחזירה רק את הצעד האחרון (וקטור) או את כל הצעדים (רצף תלת-ממדי).</div>
+    <div class="term-long">
+      <div class="formula">return_sequences=False  →  (batch, output_features)        # (None, 16)</div>
+      <div class="formula">return_sequences=True   →  (batch, timesteps, features)    # (None, 120, 16)</div>
+      <strong>מתי True:</strong> חובה בכל שכבת ביניים בערימת RNN (stacking) — אחרת השכבה הבאה לא תקבל רצף לעבד.
+      <strong>מתי False:</strong> ברירת מחדל; בשכבה האחרונה לפני Dense, כשרוצים פלט יחיד.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Vanishing Gradient</span>
+      <span class="term-he">— גרדיאנט נעלם</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">תופעה שבה הגרדיאנטים נהיים קטנטנים ככל שמתפשטים אחורה בהרבה שכבות / צעדי זמן — והרשת מפסיקה ללמוד מקשרים רחוקים.</div>
+    <div class="term-long">
+      <strong>איפה קורה:</strong> ברשתות feedforward עמוקות, ובמיוחד ב-SimpleRNN על רצפים ארוכים (כל צעד זמן = "שכבה" נוספת).
+      <strong>פתרונות:</strong> LSTM/GRU (carry track + שערים), ReLU במקום sigmoid/tanh, residual/skip connections, אתחול משקלים מתאים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head">
+      <span class="term-en">Recurrent Dropout</span>
+      <span class="term-he">— dropout לשכבות recurrent</span>
+      <span class="term-cat">למידה ואופטימיזציה</span>
+    </div>
+    <div class="term-short">גרסת dropout מיוחדת ל-RNN: מחילים את <em>אותה</em> מסכת dropout על כל נקודות הזמן ברצף.</div>
+    <div class="term-long">
+      <strong>הבעיה:</strong> dropout רגיל <em>לפני</em> שכבת recurrent פוגע בתוצאות — כי מסכה אקראית שונה בכל צעד הורסת את העברת השגיאה לאורך הזמן.
+      <strong>הפתרון (Yarin Gal):</strong> מסכה קבועה לאורך כל הצעדים. ב-Keras: הפרמטר <code>recurrent_dropout</code> בתוך השכבה.
+      <strong>דוגמה:</strong> <code>layers.LSTM(32, recurrent_dropout=0.25)</code> הוריד את ה-Test MAE ל-2.45 עם פחות overfitting.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">Conv1D</span>
+      <span class="term-he">— קונבולוציה חד-ממדית</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">שכבת קונבולוציה עם חלון שמחליק לאורך רצף חד-ממדי (במקום על תמונה דו-ממדית כמו Conv2D).</div>
+    <div class="term-long">
+      <strong>שימוש:</strong> זיהוי תבניות מקומיות ברצף — בתנאי שמתקיים translation invariance (אותה תבנית חשובה לא משנה איפה היא ברצף).
+      <strong>למה נכשל על מז"א:</strong> נתוני בוקר ≠ נתוני לילה (אין translation invariance), והסדר הכרונולוגי משמעותי — ו-<code>MaxPooling1D</code> אפילו הורס אותו. Test MAE 3.14 (הכי גרוע בהרצאה).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head">
+      <span class="term-en">timeseries_dataset_from_array</span>
+      <span class="term-he">— יצירת חלונות זמן ב-Keras</span>
+      <span class="term-cat">כלים וספריות</span>
+    </div>
+    <div class="term-short">פונקציית Keras שמייצרת חלונות זמן חופפים "on the fly" מתוך מערך — בלי לשכפל נתונים בזיכרון.</div>
+    <div class="term-long">
+      <strong>פרמטרים מרכזיים:</strong>
+      <ul>
+        <li><code>sequence_length</code> — אורך כל רצף (מספר צעדי זמן).</li>
+        <li><code>sampling_rate</code> — דילול: כל כמה דגימות לקחת (6 = פעם בשעה).</li>
+        <li><code>targets</code> — וקטור ערכי המטרה (יכול להיות מוסט ב-<code>delay</code>).</li>
+        <li><code>start_index</code> / <code>end_index</code> — לפיצול כרונולוגי train/val/test.</li>
+        <li><code>shuffle</code>, <code>batch_size</code> — ערבוב הדגימות וגודל ה-batch.</li>
+      </ul>
+      <strong>למה צריך:</strong> רצפים חופפים תופסים פי-N זיכרון אם משכפלים; הפונקציה מייצרת אותם בזמן אמת.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="arch">
+    <div class="term-head">
+      <span class="term-en">Time Series / Sequence Data</span>
+      <span class="term-he">— סדרת זמן / נתונים סדרתיים</span>
+      <span class="term-cat">ארכיטקטורות DL</span>
+    </div>
+    <div class="term-short">נתונים שבהם לסדר יש משמעות — רצף קלטים ו/או רצף פלטים (טקסט, אודיו, מדידות בזמן).</div>
+    <div class="term-long">
+      <strong>ההבדל מ-feedforward:</strong> ברשת רגילה הקלט והפלט יחידים ואין משמעות לזמן. בנתונים סדרתיים נקודה מקבלת משמעות מההקשר שלפניה (ולעיתים שאחריה).
+      <strong>ארכיטיפים:</strong> many-to-one (חיזוי טמפ', sentiment), one-to-many (חילול מנגינה), many-to-many (תרגום).
+      <strong>דוגמה בקורס:</strong> חיזוי טמפרטורה 24 שעות קדימה מ-120 שעות נתונים (many-to-one).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="ml">
+    <div class="term-head">
+      <span class="term-en">Data Leakage</span>
+      <span class="term-he">— דליפת מידע</span>
+      <span class="term-cat">אלגוריתמי ML</span>
+    </div>
+    <div class="term-short">מצב שבו מידע מה-test/עתיד "דולף" לאימון — ונותן הערכת ביצועים אופטימית ושקרית.</div>
+    <div class="term-long">
+      <strong>בסדרות זמן:</strong> חייבים פיצול כרונולוגי — train קודם, אחריו validation, ואחרון test. אסור לאמן על נתונים שמגיעים <em>אחרי</em> נתוני הבדיקה.
+      <strong>בנרמול:</strong> מחשבים mean/std מה-training בלבד — שימוש בסטטיסטיקות של כל הדאטה הוא דליפה.
+      <strong>התוצאה:</strong> מודל שנראה מצוין באימון וקורס בעולם האמיתי.
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>
