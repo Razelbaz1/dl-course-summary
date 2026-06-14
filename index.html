@@ -57,6 +57,19 @@
   .btn-primary { background: #fff; color: var(--c-primary); font-weight: 600; }
   .btn-primary:hover { background: #f1f5ff; }
 
+  /* Scroll progress bar — fixed strip at very top of viewport */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 4px;
+    z-index: 100; background: rgba(30,58,138,.08);
+    pointer-events: none;
+  }
+  #scroll-progress-bar {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--c-primary), var(--c-accent));
+    border-radius: 0 2px 2px 0;
+    transition: width .08s linear;
+  }
+
   /* Tabs */
   nav.tabs {
     display: flex; gap: 6px; padding: 12px 24px; flex-wrap: wrap;
@@ -417,7 +430,7 @@
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* הסתרת רכיבי ניווט ואינטראקציה */
-    nav.tabs, #tabs-reopen, #toc-button, #toc-panel, #to-top,
+    nav.tabs, #tabs-reopen, #toc-button, #toc-panel, #to-top, #scroll-progress,
     header.top .top-actions, .glossary-controls, .toggle-hint { display: none !important; }
 
     header.top { position: static; box-shadow: none; padding: 0 0 10px; }
@@ -450,6 +463,8 @@
 </style>
 </head>
 <body>
+
+<div id="scroll-progress" aria-hidden="true"><div id="scroll-progress-bar"></div></div>
 
 <header class="top">
   <div>
@@ -6542,10 +6557,21 @@ train_dataset = image_dataset_from_directory(
     if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) panel.classList.remove('open');
   });
 
-  // To-top button
+  // To-top button + scroll progress bar
+  const progressBar = document.getElementById('scroll-progress-bar');
+  function updateScrollProgress(){
+    const doc = document.documentElement;
+    const scrollable = doc.scrollHeight - doc.clientHeight;
+    const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+    progressBar.style.width = Math.min(100, Math.max(0, pct)) + '%';
+  }
   window.addEventListener('scroll', () => {
     document.getElementById('to-top').classList.toggle('visible', window.scrollY > 300);
+    updateScrollProgress();
   });
+  // Recompute on resize and after tab switches (each tab has a different height)
+  window.addEventListener('resize', updateScrollProgress);
+  updateScrollProgress();
 
   // Term card toggle
   document.addEventListener('click', e => {
