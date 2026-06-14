@@ -50,13 +50,13 @@
 
   <!-- right side: meaning -->
   <rect x="470" y="110" width="250" height="180" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
-  <text x="705" y="135" text-anchor="end" font-size="13" font-weight="700" fill="#1e3a8a" direction="rtl">מה כל ממד אומר</text>
-  <text x="705" y="162" text-anchor="end" font-size="12" fill="#0f172a" direction="rtl"><tspan font-weight="700">256</tspan> — דגימות ב-batch אחד</text>
-  <text x="705" y="186" text-anchor="end" font-size="12" fill="#0f172a" direction="rtl"><tspan font-weight="700">120</tspan> — נקודות זמן בכל דגימה</text>
-  <text x="705" y="210" text-anchor="end" font-size="12" fill="#0f172a" direction="rtl"><tspan font-weight="700">14</tspan> — מדדים בכל נקודת זמן</text>
+  <text x="595" y="135" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a">מה כל ממד אומר</text>
+  <text x="595" y="162" text-anchor="middle" font-size="12" fill="#0f172a"><tspan font-weight="700">256</tspan> — דגימות באצווה אחת</text>
+  <text x="595" y="186" text-anchor="middle" font-size="12" fill="#0f172a"><tspan font-weight="700">120</tspan> — נקודות זמן בכל דגימה</text>
+  <text x="595" y="210" text-anchor="middle" font-size="12" fill="#0f172a"><tspan font-weight="700">14</tspan> — מדדים בכל נקודת זמן</text>
   <line x1="490" y1="226" x2="700" y2="226" stroke="#c7dbf7"/>
-  <text x="705" y="248" text-anchor="end" font-size="12" fill="#27ae60" direction="rtl" font-weight="700">targets: (256,)</text>
-  <text x="705" y="270" text-anchor="end" font-size="11" fill="#475569" direction="rtl">256 ערכי טמפרטורה — אחד לכל דגימה</text>
+  <text x="595" y="248" text-anchor="middle" font-size="12" fill="#27ae60" font-weight="700">targets: (256,)</text>
+  <text x="595" y="270" text-anchor="middle" font-size="11" fill="#475569">256 ערכי טמפרטורה — אחד לכל דגימה</text>
 
   <text x="380" y="382" text-anchor="middle" font-size="11" fill="#c0392b" direction="rtl">שימו לב: הדגימות מעורבבות (shuffle) — אך בתוך כל דגימה נקודות הזמן עוקבות.</text>
 </svg>

@@ -53,6 +53,6 @@
 
   <!-- bottom note -->
   <rect x="60" y="356" width="660" height="44" rx="8" fill="#fff5f5" stroke="#f3c0c0"/>
-  <text x="700" y="375" text-anchor="end" font-size="12" fill="#c0392b" direction="rtl"><tspan font-weight="700">בחיזוי טמפרטורה זה לא תרם</tspan> — הסדר הכרונולוגי קריטי, ורצף הפוך נותן תוצאות גרועות יותר.</text>
-  <text x="700" y="393" text-anchor="end" font-size="12" fill="#1e3a8a" direction="rtl"><tspan font-weight="700">אבל ב-NLP זה זוהר</tspan> — מילה מקבלת משמעות גם ממילים שיבואו אחריה (השיעור הבא).</text>
+  <text x="390" y="375" text-anchor="middle" font-size="12" fill="#c0392b" direction="rtl"><tspan font-weight="700">בחיזוי טמפרטורה זה לא תרם</tspan> — הסדר הכרונולוגי קריטי, ורצף הפוך נותן תוצאות גרועות יותר.</text>
+  <text x="390" y="393" text-anchor="middle" font-size="12" fill="#1e3a8a" direction="rtl"><tspan font-weight="700">אבל ב-NLP זה זוהר</tspan> — מילה מקבלת משמעות גם ממילים שיבואו אחריה (השיעור הבא).</text>
 </svg>
