@@ -4813,6 +4813,60 @@ train_dataset = keras.utils.timeseries_dataset_from_array(
     start_index=0, end_index=num_train_samples)
 # val/test: אותו דבר עם start_index/end_index מאוחרים יותר</code></pre>
 
+    <details class="expand">
+      <summary>הרחבה: מה קורה שורה-שורה — מ-<code>sampling_rate</code> ועד <code>end_index</code></summary>
+      <div class="body">
+        <p><strong>נתון בסיס שהכל נשען עליו:</strong> הנתונים נדגמו <strong>כל 10 דקות</strong>, כלומר <strong>6 שורות = שעה אחת</strong>. כל החישובים למטה משתמשים בזה. המטרה: לקחת 120 מדידות שעתיות (5 ימים אחורה) ולחזות את הטמפרטורה <strong>24 שעות אחרי</strong> סוף החלון.</p>
+
+        <h4>הפרמטרים</h4>
+        <ul>
+          <li><code>sampling_rate = 6</code> — "קח כל שורה שישית". כיוון ש-6 שורות = שעה, זה הופך את הרזולוציה מ-10 דקות ל-<strong>שעה</strong>. אין טעם ב-10-דקתיות לחיזוי של ימים קדימה.</li>
+          <li><code>sequence_length = 120</code> — כל רצף יכיל <strong>120 נקודות שעתיות</strong> = <strong>5 ימים</strong>. זה ה"חלון אחורה" שהמודל רואה.</li>
+          <li><code>delay = sampling_rate * (sequence_length + 24 - 1)</code> = <code>6 × 143 = 858</code> — כמה שורות גלם מפרידות בין <strong>תחילת</strong> החלון ל<strong>מטרה</strong>. פירוק הנוסחה:
+            <ul>
+              <li><code>(120 − 1) × 6 = 714</code> שורות → מתחילת החלון עד <strong>סופו</strong>.</li>
+              <li>ועוד <code>24 × 6 = 144</code> שורות → עוד <strong>24 שעות</strong> קדימה.</li>
+              <li>סה"כ <code>714 + 144 = 858</code>.</li>
+            </ul>
+          </li>
+          <li><code>batch_size = 256</code> — כל אצווה תכיל 256 זוגות של (רצף, מטרה).</li>
+        </ul>
+
+        <h4>איך הפונקציה עובדת</h4>
+        <p>לרצף שמתחיל באינדקס <code>i</code> במערך ה-<code>data</code>, הפונקציה בונה: <code>data[i], data[i+6], …, data[i + 119×6]</code> — 120 נקודות — ושומרת כמטרה את <code>targets[i]</code> (המטרה מיושרת ל<strong>אינדקס ההתחלה</strong> של הרצף — נקודה קריטית).</p>
+
+        <h4>שתי השורות שמיישרות הכל</h4>
+        <ul>
+          <li><code>raw_data[:-delay]</code> — כל הנתונים <strong>חוץ מ-858 השורות האחרונות</strong>. למה? כי לרצף שמתחיל קרוב לסוף הסדרה, המטרה (24 ש' אחרי סוף החלון) כבר תהיה מחוץ למערך. החיתוך מבטיח שלכל רצף יש מטרה תקפה.</li>
+          <li><code>targets = temperature[delay:]</code> (כלומר <code>temperature[858:]</code>) — וקטור הטמפרטורות <strong>מוזז קדימה ב-858 שורות</strong>. ההזזה גורמת ל-<code>targets[i]</code> להצביע על <code>temperature[i + 858]</code>.</li>
+        </ul>
+        <p>נחבר את שתי ההזזות: רצף שמתחיל ב-<code>i</code> נגמר בשורה <code>i + 714</code>, והמטרה שלו היא <code>temperature[i + 858]</code>. ההפרש <code>858 − 714 = 144</code> שורות <code>= 144 / 6 = 24</code> שעות — <strong>בדיוק 24 שעות אחרי סוף החלון.</strong></p>
+
+        <h4>שני הפרמטרים האחרונים</h4>
+        <ul>
+          <li><code>shuffle=True</code> — מערבב את סדר ה<strong>דגימות</strong> (זוגות רצף-מטרה). לא פוגע בסדר <em>בתוך</em> רצף — הזמנים בחלון נשארים עוקבים; רק הסדר <em>בין</em> רצפים מתערבב.</li>
+          <li><code>start_index=0, end_index=num_train_samples</code> — ה<strong>פיצול הכרונולוגי</strong>. עם <code>num_train_samples = int(0.5 × 420451) = 210225</code>, רצפי ה-train מתחילים רק בטווח <code>[0, 210225)</code> — המחצית הראשונה. ל-validation מעבירים <code>start_index=num_train_samples</code>, ול-test את הרבע האחרון. כך train תמיד לפני val לפני test → אין data leakage.</li>
+        </ul>
+
+        <h4>דוגמה מספרית — הרצף הראשון (i = 0)</h4>
+        <table>
+          <thead><tr><th>רכיב</th><th>אינדקס שורת גלם</th><th>מתורגם לזמן</th></tr></thead>
+          <tbody>
+            <tr><td>תחילת החלון</td><td>שורה 0</td><td>שעה 0</td></tr>
+            <tr><td>נקודה שנייה</td><td>שורה 6</td><td>שעה 1</td></tr>
+            <tr><td>…</td><td>…</td><td>…</td></tr>
+            <tr><td><strong>סוף החלון</strong> (נקודה 120)</td><td>שורה 714</td><td>שעה 119</td></tr>
+            <tr><td><strong>המטרה</strong></td><td><code>temperature[858]</code></td><td>שעה 143</td></tr>
+          </tbody>
+        </table>
+        <p>שעה 143 היא בדיוק <strong>24 שעות אחרי</strong> שעה 119 (סוף החלון). ✅</p>
+
+        <div class="callout info">
+          <strong>התוצאה:</strong> <code>train_dataset</code> הוא <code>tf.data.Dataset</code> שמחזיר אצוות <code>(samples, targets)</code> בצורה <code>(256, 120, 14)</code> ו-<code>(256,)</code> — בדיוק התרשים שמופיע למטה. עכשיו ברור מאיפה כל ממד הגיע.
+        </div>
+      </div>
+    </details>
+
     <p>כל batch שיוצא הוא tuple של <code>(samples, targets)</code> בצורה הבאה:</p>
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect9_tensor_shape.svg" alt="צורת הטנזור (256,120,14)" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
