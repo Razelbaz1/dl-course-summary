@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 400" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="t10k" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#475569"/></marker>
+  </defs>
+
+  <text x="380" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">מתי BoW ומתי Sequence Model?</text>
+  <text x="380" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">כלל אצבע מעשי (Google Developers) — לפי יחס דגימות למילים</text>
+
+  <!-- formula -->
+  <rect x="170" y="62" width="420" height="44" rx="10" fill="#0f172a"/>
+  <text x="380" y="90" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#fbbf24">ratio = (מספר דגימות train) / (מילים לדגימה)</text>
+
+  <!-- scale -->
+  <line x1="80" y1="180" x2="680" y2="180" stroke="#9ca3af" stroke-width="2"/>
+  <!-- zones -->
+  <rect x="80" y="160" width="300" height="40" fill="#fef3cd" opacity="0.5"/>
+  <rect x="380" y="160" width="300" height="40" fill="#dbeafe" opacity="0.5"/>
+  <!-- threshold -->
+  <line x1="380" y1="150" x2="380" y2="210" stroke="#c0392b" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="380" y="146" text-anchor="middle" font-size="12" font-weight="700" fill="#c0392b">1500 (סף)</text>
+
+  <!-- ticks -->
+  <g font-size="10" fill="#6b7280" text-anchor="middle">
+    <text x="80" y="225">0</text>
+    <text x="380" y="225">1500</text>
+    <text x="680" y="225">3000+</text>
+  </g>
+
+  <!-- zone labels -->
+  <text x="230" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#d35400" direction="rtl">ratio &lt; 1500 → Bag-of-Bigrams</text>
+  <text x="530" y="184" text-anchor="middle" font-size="13" font-weight="700" fill="#2563eb" direction="rtl">ratio ≥ 1500 → Sequence model</text>
+
+  <!-- IMDB marker -->
+  <line x1="97" y1="160" x2="97" y2="135" stroke="#27ae60" stroke-width="2" marker-end="url(#t10k)"/>
+  <text x="97" y="128" text-anchor="middle" font-size="11" font-weight="700" fill="#27ae60">IMDB = 85</text>
+
+  <!-- IMDB calc box -->
+  <rect x="180" y="250" width="400" height="60" rx="10" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="380" y="274" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60" direction="rtl">בדוגמת IMDB שלנו:</text>
+  <text x="380" y="296" text-anchor="middle" font-family="Consolas,monospace" font-size="13" font-weight="700" fill="#0f172a">25,000 / 233 ≈ 85   ≪ 1500   →   BoW עדיף ✓</text>
+
+  <!-- intuition -->
+  <rect x="120" y="324" width="520" height="62" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="620" y="346" text-anchor="end" font-size="11" font-weight="700" fill="#1e3a8a" direction="rtl">האינטואיציה:</text>
+  <text x="620" y="366" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">מעט דגימות יחסית לאורך המשפט → אין מספיק דאטה כדי שהמודל ילמד את הסדר.</text>
+  <text x="415.2" y="382" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">BoW פשוט יותר, פחות פרמטרים — ולכן מנצח. "Transformer הכי טוב" — לא תמיד נכון!</text>
+</svg>

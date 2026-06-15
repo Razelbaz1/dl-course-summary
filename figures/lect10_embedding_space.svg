@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="t10e" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#27ae60"/></marker>
+    <marker id="t10eO" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d35400"/></marker>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">המרחב הסמנטי של Word Embeddings</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">מילים בעלות משמעות דומה → קרובות גאומטרית; כיוונים מקודדים יחסים</text>
+
+  <!-- plane -->
+  <rect x="55" y="62" width="490" height="360" rx="10" fill="#f8fbff" stroke="#c7dbf7"/>
+  <!-- axis hints -->
+  <text x="70" y="80" text-anchor="start" font-size="10" fill="#94a3b8" direction="rtl">↑ ציר מגדר (זכר↔נקבה)</text>
+  <text x="535" y="410" text-anchor="end" font-size="10" fill="#94a3b8" direction="rtl">ציר מלוכה (פשוט↔מלכותי) →</text>
+
+  <!-- parallelogram dashed guides -->
+  <line x1="180" y1="330" x2="430" y2="330" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+  <line x1="180" y1="190" x2="430" y2="190" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+  <line x1="180" y1="330" x2="180" y2="190" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+  <line x1="430" y1="330" x2="430" y2="190" stroke="#cbd5e1" stroke-dasharray="3,3"/>
+
+  <!-- gender arrows (orange): man->woman and king->queen (same vector) -->
+  <line x1="180" y1="322" x2="180" y2="200" stroke="#d35400" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#t10eO)"/>
+  <line x1="430" y1="322" x2="430" y2="200" stroke="#d35400" stroke-width="1.8" stroke-dasharray="5,3" marker-end="url(#t10eO)"/>
+  <text x="158" y="262" text-anchor="middle" font-size="9.5" fill="#d35400" direction="rtl">+woman</text>
+  <text x="158" y="275" text-anchor="middle" font-size="9.5" fill="#d35400" direction="rtl">−man</text>
+
+  <!-- points -->
+  <g font-size="12" font-weight="700" text-anchor="middle">
+    <circle cx="180" cy="330" r="6" fill="#2563eb"/><text x="180" y="350" fill="#1e3a8a">man</text>
+    <circle cx="180" cy="190" r="6" fill="#2563eb"/><text x="180" y="182" fill="#1e3a8a">woman</text>
+    <circle cx="430" cy="330" r="6" fill="#c0392b"/><text x="430" y="350" fill="#c0392b">king</text>
+    <circle cx="430" cy="190" r="7" fill="#27ae60"/><text x="430" y="182" fill="#27ae60">queen ★</text>
+  </g>
+
+  <!-- the computed arrow: king + (woman-man) -> queen (green) -->
+  <line x1="438" y1="322" x2="438" y2="200" stroke="#27ae60" stroke-width="2.2" marker-end="url(#t10e)"/>
+
+  <!-- semantic clusters -->
+  <ellipse cx="330" cy="110" rx="62" ry="26" fill="#dbeafe" stroke="#2563eb" stroke-dasharray="2,2"/>
+  <circle cx="310" cy="108" r="5" fill="#2563eb"/><text x="308" y="100" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">movie</text>
+  <circle cx="350" cy="116" r="5" fill="#2563eb"/><text x="356" y="130" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">film</text>
+  <text x="330" y="86" text-anchor="middle" font-size="9" fill="#475569" direction="rtl">משמעות דומה → צמודים</text>
+
+  <ellipse cx="120" cy="120" rx="50" ry="24" fill="#dcfce7" stroke="#27ae60" stroke-dasharray="2,2"/>
+  <circle cx="105" cy="118" r="5" fill="#27ae60"/><text x="103" y="110" text-anchor="middle" font-size="10" font-weight="700" fill="#1e7a43">cat</text>
+  <circle cx="138" cy="124" r="5" fill="#27ae60"/><text x="144" y="138" text-anchor="middle" font-size="10" font-weight="700" fill="#1e7a43">dog</text>
+
+  <!-- right: vector arithmetic -->
+  <rect x="565" y="80" width="210" height="160" rx="10" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="755" y="104" text-anchor="end" font-size="12" font-weight="700" fill="#27ae60" direction="rtl">אריתמטיקה של משמעות</text>
+  <text x="670" y="138" text-anchor="middle" font-family="Consolas,monospace" font-size="13" font-weight="700" fill="#0f172a">king − man</text>
+  <text x="670" y="160" text-anchor="middle" font-family="Consolas,monospace" font-size="13" font-weight="700" fill="#0f172a">+ woman</text>
+  <text x="670" y="186" text-anchor="middle" font-family="Consolas,monospace" font-size="14" font-weight="700" fill="#27ae60">≈ queen</text>
+  <line x1="585" y1="200" x2="755" y2="200" stroke="#86efac"/>
+  <text x="670" y="222" text-anchor="middle" font-family="Consolas,monospace" font-size="12" font-weight="700" fill="#0f172a">king + plural − sing</text>
+  <text x="670" y="234" text-anchor="middle" font-family="Consolas,monospace" font-size="11" fill="#475569">≈ kings</text>
+
+  <!-- right bottom: properties -->
+  <rect x="565" y="256" width="210" height="166" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="755" y="280" text-anchor="end" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">תכונות</text>
+  <text x="686.8" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">• ערכי float נמוכים, dense</text>
+  <text x="755" y="324" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">• 256 / 512 / 1024 מימדים</text>
+  <text x="692.0" y="344" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">• מרחק = cosine distance</text>
+  <text x="755" y="364" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">• נלמדים מהנתונים</text>
+  <text x="678.9" y="384" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">• Word2Vec · GloVe · FastText</text>
+  <text x="755" y="404" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">• תלויי שפה ותרבות</text>
+</svg>

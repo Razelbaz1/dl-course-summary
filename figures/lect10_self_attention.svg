@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="t10g" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#475569"/></marker>
+    <linearGradient id="scoreG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f39c12"/><stop offset="100%" stop-color="#d35400"/></linearGradient>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">Self-Attention — מילה מקבלת משמעות מההקשר</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">"The train left the station on time" — איזו תחנה? המודל מסתכל על שאר המילים</text>
+
+  <!-- focus word -->
+  <text x="475" y="76" text-anchor="middle" font-size="11" font-weight="700" fill="#27ae60" direction="rtl">מתמקדים ב-"station" ומודדים קרבה לכל מילה</text>
+
+  <!-- words row -->
+  <g font-size="11" text-anchor="middle" font-weight="700">
+    <rect x="55" y="86" width="80" height="30" rx="6" fill="#e5e7eb"/><text x="95" y="106" fill="#475569">The</text>
+    <rect x="150" y="86" width="80" height="30" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="190" y="106" fill="#1e3a8a">train</text>
+    <rect x="245" y="86" width="80" height="30" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="285" y="106" fill="#1e3a8a">left</text>
+    <rect x="340" y="86" width="80" height="30" rx="6" fill="#e5e7eb"/><text x="380" y="106" fill="#475569">the</text>
+    <rect x="435" y="86" width="80" height="30" rx="6" fill="#dcfce7" stroke="#27ae60" stroke-width="2"/><text x="475" y="106" fill="#27ae60">station</text>
+    <rect x="530" y="86" width="80" height="30" rx="6" fill="#e5e7eb"/><text x="570" y="106" fill="#475569">on</text>
+    <rect x="625" y="86" width="80" height="30" rx="6" fill="#dbeafe" stroke="#2563eb"/><text x="665" y="106" fill="#1e3a8a">time</text>
+  </g>
+
+  <!-- step 1 label -->
+  <text x="577.0" y="142" text-anchor="middle" font-size="12" font-weight="700" fill="#d35400" direction="rtl">שלב 1 · attention scores = softmax(dot של station עם כל מילה)</text>
+
+  <!-- score bars (grow down from y=150) -->
+  <g text-anchor="middle">
+    <rect x="75" y="150" width="40" height="5"  fill="url(#scoreG)"/><text x="95" y="172" font-size="10" fill="#475569">0.03</text>
+    <rect x="170" y="150" width="40" height="51" fill="url(#scoreG)"/><text x="190" y="218" font-size="10" font-weight="700" fill="#d35400">0.34</text>
+    <rect x="265" y="150" width="40" height="18" fill="url(#scoreG)"/><text x="285" y="185" font-size="10" fill="#475569">0.12</text>
+    <rect x="360" y="150" width="40" height="5"  fill="url(#scoreG)"/><text x="380" y="172" font-size="10" fill="#475569">0.03</text>
+    <rect x="455" y="150" width="40" height="33" fill="url(#scoreG)"/><text x="475" y="200" font-size="10" fill="#475569">0.22</text>
+    <rect x="550" y="150" width="40" height="6"  fill="url(#scoreG)"/><text x="570" y="172" font-size="10" fill="#475569">0.04</text>
+    <rect x="645" y="150" width="40" height="33" fill="url(#scoreG)"/><text x="665" y="200" font-size="10" fill="#475569">0.22</text>
+  </g>
+  <text x="190" y="236" text-anchor="middle" font-size="9.5" fill="#d35400" direction="rtl">"train" הכי רלוונטי → תחנת רכבת!</text>
+
+  <!-- step 2 -->
+  <text x="616.0" y="266" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60" direction="rtl">שלב 2 · סכום ממושקל של ה-embeddings לפי ה-scores</text>
+  <line x1="410" y1="244" x2="410" y2="286" stroke="#475569" stroke-width="1.6" marker-end="url(#t10g)"/>
+
+  <rect x="250" y="290" width="320" height="46" rx="10" fill="#dcfce7" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="410" y="312" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60" direction="rtl">station חדש = ייצוג מודע-הקשר</text>
+  <text x="410" y="329" text-anchor="middle" font-size="10.5" fill="#475569" direction="rtl">"יודע" שמדובר בתחנת רכבת, לא רדיו/עבודה</text>
+
+  <!-- formula box -->
+  <rect x="120" y="352" width="580" height="48" rx="10" fill="#0f172a"/>
+  <text x="410" y="382" text-anchor="middle" font-family="Consolas, monospace" font-size="16" font-weight="700" fill="#fbbf24">Attention(Q,K,V) = softmax(Q·Kᵀ / √dₖ) · V</text>
+
+  <!-- bottom note -->
+  <text x="410" y="424" text-anchor="middle" font-size="11" fill="#1e3a8a" direction="rtl">נקרא "Self" כי Q, K, V מגיעים כולם מאותו משפט. נחזור על זה לכל מילה → רצף ייצוגים מודעי-הקשר.</text>
+  <text x="410" y="444" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">המנגנון לא לומד פרמטרים חדשים — רק מחשב על ה-embeddings הקיימים (בגרסה הבסיסית).</text>
+</svg>

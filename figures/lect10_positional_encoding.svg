@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420" font-family="Segoe UI, Arial, sans-serif">
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">Positional Encoding — מזריקים את מיקום המילה</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">self-attention לבדו "עיוור לסדר" — מוסיפים לכל מילה וקטור שמקודד את מיקומה</text>
+
+  <!-- three word columns: THE(pos0) CAT(pos1) SAT(pos2) -->
+  <!-- column template centers -->
+  <g font-size="12" font-weight="700" text-anchor="middle" fill="#1e3a8a">
+    <text x="200" y="78">THE  (pos 0)</text>
+    <text x="410" y="78">CAT  (pos 1)</text>
+    <text x="620" y="78">SAT  (pos 2)</text>
+  </g>
+
+  <!-- token embeddings (blue) row y=92..150 -->
+  <text x="70" y="120" text-anchor="middle" font-size="10" fill="#2563eb" direction="rtl" transform="rotate(-90 70 120)">Token Embedding</text>
+  <g>
+    <rect x="150" y="92" width="100" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <rect x="360" y="92" width="100" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+    <rect x="570" y="92" width="100" height="44" rx="6" fill="#dbeafe" stroke="#2563eb"/>
+  </g>
+  <g font-size="9" text-anchor="middle" fill="#1e3a8a">
+    <text x="200" y="110">[ -0.43, 0.23,</text><text x="200" y="124">0.56, ..., 0.88 ]</text>
+    <text x="410" y="110">[ 0.44, 0.55,</text><text x="410" y="124">0.33, ..., 0.35 ]</text>
+    <text x="620" y="110">[ -0.83, 0.64,</text><text x="620" y="124">0.93, ..., 0.72 ]</text>
+  </g>
+
+  <!-- plus -->
+  <text x="200" y="162" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">+</text>
+  <text x="410" y="162" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">+</text>
+  <text x="620" y="162" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">+</text>
+
+  <!-- position embeddings (orange) y=170..214 -->
+  <text x="70" y="194" text-anchor="middle" font-size="10" fill="#d35400" direction="rtl" transform="rotate(-90 70 194)">Position Embedding</text>
+  <g>
+    <rect x="150" y="170" width="100" height="44" rx="6" fill="#fef3cd" stroke="#d35400"/>
+    <rect x="360" y="170" width="100" height="44" rx="6" fill="#fef3cd" stroke="#d35400"/>
+    <rect x="570" y="170" width="100" height="44" rx="6" fill="#fef3cd" stroke="#d35400"/>
+  </g>
+  <g font-size="9" text-anchor="middle" fill="#d35400">
+    <text x="200" y="188">[ 0.00, 1.00,</text><text x="200" y="202">0.00, ..., 1.00 ]</text>
+    <text x="410" y="188">[ 0.84, 0.54,</text><text x="410" y="202">0.0001, ... ]</text>
+    <text x="620" y="188">[ 0.91, -0.42,</text><text x="620" y="202">0.0002, ... ]</text>
+  </g>
+
+  <!-- equals -->
+  <text x="200" y="240" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">=</text>
+  <text x="410" y="240" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">=</text>
+  <text x="620" y="240" text-anchor="middle" font-size="20" font-weight="700" fill="#475569">=</text>
+
+  <!-- encoder input (green) y=248..292 -->
+  <text x="70" y="272" text-anchor="middle" font-size="10" fill="#27ae60" direction="rtl" transform="rotate(-90 70 272)">Encoder Input</text>
+  <g>
+    <rect x="150" y="248" width="100" height="40" rx="6" fill="#dcfce7" stroke="#27ae60" stroke-width="1.5"/>
+    <rect x="360" y="248" width="100" height="40" rx="6" fill="#dcfce7" stroke="#27ae60" stroke-width="1.5"/>
+    <rect x="570" y="248" width="100" height="40" rx="6" fill="#dcfce7" stroke="#27ae60" stroke-width="1.5"/>
+  </g>
+  <text x="200" y="273" text-anchor="middle" font-size="10" font-weight="700" fill="#27ae60" direction="rtl">משמעות + מיקום</text>
+  <text x="410" y="273" text-anchor="middle" font-size="10" font-weight="700" fill="#27ae60" direction="rtl">משמעות + מיקום</text>
+  <text x="620" y="273" text-anchor="middle" font-size="10" font-weight="700" fill="#27ae60" direction="rtl">משמעות + מיקום</text>
+
+  <!-- formula + note -->
+  <rect x="120" y="306" width="580" height="44" rx="9" fill="#0f172a"/>
+  <text x="410" y="324" text-anchor="middle" font-family="Consolas, monospace" font-size="12" fill="#fbbf24">PE(pos,2i)=sin(pos/10000^(2i/d))   PE(pos,2i+1)=cos(pos/10000^(2i/d))</text>
+  <text x="410" y="342" text-anchor="middle" font-size="10" fill="#cbd5e1" direction="rtl">בנוסחה המקורית (sin/cos) — מחושב פעם אחת, לא נלמד</text>
+
+  <text x="410" y="372" text-anchor="middle" font-size="11" fill="#1e3a8a" direction="rtl">במימוש של Keras בקורס משתמשים ב-<tspan font-family="Consolas,monospace" font-weight="700">PositionalEmbedding</tspan> — שכבת Embedding שלומדת את מיקומי המילים,</text>
+  <text x="410" y="392" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">בדיוק כמו ש-token embedding לומד את משמעות המילים.</text>
+</svg>

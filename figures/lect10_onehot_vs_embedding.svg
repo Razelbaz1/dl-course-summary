@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="Segoe UI, Arial, sans-serif">
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">One-hot מול Embedding — למה עוברים לוקטורים צפופים</text>
+
+  <!-- divider -->
+  <line x1="410" y1="50" x2="410" y2="410" stroke="#c7dbf7" stroke-dasharray="4,4"/>
+
+  <!-- LEFT: one-hot -->
+  <text x="205" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">One-hot encoding</text>
+  <text x="205" y="89" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">sparse · אורתוגונלי · 20000 מימדים</text>
+
+  <!-- vectors -->
+  <text x="120" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">movie</text>
+  <g font-size="10" text-anchor="middle" font-weight="700">
+    <rect x="60" y="126" width="26" height="24" fill="#e5e7eb"/><text x="73" y="143" fill="#475569">0</text>
+    <rect x="86" y="126" width="26" height="24" fill="#c0392b"/><text x="99" y="143" fill="#fff">1</text>
+    <rect x="112" y="126" width="26" height="24" fill="#e5e7eb"/><text x="125" y="143" fill="#475569">0</text>
+    <rect x="138" y="126" width="26" height="24" fill="#e5e7eb"/><text x="151" y="143" fill="#475569">0</text>
+    <rect x="164" y="126" width="26" height="24" fill="#e5e7eb"/><text x="177" y="143" fill="#475569">0</text>
+    <text x="210" y="143" fill="#475569" font-weight="400">... (20000)</text>
+  </g>
+  <text x="120" y="172" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">film</text>
+  <g font-size="10" text-anchor="middle" font-weight="700">
+    <rect x="60" y="180" width="26" height="24" fill="#e5e7eb"/><text x="73" y="197" fill="#475569">0</text>
+    <rect x="86" y="180" width="26" height="24" fill="#e5e7eb"/><text x="99" y="197" fill="#475569">0</text>
+    <rect x="112" y="180" width="26" height="24" fill="#e5e7eb"/><text x="125" y="197" fill="#475569">0</text>
+    <rect x="138" y="180" width="26" height="24" fill="#c0392b"/><text x="151" y="197" fill="#fff">1</text>
+    <rect x="164" y="180" width="26" height="24" fill="#e5e7eb"/><text x="177" y="197" fill="#475569">0</text>
+    <text x="210" y="197" fill="#475569" font-weight="400">... (20000)</text>
+  </g>
+
+  <rect x="55" y="226" width="300" height="86" rx="10" fill="#fdecea" stroke="#c0392b"/>
+  <text x="345" y="248" text-anchor="end" font-size="11.5" font-weight="700" fill="#c0392b" direction="rtl">הבעיה:</text>
+  <text x="235.0" y="268" text-anchor="middle" font-size="11" fill="#0f172a" direction="rtl">movie ו-film אורתוגונליים (מרחק מקסימלי)</text>
+  <text x="345" y="287" text-anchor="end" font-size="11" fill="#0f172a" direction="rtl">למרות שהמשמעות כמעט זהה!</text>
+  <text x="345" y="306" text-anchor="end" font-size="11" fill="#0f172a" direction="rtl">ענק, מבזבז זיכרון, חסר משמעות</text>
+
+  <!-- RIGHT: embedding -->
+  <text x="615" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#2563eb">Embedding</text>
+  <text x="615" y="89" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">dense · סמנטי · 256 מימדים</text>
+
+  <text x="530" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">movie</text>
+  <g font-size="9.5" text-anchor="middle" fill="#fff" font-weight="700">
+    <rect x="465" y="126" width="34" height="24" fill="#3b82f6"/><text x="482" y="143">0.82</text>
+    <rect x="499" y="126" width="34" height="24" fill="#60a5fa"/><text x="516" y="143">-0.3</text>
+    <rect x="533" y="126" width="34" height="24" fill="#2563eb"/><text x="550" y="143">0.51</text>
+    <rect x="567" y="126" width="34" height="24" fill="#93c5fd"/><text x="584" y="143">0.04</text>
+    <text x="640" y="143" fill="#475569" font-weight="400">... (256)</text>
+  </g>
+  <text x="530" y="172" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a">film</text>
+  <g font-size="9.5" text-anchor="middle" fill="#fff" font-weight="700">
+    <rect x="465" y="180" width="34" height="24" fill="#3b82f6"/><text x="482" y="197">0.79</text>
+    <rect x="499" y="180" width="34" height="24" fill="#60a5fa"/><text x="516" y="197">-0.28</text>
+    <rect x="533" y="180" width="34" height="24" fill="#2563eb"/><text x="550" y="197">0.55</text>
+    <rect x="567" y="180" width="34" height="24" fill="#93c5fd"/><text x="584" y="197">0.02</text>
+    <text x="640" y="197" fill="#475569" font-weight="400">... (256)</text>
+  </g>
+
+  <rect x="465" y="226" width="300" height="86" rx="10" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="755" y="248" text-anchor="end" font-size="11.5" font-weight="700" fill="#27ae60" direction="rtl">היתרון:</text>
+  <text x="645.0" y="268" text-anchor="middle" font-size="11" fill="#0f172a" direction="rtl">movie ו-film כמעט זהים → קרובים גאומטרית</text>
+  <text x="650.5" y="287" text-anchor="middle" font-size="11" fill="#0f172a" direction="rtl">דחוס, ערכי float נמוכים, נלמד מהנתונים</text>
+  <text x="755" y="306" text-anchor="end" font-size="11" fill="#0f172a" direction="rtl">מקודד משמעות סמנטית</text>
+
+  <!-- bottom note -->
+  <rect x="120" y="332" width="580" height="78" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="410" y="356" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">למה זה כל כך משנה בפועל?</text>
+  <text x="410" y="378" text-anchor="middle" font-size="11" fill="#0f172a" direction="rtl">one-hot: ביקורת באורך 600 = מטריצה 600×20000 = 12 מיליון מספרים → אימון איטי מאוד.</text>
+  <text x="410" y="397" text-anchor="middle" font-size="11" fill="#0f172a" direction="rtl">embedding: 600×256 בלבד → קטן פי ~78, מהיר בהרבה, וגם נושא משמעות.</text>
+</svg>

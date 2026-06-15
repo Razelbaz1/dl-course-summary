@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 410" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="t10f" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#475569"/></marker>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">Masking — לדלג על ריפוד האפסים</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">ביקורת קצרה רופדה ל-600 → רוב הרצף אפסים חסרי משמעות</text>
+
+  <!-- padded sequence -->
+  <text x="760" y="80" text-anchor="end" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">רצף מרופד (אורך קבוע)</text>
+  <g font-size="11" text-anchor="middle" font-weight="700">
+    <rect x="80" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="102" y="110" fill="#fff">12</text>
+    <rect x="126" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="148" y="110" fill="#fff">431</text>
+    <rect x="172" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="194" y="110" fill="#fff">9</text>
+    <rect x="218" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="240" y="110" fill="#fff">88</text>
+    <rect x="266" y="90" width="44" height="30" rx="5" fill="#cbd5e1"/><text x="288" y="110" fill="#475569">0</text>
+    <rect x="312" y="90" width="44" height="30" rx="5" fill="#cbd5e1"/><text x="334" y="110" fill="#475569">0</text>
+    <rect x="358" y="90" width="44" height="30" rx="5" fill="#cbd5e1"/><text x="380" y="110" fill="#475569">0</text>
+    <rect x="404" y="90" width="44" height="30" rx="5" fill="#cbd5e1"/><text x="426" y="110" fill="#475569">0</text>
+    <rect x="450" y="90" width="44" height="30" rx="5" fill="#cbd5e1"/><text x="472" y="110" fill="#475569">0</text>
+    <text x="520" y="110" text-anchor="middle" font-size="11" fill="#475569">... עד 600</text>
+  </g>
+  <text x="194" y="138" text-anchor="middle" font-size="10" fill="#2563eb" direction="rtl">4 מילים אמיתיות</text>
+  <text x="400" y="138" text-anchor="middle" font-size="10" fill="#475569" direction="rtl">596 אפסי ריפוד (padding)</text>
+
+  <!-- mask tensor -->
+  <text x="676.0" y="178" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">מסכה (mask) — mask_zero=True</text>
+  <g font-size="11" text-anchor="middle" font-weight="700">
+    <rect x="80" y="188" width="44" height="30" rx="5" fill="#27ae60"/><text x="102" y="208" fill="#fff">True</text>
+    <rect x="126" y="188" width="44" height="30" rx="5" fill="#27ae60"/><text x="148" y="208" fill="#fff">True</text>
+    <rect x="172" y="188" width="44" height="30" rx="5" fill="#27ae60"/><text x="194" y="208" fill="#fff">True</text>
+    <rect x="218" y="188" width="44" height="30" rx="5" fill="#27ae60"/><text x="240" y="208" fill="#fff">True</text>
+    <rect x="266" y="188" width="44" height="30" rx="5" fill="#fde8e8" stroke="#c0392b"/><text x="288" y="208" fill="#c0392b" font-size="9">False</text>
+    <rect x="312" y="188" width="44" height="30" rx="5" fill="#fde8e8" stroke="#c0392b"/><text x="334" y="208" fill="#c0392b" font-size="9">False</text>
+    <rect x="358" y="188" width="44" height="30" rx="5" fill="#fde8e8" stroke="#c0392b"/><text x="380" y="208" fill="#c0392b" font-size="9">False</text>
+    <rect x="404" y="188" width="44" height="30" rx="5" fill="#fde8e8" stroke="#c0392b"/><text x="426" y="208" fill="#c0392b" font-size="9">False</text>
+    <rect x="450" y="188" width="44" height="30" rx="5" fill="#fde8e8" stroke="#c0392b"/><text x="472" y="208" fill="#c0392b" font-size="9">False</text>
+    <text x="520" y="208" text-anchor="middle" font-size="11" fill="#475569">...</text>
+  </g>
+  <text x="290" y="240" text-anchor="middle" font-size="10" fill="#475569" direction="rtl">mask[i,t] = "האם זו מילה אמיתית בזמן t?"</text>
+
+  <!-- RNN skips -->
+  <line x1="287" y1="248" x2="287" y2="276" stroke="#475569" stroke-width="1.4" marker-end="url(#t10f)"/>
+  <rect x="120" y="280" width="400" height="50" rx="10" fill="#dcfce7" stroke="#27ae60"/>
+  <text x="320" y="310" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60" direction="rtl">ה-RNN מדלג על כל מקום שבו False — מעבד רק 4 מילים</text>
+
+  <!-- right note -->
+  <rect x="560" y="90" width="210" height="240" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
+  <text x="755" y="114" text-anchor="end" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">למה זה חשוב</text>
+  <text x="686.8" y="140" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">בלי mask, BiLSTM דו-כיווני</text>
+  <text x="755" y="156" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">"מבזבז" מאות איטרציות על</text>
+  <text x="755" y="172" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">אפסים לפני שמגיע למידע</text>
+  <line x1="575" y1="186" x2="755" y2="186" stroke="#c7dbf7"/>
+  <text x="692.0" y="208" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">שכבת Embedding מייצרת את</text>
+  <text x="755" y="224" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">המסכה אוטומטית עם</text>
+  <text x="690" y="244" text-anchor="middle" font-family="Consolas,monospace" font-size="11" font-weight="700" fill="#2563eb">mask_zero=True</text>
+  <line x1="575" y1="256" x2="755" y2="256" stroke="#c7dbf7"/>
+  <text x="755" y="278" text-anchor="end" font-size="10.5" fill="#27ae60" direction="rtl">בפועל: דיוק עלה</text>
+  <text x="755" y="296" text-anchor="end" font-size="10.5" fill="#27ae60" direction="rtl">מ-86.3% ל-88.0%</text>
+  <text x="697.2" y="316" text-anchor="middle" font-size="10.5" fill="#475569" direction="rtl">(אינדקס 0 שמור ל-mask)</text>
+</svg>

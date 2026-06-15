@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <linearGradient id="cBoW" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#d35400"/><stop offset="100%" stop-color="#f39c12"/></linearGradient>
+    <linearGradient id="cBoWbest" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#b9770e"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient>
+    <linearGradient id="cRNN" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#1f6fb5"/><stop offset="100%" stop-color="#3498db"/></linearGradient>
+    <linearGradient id="cTr" x1="0" y1="1" x2="0" y2="0"><stop offset="0%" stop-color="#27ae60"/><stop offset="100%" stop-color="#2ecc71"/></linearGradient>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">השוואת המודלים על IMDB — Test Accuracy</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">סיווג סנטימנט · baseline אקראי = 50% · גבוה יותר = טוב יותר</text>
+
+  <!-- axes -->
+  <line x1="86" y1="90" x2="86" y2="380" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="86" y1="380" x2="772" y2="380" stroke="#9ca3af" stroke-width="1.5"/>
+  <!-- gridlines: y(acc)=380-(acc-0.50)*690 -->
+  <g font-size="11" fill="#6b7280" text-anchor="end">
+    <line x1="86" y1="380" x2="772" y2="380" stroke="#e5e7eb"/><text x="79" y="384">50%</text>
+    <line x1="86" y1="311" x2="772" y2="311" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="79" y="315">60%</text>
+    <line x1="86" y1="242" x2="772" y2="242" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="79" y="246">70%</text>
+    <line x1="86" y1="173" x2="772" y2="173" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="79" y="177">80%</text>
+    <line x1="86" y1="104" x2="772" y2="104" stroke="#e5e7eb" stroke-dasharray="3,3"/><text x="79" y="108">90%</text>
+  </g>
+
+  <!-- group labels -->
+  <text x="210" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#d35400" direction="rtl">Bag-of-Words</text>
+  <text x="490" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb" direction="rtl">Sequence / RNN</text>
+  <text x="690" y="62" text-anchor="middle" font-size="11" font-weight="700" fill="#27ae60">Transformer</text>
+
+  <!-- Bars: width 56, y_top=380-(acc-0.50)*690 -->
+  <!-- unigram 0.886 -->
+  <rect x="102" y="113.7" width="56" height="266.3" rx="4" fill="url(#cBoW)"/>
+  <text x="130" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#d35400">88.6%</text>
+  <text x="130" y="398" text-anchor="middle" font-size="10" fill="#374151">unigram</text>
+  <!-- bigram 0.897 BEST -->
+  <rect x="182" y="106.1" width="56" height="273.9" rx="4" fill="url(#cBoWbest)" stroke="#1e3a8a" stroke-width="2"/>
+  <text x="210" y="98" text-anchor="middle" font-size="12" font-weight="700" fill="#b9770e">89.7%</text>
+  <text x="210" y="398" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a8a">bigram ★</text>
+  <!-- tf-idf 0.885 -->
+  <rect x="262" y="114.3" width="56" height="265.7" rx="4" fill="url(#cBoW)"/>
+  <text x="290" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#d35400">88.5%</text>
+  <text x="290" y="398" text-anchor="middle" font-size="10" fill="#374151">TF-IDF</text>
+
+  <!-- one-hot LSTM 0.87 -->
+  <rect x="342" y="124.7" width="56" height="255.3" rx="4" fill="url(#cRNN)"/>
+  <text x="370" y="117" text-anchor="middle" font-size="12" font-weight="700" fill="#1f6fb5">87.0%</text>
+  <text x="370" y="398" text-anchor="middle" font-size="10" fill="#374151">one-hot</text>
+  <text x="370" y="411" text-anchor="middle" font-size="9" fill="#c0392b" direction="rtl">איטי!</text>
+  <!-- embedding 0.863 -->
+  <rect x="422" y="129.5" width="56" height="250.5" rx="4" fill="url(#cRNN)"/>
+  <text x="450" y="122" text-anchor="middle" font-size="12" font-weight="700" fill="#1f6fb5">86.3%</text>
+  <text x="450" y="398" text-anchor="middle" font-size="10" fill="#374151">embedding</text>
+  <!-- mask 0.880 -->
+  <rect x="502" y="117.8" width="56" height="262.2" rx="4" fill="url(#cRNN)"/>
+  <text x="530" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#1f6fb5">88.0%</text>
+  <text x="530" y="398" text-anchor="middle" font-size="10" fill="#374151">+ masking</text>
+  <!-- GloVe 0.874 -->
+  <rect x="582" y="121.9" width="56" height="258.1" rx="4" fill="url(#cRNN)"/>
+  <text x="610" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#1f6fb5">87.4%</text>
+  <text x="610" y="398" text-anchor="middle" font-size="10" fill="#374151">GloVe</text>
+
+  <!-- transformer 0.883 -->
+  <rect x="662" y="115.7" width="56" height="264.3" rx="4" fill="url(#cTr)"/>
+  <text x="690" y="108" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60">88.3%</text>
+  <text x="690" y="398" text-anchor="middle" font-size="10" fill="#374151">Transformer</text>
+
+  <!-- insight -->
+  <rect x="86" y="426" width="686" height="34" rx="8" fill="#fff7ed" stroke="#d35400"/>
+  <text x="415" y="447" text-anchor="middle" font-size="12" fill="#1e3a8a" direction="rtl">ההפתעה: דווקא <tspan font-weight="700" fill="#b9770e">BoW bigram (89.7%) ניצח</tspan> את ה-Transformer — כי יחס הדגימות למילים גבוה (ראו כלל האצבע).</text>
+</svg>
