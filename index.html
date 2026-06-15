@@ -5053,6 +5053,42 @@ x = layers.Dropout(0.5)(x)
 outputs = layers.Dense(1)(x)
 # Test MAE: 2.46   ·  Stacked GRU — הטוב ביותר בריצה</code></pre>
 
+    <details class="expand">
+      <summary>הרחבה: מה בעצם קורה בערימת שכבות RNN + דוגמה</summary>
+      <div class="body">
+        <p>ערימת שכבות = <strong>הפלט של שכבה אחת הופך לקלט של הבאה</strong>. כמו ערימת שכבות ב-CNN (קצוות → צורות → אובייקטים), אבל <strong>בזמן</strong>: שכבה תחתונה לומדת תבניות זמן בסיסיות, והעליונה לומדת תבניות מורכבות יותר <em>על גבי</em> הייצוג של התחתונה. כל שכבה = רמת הפשטה גבוהה יותר.</p>
+
+        <div class="callout info">
+          <strong>הדימוי:</strong> שני אנליסטים. ה<strong>זוטר</strong> קורא את הנתונים שעה-שעה ובכל שעה רושם סיכום קצר ("מתחמם? לילה? לחות עולה?"). ה<strong>בכיר</strong> לא מסתכל על הנתונים הגולמיים בכלל — הוא קורא את <em>רצף הסיכומים</em> של הזוטר ומפיק מהם את התמונה הגדולה של 5 הימים.
+        </div>
+
+        <h4>מה קורה לצורות (הלב של ההבנה)</h4>
+        <table>
+          <thead><tr><th>שלב</th><th>צורה</th><th>מה קרה</th></tr></thead>
+          <tbody>
+            <tr><td>קלט</td><td><code>(256, 120, 14)</code></td><td>120 שעות × 14 מדדים גולמיים</td></tr>
+            <tr><td>GRU תחתון (<code>return_sequences=True</code>)</td><td><code>(256, 120, 32)</code></td><td>אותם 120 צעדי זמן, אבל כל שעה מיוצגת ב-32 פיצ'רים <strong>נלמדים</strong> במקום 14 גולמיים</td></tr>
+            <tr><td>GRU עליון (<code>return_sequences=False</code>)</td><td><code>(256, 32)</code></td><td>מכווץ את כל 120 הצעדים לווקטור סיכום אחד</td></tr>
+            <tr><td>Dense</td><td><code>(256, 1)</code></td><td>החיזוי</td></tr>
+          </tbody>
+        </table>
+        <p>הנקודה הקריטית: השכבה התחתונה חייבת <code>return_sequences=True</code> כדי להחזיר <strong>רצף שלם</strong> (טנזור תלת-ממדי). אם הייתה מחזירה רק וקטור <code>(256, 32)</code>, לשכבה העליונה לא היה <strong>על מה לרוץ</strong> — אין ציר זמן לעבור עליו. השכבה העליונה רואה לא את 14 המדדים, אלא רצף של 120 "סיכומים נלמדים" שהתחתונה ייצרה — זו ההפשטה.</p>
+
+        <h4>דוגמת צעצוע (3 צעדים, מדד אחד, 2 יחידות)</h4>
+        <p>קלט: <code>x₁, x₂, x₃</code> (כל אחד מספר בודד).</p>
+        <ul>
+          <li><strong>GRU תחתון</strong> (2 יחידות, <code>return_sequences=True</code>) מחזיר פלט <strong>בכל צעד</strong>: <code>h₁, h₂, h₃</code> — כל אחד וקטור דו-ממדי. הפלט = <code>[h₁, h₂, h₃]</code>, צורה <code>(3, 2)</code>.</li>
+          <li><strong>GRU עליון</strong> (2 יחידות, <code>return_sequences=False</code>) קורא את הרצף <code>[h₁, h₂, h₃]</code> כאילו זה הקלט שלו, ומחזיר וקטור סיכום אחד <code>g₃</code> (דו-ממדי).</li>
+          <li><strong>Dense</strong> קורא את <code>g₃</code> → חיזוי.</li>
+        </ul>
+        <p>ה-<code>h</code>-ים אינם הנתונים — הם <strong>ייצוג שהשכבה הראשונה המציאה</strong>, וזה מה שזורם למעלה.</p>
+
+        <div class="callout success">
+          <strong>מתי כדאי:</strong> מגדילים קיבולת (עוד שכבות/יחידות) עד שמגיעים ל-overfitting, ואז נלחמים בו ב-dropout. דוגמה קיצונית: Google Translate עם 7 שכבות LSTM. בפרק שלנו ה-Stacked GRU נתן את התוצאה הטובה ביותר (Test MAE 2.46) — אבל גם התחיל overfitting, ולכן נדרש <code>recurrent_dropout</code>. עומק נותן כוח, אך עולה בזמן ריצה ובסיכון להתאמת-יתר.
+        </div>
+      </div>
+    </details>
+
     <h4>Bidirectional — קריאה משני הכיוונים</h4>
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect9_bidirectional.svg" alt="Bidirectional RNN" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
