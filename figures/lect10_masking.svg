@@ -7,7 +7,7 @@
   <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">ביקורת קצרה רופדה ל-600 → רוב הרצף אפסים חסרי משמעות</text>
 
   <!-- padded sequence -->
-  <text x="760" y="80" text-anchor="end" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">רצף מרופד (אורך קבוע)</text>
+  <text x="697.0" y="80" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">רצף מרופד (אורך קבוע)</text>
   <g font-size="11" text-anchor="middle" font-weight="700">
     <rect x="80" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="102" y="110" fill="#fff">12</text>
     <rect x="126" y="90" width="44" height="30" rx="5" fill="#2563eb"/><text x="148" y="110" fill="#fff">431</text>
@@ -46,16 +46,16 @@
 
   <!-- right note -->
   <rect x="560" y="90" width="210" height="240" rx="10" fill="#eef4ff" stroke="#c7dbf7"/>
-  <text x="755" y="114" text-anchor="end" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">למה זה חשוב</text>
+  <text x="722.0" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">למה זה חשוב</text>
   <text x="686.8" y="140" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">בלי mask, BiLSTM דו-כיווני</text>
-  <text x="755" y="156" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">"מבזבז" מאות איטרציות על</text>
-  <text x="755" y="172" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">אפסים לפני שמגיע למידע</text>
+  <text x="692.0" y="156" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">"מבזבז" מאות איטרציות על</text>
+  <text x="697.2" y="172" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">אפסים לפני שמגיע למידע</text>
   <line x1="575" y1="186" x2="755" y2="186" stroke="#c7dbf7"/>
   <text x="692.0" y="208" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">שכבת Embedding מייצרת את</text>
-  <text x="755" y="224" text-anchor="end" font-size="10.5" fill="#0f172a" direction="rtl">המסכה אוטומטית עם</text>
+  <text x="710.4" y="224" text-anchor="middle" font-size="10.5" fill="#0f172a" direction="rtl">המסכה אוטומטית עם</text>
   <text x="690" y="244" text-anchor="middle" font-family="Consolas,monospace" font-size="11" font-weight="700" fill="#2563eb">mask_zero=True</text>
   <line x1="575" y1="256" x2="755" y2="256" stroke="#c7dbf7"/>
-  <text x="755" y="278" text-anchor="end" font-size="10.5" fill="#27ae60" direction="rtl">בפועל: דיוק עלה</text>
-  <text x="755" y="296" text-anchor="end" font-size="10.5" fill="#27ae60" direction="rtl">מ-86.3% ל-88.0%</text>
+  <text x="715.6" y="278" text-anchor="middle" font-size="10.5" fill="#27ae60" direction="rtl">בפועל: דיוק עלה</text>
+  <text x="715.6" y="296" text-anchor="middle" font-size="10.5" fill="#27ae60" direction="rtl">מ-86.3% ל-88.0%</text>
   <text x="697.2" y="316" text-anchor="middle" font-size="10.5" fill="#475569" direction="rtl">(אינדקס 0 שמור ל-mask)</text>
 </svg>
