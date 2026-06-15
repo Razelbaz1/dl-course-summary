@@ -5045,6 +5045,58 @@ outputs = layers.Dense(1)(x)
 x = layers.Dropout(0.5)(x)                  # dropout רגיל אחרי, לרגולריזציה של ה-Dense
 # Validation MAE: 2.27   |   Test MAE: 2.45   ·  פחות overfitting</code></pre>
 
+    <details class="expand">
+      <summary>הרחבה: מה זה "אותה מסכה על כל נקודות הזמן" + דוגמה</summary>
+      <div class="body">
+        <p><strong>תזכורת:</strong> dropout רגיל "משתיק" (מאפס) חלק אקראי מהיחידות, <strong>עם מסכה חדשה בכל forward pass</strong>. ברשת רגילה זה מצוין למניעת overfitting.</p>
+
+        <p><strong>הבעיה ב-RNN:</strong> RNN מעבד את הרצף צעד-אחר-צעד ומשתמש שוב ושוב באותו חיבור חוזר. אם נחיל dropout בצורה רגילה — <strong>מסכה אקראית חדשה בכל צעד זמן</strong> — אז בכל צעד מושתקות יחידות אחרות, הרעש מתערבב לתוך ה-state שעובר קדימה, ה"זיכרון" נפגם אחרת בכל פעם, והגרדיאנט לא יכול לזרום נקי לאורך הזמן. לכן זה דווקא <strong>מזיק</strong>.</p>
+
+        <p><strong>הפתרון (Yarin Gal):</strong> להגריל את המסכה <strong>פעם אחת לכל רצף</strong> ולהקפיא אותה — אותן יחידות בדיוק מושתקות לאורך כל 120 הצעדים. כך היחידות הפעילות מעבירות את הזיכרון <em>ברציפות</em>, והשגיאה זורמת נקי. עדיין יש רגולריזציה, כי לרצף הבא תוגרל מסכה חדשה.</p>
+
+        <div class="callout info">
+          <strong>הדימוי:</strong> ה-state הוא צוות של 32 עובדים שמעבירים פתק (הזיכרון) לאורך שורה של 120 שולחנות (צעדי זמן).
+          <ul>
+            <li><strong>נאיבי (שגוי):</strong> בכל שולחן שולחים תת-קבוצה <em>אחרת</em> להפסקת קפה. הפתק עובר כל פעם דרך אנשים אחרים → מתעוות, מידע אובד.</li>
+            <li><strong>Recurrent dropout (נכון):</strong> מחליטים מראש מי בהפסקה <em>לכל מסע הפתק</em>, והם נשארים בהפסקה כל 120 השולחנות. אותם עובדים פעילים מעבירים את הפתק עד הסוף. לפתק הבא — קבוצת הפסקה חדשה.</li>
+          </ul>
+        </div>
+
+        <h4>דוגמת מסכה (4 יחידות, dropout=0.5 → משתיקים 2)</h4>
+        <p><strong>נאיבי — מסכה מתחלפת בכל צעד (הורס):</strong></p>
+        <table>
+          <thead><tr><th>צעד</th><th>יחידות מושתקות</th></tr></thead>
+          <tbody>
+            <tr><td>t=1</td><td>u2, u4</td></tr>
+            <tr><td>t=2</td><td>u1, u3</td></tr>
+            <tr><td>t=3</td><td>u3, u4</td></tr>
+          </tbody>
+        </table>
+        <p>אין אף יחידה שמעבירה את הזיכרון מתחילת הרצף לסופו ברציפות.</p>
+
+        <p><strong>Variational — אותה מסכה לכל הצעדים (נכון):</strong></p>
+        <table>
+          <thead><tr><th>צעד</th><th>יחידות מושתקות</th></tr></thead>
+          <tbody>
+            <tr><td>t=1</td><td>u2, u4</td></tr>
+            <tr><td>t=2</td><td>u2, u4</td></tr>
+            <tr><td>t=3</td><td>u2, u4</td></tr>
+          </tbody>
+        </table>
+        <p>u1 ו-u3 מעבירים את הזיכרון לכל אורך הרצף; לרצף הבא תוגרל מסכה חדשה.</p>
+
+        <h4>שתי הדרגות ב-Keras</h4>
+        <ul>
+          <li><code>dropout</code> — מסכה על ה<strong>קלט</strong> (מטריצות W, על <code>x_t</code>).</li>
+          <li><code>recurrent_dropout</code> — מסכה על ה<strong>חיבור החוזר</strong> (מטריצות U, על ה-state <code>h_t</code>). זה החלק הקריטי, ושניהם משתמשים בגישת "אותה מסכה לכל הצעדים".</li>
+        </ul>
+
+        <div class="callout warning">
+          <strong>מחיר מעשי:</strong> <code>recurrent_dropout</code> מאלץ את Keras להשתמש במימוש הגנרי האיטי (מבטל את ה-kernel המהיר של cuDNN על GPU), אז האימון נהיה איטי יותר — זה המחיר עבור הרגולריזציה הזו.
+        </div>
+      </div>
+    </details>
+
     <h4>Stacking — ערימת שכבות</h4>
     <p>כלל אצבע: בונים מודל מורכב מספיק עד שמגיעים ל-overfitting, ורק אז נלחמים בו. אם <em>לא</em> מגיעים ל-overfitting — המודל לא הגיע לגבול היכולת. מוסיפים שכבות (לדוגמה, Google Translate בנוי מ-7 שכבות LSTM). כל שכבת ביניים חייבת <code>return_sequences=True</code>:</p>
     <pre><code>x = layers.GRU(32, recurrent_dropout=0.5, return_sequences=True)(inputs)
