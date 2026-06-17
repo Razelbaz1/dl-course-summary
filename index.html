@@ -5321,6 +5321,56 @@ x = layers.Dense(16, activation="relu")(inputs)
 x = layers.Dropout(0.5)(x)
 outputs = layers.Dense(1, activation="sigmoid")(x)</code></pre>
 
+    <details class="expand">
+      <summary>הרחבה: איך עובד <code>TextVectorization</code> — שני שלבים: adapt ו-transform (שקף 22)</summary>
+      <div class="body">
+        <p><strong>הרעיון הגדול:</strong> <code>TextVectorization</code> היא לא פונקציה רגילה — היא <strong>שכבת preprocessing</strong> שעובדת בשני שלבים נפרדים, בדיוק כמו <code>StandardScaler</code> ב-sklearn שקודם עושים לו <code>fit</code> ואז <code>transform</code>:</p>
+        <ul>
+          <li><strong>שלב א' — <code>adapt</code> ("ללמוד"):</strong> השכבה קוראת הרבה טקסט ו<strong>בונה את ה-vocabulary</strong> — סופרת מילים, בוחרת את 20,000 הנפוצות, ונותנת לכל אחת אינדקס. זה קורה <em>פעם אחת</em>.</li>
+          <li><strong>שלב ב' — transform ("לתרגם"):</strong> אחרי שה-vocabulary קבוע, השכבה ממירה <em>כל</em> טקסט לוקטור לפי המילון שבנתה.</li>
+        </ul>
+        <div class="callout info">
+          <strong>הדימוי:</strong> מתורגמן שצריך קודם <strong>לבנות מילון</strong> (קורא ערימת ספרים, רושם מילים) — וזה <code>adapt</code>. רק אחרי שהמילון מוכן וקבוע, הוא יכול <strong>לתרגם</strong> כל משפט חדש לפיו — וזה ה-transform.
+        </div>
+
+        <h4>הקוד המלא של השקף — שורה שורה</h4>
+        <pre><code>text_vectorization = TextVectorization(   # (1) יוצרים את השכבה
+    max_tokens=20000,                     #     גודל המילון: 20K המילים הנפוצות
+    output_mode="multi_hot",              #     פורמט הפלט: וקטור בינארי
+)
+
+text_only_train_ds = train_ds.map(lambda x, y: x)   # (2) מפשיטים את ה-labels
+text_vectorization.adapt(text_only_train_ds)        # (3) לומדים vocabulary מה-train בלבד
+
+binary_1gram_train_ds = train_ds.map(               # (4) מתרגמים כל dataset:
+    lambda x, y: (text_vectorization(x), y),         #     x (טקסט)→וקטור,  y (label) נשאר
+    num_parallel_calls=4)
+binary_1gram_val_ds   = val_ds.map(lambda x, y: (text_vectorization(x), y), num_parallel_calls=4)
+binary_1gram_test_ds  = test_ds.map(lambda x, y: (text_vectorization(x), y), num_parallel_calls=4)</code></pre>
+
+        <h4>(2) למה <code>train_ds.map(lambda x, y: x)</code> — מפשיטים את ה-labels?</h4>
+        <p>ה-dataset בנוי מזוגות <code>(טקסט, label)</code> — הביקורת והתווית חיובי/שלילי. אבל ל-<code>adapt</code> לא אכפת מהתוויות; הוא צריך <em>רק את הטקסט</em> כדי לספור מילים. ה-<code>map(lambda x, y: x)</code> לוקח כל זוג ומחזיר רק את ה-x (הטקסט) → dataset של טקסט בלבד, שמוזן ל-adapt.</p>
+
+        <h4>(3) למה <code>adapt</code> רק על ה-train (ולא val/test)?</h4>
+        <p>אותה סיבה כמו נרמול בסדרות זמן — <strong>מניעת data leakage</strong>. ה-vocabulary חייב להיבנות רק ממה שהמודל "מותר" לראות. מילה שמופיעה ב-test אבל לא הייתה ב-train פשוט תקבל <code>[UNK]</code> (אינדקס 1) — בדיוק כמו שיקרה בעולם האמיתי עם מילה חדשה.</p>
+
+        <h4>(4) למה שלוש שורות <code>.map</code> נפרדות?</h4>
+        <p>צריך לתרגם את כל שלושת ה-datasets (train/val/test) עם <strong>אותו</strong> מילון שנלמד בשלב (3). כל <code>.map</code> רץ על כל הדגימות וממיר: <code>lambda x, y: (text_vectorization(x), y)</code> — <strong>x</strong> (הטקסט) עובר וקטוריזציה, <strong>y</strong> (ה-label) נשאר ללא שינוי. כאן <em>כן</em> שומרים את ה-labels, כי לאימון צריך זוגות <code>(וקטור, תשובה)</code>.</p>
+        <p><code>num_parallel_calls=4</code> — פרט ביצועים בלבד: מעבד 4 דגימות במקביל כדי להאיץ.</p>
+
+        <h4>מה יוצא בסוף — multi_hot</h4>
+        <p>כל ביקורת (מחרוזת) הופכת לוקטור בינארי באורך 20,000: <code>1</code> בכל אינדקס של מילה שהופיעה, <code>0</code> אחרת. הצורה: <code>(batch, 20000)</code>. לכן ה-<code>keras.Input</code> של המודל הוא <code>shape=(20000,)</code>.</p>
+        <pre><code>for inputs, targets in binary_1gram_train_ds:
+    print(inputs.shape)   # (32, 20000)  — 32 ביקורות, כל אחת וקטור 20K
+    print(inputs[0])      # [1. 1. 1. ... 0. 0. 0.]
+    break</code></pre>
+
+        <div class="callout success">
+          <strong>בונוס — למה זו "שכבה" ולא סתם פונקציה:</strong> מכיוון ש-<code>TextVectorization</code> היא שכבת Keras, אפשר <strong>להטמיע אותה בתוך המודל הסופי</strong> כך שיקבל מחרוזת גולמית ויחזיר חיזוי — בלי לעשות preprocessing ידני ב-inference (ראו שקף 32). זה ההבדל מ-preprocessing שעושים מחוץ למודל.
+        </div>
+      </div>
+    </details>
+
     <h4>התוצאות</h4>
     <table>
       <thead><tr><th>מודל</th><th>Test acc</th><th>הערה</th></tr></thead>
