@@ -5455,6 +5455,26 @@ outputs = layers.Dense(1, activation="sigmoid")(x)        # חיובי / שלי�
       <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">‎king − man + woman ≈ queen — היחס "מלוכה" וה"מגדר" הם כיוונים קבועים במרחב.</div>
     </div>
 
+    <details class="expand">
+      <summary>הרחבה: איך מודדים "קרבה" בין מילים — Cosine Similarity (ולמה לא מרחק אוקלידי)</summary>
+      <div class="body">
+        <p>כשאומרים ש-<code>movie</code> ו-<code>film</code> "קרובים גאומטרית" — לפי איזה מרחק? התשובה (וכך גם בהרצאה, שקף 39): <strong>cosine</strong> — הזווית בין הוקטורים.</p>
+        <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+          <img src="figures/lect10_cosine_distance.svg" alt="Cosine similarity — זווית, לא אורך" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+        </div>
+        <p><strong>הדימוי:</strong> כל מילה היא חץ מהראשית. מה שמעניין הוא ה<strong>כיוון</strong> (המשמעות), לא האורך. cosine מודד את הזווית בין החצים ומתעלם מהאורך.</p>
+        <div class="formula">cos(A, B) = (A · B) / (‖A‖ · ‖B‖)</div>
+        <ul>
+          <li><strong>Cosine similarity</strong> (דמיון): טווח 1…0…−1. ‏<code>1</code> = אותו כיוון (זהה), <code>0</code> = אורתוגונליים (לא קשורים), <code>−1</code> = הפוכים.</li>
+          <li><strong>Cosine distance</strong> (מרחק): פשוט <code>1 − cosine similarity</code> — קרוב = מרחק נמוך.</li>
+        </ul>
+        <p><strong>דוגמה מספרית:</strong> ‏<code>movie=[0.82,−0.3,0.51,0.04]</code> ו-<code>film=[0.79,−0.28,0.55,0.02]</code> כמעט מקבילים → cosine ≈ <code>0.998</code> → cosine distance ≈ <code>0.002</code> (קרובים מאוד). ב-one-hot הם אורתוגונליים → cosine = 0 (מרחק מקסימלי).</p>
+        <div class="callout info">
+          <strong>למה cosine ולא מרחק אוקלידי?</strong> במרחק אוקלידי <em>אורך</em> הוקטור משפיע — שתי מילים יכולות להצביע לאותו כיוון (משמעות זהה) אך אם אחת "ארוכה" יותר, האוקלידי יראה אותן רחוקות ויטעה. cosine שומר רק על הכיוון, שזה מה שמקודד משמעות. <strong>הערה:</strong> אם מנרמלים את כל הוקטורים לאורך 1, cosine ואוקלידי הופכים שקולים (<code>מרחק² = 2(1 − cos)</code>).
+        </div>
+      </div>
+    </details>
+
     <h4>הקוד — שכבת Embedding שנלמדת מאפס</h4>
     <pre><code>inputs = keras.Input(shape=(None,), dtype="int64")
 embedded = layers.Embedding(input_dim=20000, output_dim=256)(inputs)

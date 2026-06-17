@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 460" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="cmB" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="cmG" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#27ae60"/></marker>
+    <marker id="cmO" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#d35400"/></marker>
+    <linearGradient id="scaleG2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#e74c3c"/><stop offset="50%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#27ae60"/>
+    </linearGradient>
+  </defs>
+
+  <text x="410" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#1e3a8a" direction="rtl">Cosine Similarity — מודדים זווית, לא אורך</text>
+  <text x="410" y="45" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">קרבת מילים נמדדת לפי הזווית בין הוקטורים שלהן</text>
+
+  <!-- LEFT panel: angle intuition -->
+  <rect x="50" y="60" width="350" height="232" rx="10" fill="#f8fbff" stroke="#c7dbf7"/>
+  <text x="225" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#1e3a8a" direction="rtl">זווית קטנה = משמעות דומה</text>
+  <!-- origin -->
+  <circle cx="110" cy="265" r="4" fill="#475569"/>
+  <text x="98" y="282" text-anchor="middle" font-size="10" fill="#475569">O</text>
+  <!-- movie vector -->
+  <line x1="110" y1="265" x2="335" y2="110" stroke="#2563eb" stroke-width="2.4" marker-end="url(#cmB)"/>
+  <text x="350" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#2563eb">movie</text>
+  <!-- film vector -->
+  <line x1="110" y1="265" x2="355" y2="150" stroke="#27ae60" stroke-width="2.4" marker-end="url(#cmG)"/>
+  <text x="372" y="152" text-anchor="middle" font-size="12" font-weight="700" fill="#27ae60">film</text>
+  <!-- angle arc -->
+  <path d="M 198 218 A 100 100 0 0 1 211 232" fill="none" stroke="#d35400" stroke-width="2"/>
+  <text x="223" y="222" text-anchor="middle" font-size="13" font-weight="700" fill="#d35400">θ</text>
+  <text x="225" y="280" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">θ קטנה ⇐ cos ≈ 1 ⇐ קרוב</text>
+
+  <!-- RIGHT panel: why not euclidean -->
+  <rect x="420" y="60" width="350" height="232" rx="10" fill="#fff7ed" stroke="#d35400"/>
+  <text x="595" y="82" text-anchor="middle" font-size="12" font-weight="700" fill="#d35400" direction="rtl">למה לא מרחק אוקלידי?</text>
+  <circle cx="470" cy="265" r="4" fill="#475569"/>
+  <text x="458" y="282" text-anchor="middle" font-size="10" fill="#475569">O</text>
+  <!-- short vector A and long vector B, same direction -->
+  <line x1="470" y1="265" x2="560" y2="178" stroke="#2563eb" stroke-width="2.4" marker-end="url(#cmB)"/>
+  <text x="556" y="196" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb">A</text>
+  <line x1="470" y1="265" x2="688" y2="55" stroke="#60a5fa" stroke-width="2.4" marker-end="url(#cmB)"/>
+  <text x="700" y="58" text-anchor="middle" font-size="11" font-weight="700" fill="#60a5fa">B = 2.4·A</text>
+  <!-- euclidean dashed between tips -->
+  <line x1="560" y1="178" x2="688" y2="55" stroke="#c0392b" stroke-width="1.8" stroke-dasharray="5,3"/>
+  <text x="648" y="135" text-anchor="middle" font-size="10" font-weight="700" fill="#c0392b" direction="rtl">מרחק אוקלידי גדול</text>
+  <text x="595" y="280" text-anchor="middle" font-size="11" fill="#475569" direction="rtl">אותו כיוון = אותה משמעות → cos = 1 (אך אוקלידי "מרחיק")</text>
+
+  <!-- formula -->
+  <rect x="150" y="306" width="520" height="40" rx="9" fill="#0f172a"/>
+  <text x="410" y="324" text-anchor="middle" font-family="Consolas, monospace" font-size="14" font-weight="700" fill="#fbbf24">cos(A,B) = (A · B) / (‖A‖ · ‖B‖)</text>
+  <text x="410" y="340" text-anchor="middle" font-size="10.5" fill="#cbd5e1" direction="rtl">cosine distance = 1 − cos(A,B)  ·  קרוב = מרחק נמוך</text>
+
+  <!-- scale bar -->
+  <rect x="140" y="378" width="540" height="18" rx="9" fill="url(#scaleG2)"/>
+  <g font-size="11" text-anchor="middle">
+    <text x="140" y="372" font-weight="700" fill="#c0392b">−1</text>
+    <text x="410" y="372" font-weight="700" fill="#64748b">0</text>
+    <text x="680" y="372" font-weight="700" fill="#27ae60">1</text>
+    <text x="140" y="412" fill="#475569" direction="rtl">הפוך (180°)</text>
+    <text x="410" y="412" fill="#475569" direction="rtl">לא קשור (90°)</text>
+    <text x="680" y="412" fill="#475569" direction="rtl">זהה (0°)</text>
+  </g>
+  <text x="410" y="438" text-anchor="middle" font-size="11" fill="#1e3a8a" direction="rtl">cosine מתעלם מאורך הוקטור ומשאיר רק את הכיוון — וזה מה שמקודד משמעות.</text>
+</svg>
