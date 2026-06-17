@@ -5397,16 +5397,47 @@ binary_1gram_test_ds  = test_ds.map(lambda x, y: (text_vectorization(x), y), num
   <!-- ========== 5. SEQUENCE MODELS ========== -->
   <h3>5. Sequence Models — לתת למודל ללמוד את הסדר</h3>
   <div class="card">
-    <p>ב-BoW יצרנו את הסדר ידנית (n-grams = feature engineering). ב-sequence models נותנים למודל <strong>ללמוד את הסדר בעצמו</strong>: מייצגים כל מילה כמספר → ממפים כל מספר לוקטור → מזינים את רצף הוקטורים ל-RNN/Transformer.</p>
+    <p>ב-BoW יצרנו את הסדר ידנית (n-grams = feature engineering). ב-sequence models נותנים למודל <strong>ללמוד את הסדר בעצמו</strong>: מייצגים כל מילה כמספר → ממפים כל מספר לוקטור → מזינים את רצף הוקטורים ל-RNN/Transformer. נדגים זאת עם BiLSTM על IMDB.</p>
 
-    <h4>הניסיון הראשון: one-hot + BiLSTM — ונכשל (וגם איטי!)</h4>
-    <pre><code>inputs = keras.Input(shape=(None,), dtype="int64")
-embedded = OneHotEncoding(max_tokens)(inputs)   # (batch, 600, 20000)!
-x = layers.Bidirectional(layers.LSTM(32))(embedded)
-outputs = layers.Dense(1, activation="sigmoid")(x)
-# Test acc: ~0.87  ·  אבל ~2500 שניות לכל epoch!</code></pre>
+    <h4>5.1 הכנת הנתונים — וקטוריזציה כ-<code>int</code> (שקף 35)</h4>
+    <p>שלב ראשון, וקריטי: כאן <strong>לא</strong> משתמשים ב-multi_hot. רוצים לשמר את <em>סדר</em> המילים, אז מייצגים כל ביקורת כ-<strong>רצף של מספרים שלמים</strong> (כל מספר = אינדקס מילה במילון), באורך קבוע.</p>
+    <pre><code>max_length = 600
+max_tokens = 20000
+text_vectorization = layers.TextVectorization(
+    max_tokens=max_tokens,
+    output_mode="int",                  # ← שינוי מהותי: רצף אינדקסים, לא multi-hot
+    output_sequence_length=max_length,  # ← כל הרצפים יחתכו/ירופדו ל-600
+)
+text_vectorization.adapt(text_only_train_ds)
+int_train_ds = train_ds.map(lambda x, y: (text_vectorization(x), y), num_parallel_calls=4)
+# (וכך גם int_val_ds, int_test_ds)</code></pre>
+
+    <div class="callout info">
+      <strong>למה דווקא 600?</strong> זו לא בחירה שרירותית — היא מבוססת על הנתונים: האורך <strong>הממוצע</strong> של ביקורת הוא <strong>233 מילים</strong>, ורק <strong>5%</strong> מהביקורות ארוכות מ-600. אז 600 לוכד כמעט הכול. ביקורות ארוכות יותר <strong>נחתכות</strong> ל-600; קצרות יותר <strong>מרופדות</strong> באפסים עד 600.
+    </div>
+
+    <p>איך נראה הקלט עכשיו? כל ביקורת היא וקטור של 600 מספרים, עם אפסי ריפוד בסוף:</p>
+    <pre><code>for inputs, targets in int_train_ds:
+    print(inputs.shape)   # (32, 600)   — 32 ביקורות, כל אחת רצף באורך 600
+    print(inputs[0])      # [ 10  432   9 ...  88   0   0   0 ... 0 ]  ← אפסים = ריפוד
+    break</code></pre>
+
+    <h4>5.2 מהמספרים לוקטורים — one-hot (שקפים 36–37)</h4>
+    <p>רשת לא יכולה לעבוד ישירות על אינדקסים (המספר 5000 לא "גדול" מהמספר 3). צריך להמיר כל מספר לוקטור. הדרך הפשוטה ביותר: <strong>one-hot</strong> — כל אינדקס הופך לוקטור באורך 20,000, עם <code>1</code> במקום אחד ו-0 בכל השאר. את רצף הוקטורים מזינים ל-<strong>Bidirectional LSTM</strong>.</p>
+    <pre><code>inputs = keras.Input(shape=(None,), dtype="int64")        # רצף אינדקסים
+embedded = OneHotEncoding(max_tokens)(inputs)             # → (batch, 600, 20000)
+x = layers.Bidirectional(layers.LSTM(32))(embedded)       # BiLSTM קורא משני הכיוונים
+x = layers.Dropout(0.5)(x)
+outputs = layers.Dense(1, activation="sigmoid")(x)        # חיובי / שלילי
+# סה"כ ~5.1 מיליון פרמטרים</code></pre>
+
+    <h4>5.3 התוצאה — עובד, אבל איטי וגרוע מ-BoW (שקף 38)</h4>
+    <p><strong>Test acc = 0.87</strong> — <em>פחות טוב</em> מ-BoW bigram (0.897). וגרוע מכך: האימון <strong>איטי להחריד</strong> — בריצת המחברת כל epoch ארך כ-<strong>2,500 שניות (~42 דקות!)</strong>.</p>
     <div class="callout warning">
-      <strong>למה כל כך איטי?</strong> כל ביקורת באורך 600 הופכת למטריצה <code>600 × 20,000 = 12 מיליון מספרים</code>. עצום, דליל, וחסר משמעות (כל המילים אורתוגונליות). הפתרון: <strong>word embeddings</strong>.
+      <strong>למה כל כך איטי?</strong> כל ביקורת מיוצגת כמטריצה <code>600 × 20,000 = 12 מיליון מספרים</code>. עצום, <strong>דליל</strong> (רק 600 ערכי 1 מתוך 12M), <strong>וחסר משמעות</strong> — כל המילים אורתוגונליות (movie ⊥ film). ה-BiLSTM צריך לעבד את הקלט הענק הזה צעד-אחר-צעד.
+    </div>
+    <div class="callout success">
+      <strong>המסקנה שמובילה הלאה:</strong> במקום מטריצות one-hot עצומות וחסרות-משמעות — נשתמש ב-<strong>word embeddings</strong>: וקטורים קצרים (256), צפופים, ועם משמעות. זה הנושא של §6.
     </div>
   </div>
 
