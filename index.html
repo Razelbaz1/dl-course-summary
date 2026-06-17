@@ -5208,11 +5208,11 @@ outputs = layers.Dense(1)(x)
 
     <h4>על מה נדבר בפרק הזה</h4>
     <ol>
-      <li>NLP — מבוא קצר: למה שפה טבעית קשה, וההיסטוריה (חוקים → ML → DL).</li>
+      <li>NLP — מבוא קצר: למה שפה טבעית קשה, וההיסטוריה (חוקים ← ML ← DL).</li>
       <li>שלוש הגישות לסדר המילים: BoW / RNN / Transformer.</li>
       <li>הכנת נתונים: סטנדרטיזציה, tokenization, vocabulary, וקטוריזציה.</li>
       <li>Bag-of-Words: unigram, bigram, TF-IDF — והתוצאות בפועל.</li>
-      <li>Sequence models: one-hot (איטי!) → word embeddings → masking → GloVe.</li>
+      <li>Sequence models: one-hot (איטי!) ← word embeddings ← masking ← GloVe.</li>
       <li>Transformer: self-attention, multi-head, positional encoding, encoder/decoder.</li>
       <li>מתי לבחור BoW ומתי Sequence — כלל אצבע מעשי.</li>
     </ol>
@@ -5245,9 +5245,9 @@ outputs = layers.Dense(1)(x)
       <strong>קו הזמן של NLP:</strong>
       <ul>
         <li><strong>שנות ה-90:</strong> חוקי לשון ידניים — השיטה השולטת, מוגבלת.</li>
-        <li><strong>סוף שנות ה-80 →:</strong> ML — עצי החלטה, Naive Bayes, רגרסיה לוגיסטית מוצאים חוקים אוטומטית מהנתונים.</li>
+        <li><strong>סוף שנות ה-80 ←:</strong> ML — עצי החלטה, Naive Bayes, רגרסיה לוגיסטית מוצאים חוקים אוטומטית מהנתונים.</li>
         <li><strong>2014–2017:</strong> LSTM / BiLSTM — פריצת דרך, "השיטה השולטת".</li>
-        <li><strong>2017 →:</strong> Transformer — השיטה השולטת עד היום.</li>
+        <li><strong>2017 ←:</strong> Transformer — השיטה השולטת עד היום.</li>
       </ul>
     </div>
     <p><strong>נקודה חשובה:</strong> המודלים <em>לא באמת מבינים</em> שפה — כמו שמודל ראייה לא באמת "רואה". הם מתבססים על ייצוגים סטטיסטיים כדי לבצע משימות (סיווג, תרגום, סיכום, יצירת טקסט...).</p>
@@ -5276,7 +5276,7 @@ outputs = layers.Dense(1)(x)
       <summary>הרחבה: ארבעת השלבים בפירוט (עם דוגמה)</summary>
       <div class="body">
         <h4>1 · Standardization (סטנדרטיזציה)</h4>
-        <p>אותו משפט יכול להיכתב בכמה צורות שייתנו ייצוגי byte שונים לגמרי. מנרמלים: lowercase, הסרת פיסוק, המרת אותיות מיוחדות (é→e), ולעיתים <strong>stemming</strong> (הורדת סיומות: "stared"→"stare").</p>
+        <p>אותו משפט יכול להיכתב בכמה צורות שייתנו ייצוגי byte שונים לגמרי. מנרמלים: lowercase, הסרת פיסוק, המרת אותיות מיוחדות (é←e), ולעיתים <strong>stemming</strong> (הורדת סיומות: "stared"←"stare").</p>
         <pre><code>"Sunset came. I was staring at the México sky!"
    ↓ lowercase + הסרת פיסוק + é→e
 "sunset came i was staring at the mexico sky"</code></pre>
@@ -5349,7 +5349,7 @@ binary_1gram_val_ds   = val_ds.map(lambda x, y: (text_vectorization(x), y), num_
 binary_1gram_test_ds  = test_ds.map(lambda x, y: (text_vectorization(x), y), num_parallel_calls=4)</code></pre>
 
         <h4>(2) למה <code>train_ds.map(lambda x, y: x)</code> — מפשיטים את ה-labels?</h4>
-        <p>ה-dataset בנוי מזוגות <code>(טקסט, label)</code> — הביקורת והתווית חיובי/שלילי. אבל ל-<code>adapt</code> לא אכפת מהתוויות; הוא צריך <em>רק את הטקסט</em> כדי לספור מילים. ה-<code>map(lambda x, y: x)</code> לוקח כל זוג ומחזיר רק את ה-x (הטקסט) → dataset של טקסט בלבד, שמוזן ל-adapt.</p>
+        <p>ה-dataset בנוי מזוגות <code>(טקסט, label)</code> — הביקורת והתווית חיובי/שלילי. אבל ל-<code>adapt</code> לא אכפת מהתוויות; הוא צריך <em>רק את הטקסט</em> כדי לספור מילים. ה-<code>map(lambda x, y: x)</code> לוקח כל זוג ומחזיר רק את ה-x (הטקסט) ← dataset של טקסט בלבד, שמוזן ל-adapt.</p>
 
         <h4>(3) למה <code>adapt</code> רק על ה-train (ולא val/test)?</h4>
         <p>אותה סיבה כמו נרמול בסדרות זמן — <strong>מניעת data leakage</strong>. ה-vocabulary חייב להיבנות רק ממה שהמודל "מותר" לראות. מילה שמופיעה ב-test אבל לא הייתה ב-train פשוט תקבל <code>[UNK]</code> (אינדקס 1) — בדיוק כמו שיקרה בעולם האמיתי עם מילה חדשה.</p>
@@ -5387,7 +5387,7 @@ binary_1gram_test_ds  = test_ds.map(lambda x, y: (text_vectorization(x), y), num
         <p>מילים כמו "the", "is", "a" שכיחות מאוד אבל <strong>לא אינפורמטיביות</strong>. לא נרצה לתת להן משקל רב. <strong>TF-IDF</strong> מנרמל את ספירת המילים:</p>
         <ul>
           <li><strong>TF (Term Frequency):</strong> כמה פעמים המילה מופיעה במסמך הזה.</li>
-          <li><strong>IDF (Inverse Document Frequency):</strong> מחלקים בשכיחות המילה ב-<em>כל</em> ה-dataset → מילה שמופיעה בכל מקום מקבלת משקל נמוך.</li>
+          <li><strong>IDF (Inverse Document Frequency):</strong> מחלקים בשכיחות המילה ב-<em>כל</em> ה-dataset ← מילה שמופיעה בכל מקום מקבלת משקל נמוך.</li>
         </ul>
         <p><strong>למה כאן זה לא שיפר?</strong> לוקטור BoW יש תכונת <strong>sparsity</strong> (רוב האיברים 0), שמייעלת חישוב ומקטינה overfitting. נרמול רגיל (הפחתת ממוצע) היה הורס את ה-sparsity. TF-IDF שומר עליה — אבל בדאטה הזה לא נתן יתרון על multi-hot פשוט.</p>
       </div>
@@ -5397,7 +5397,7 @@ binary_1gram_test_ds  = test_ds.map(lambda x, y: (text_vectorization(x), y), num
   <!-- ========== 5. SEQUENCE MODELS ========== -->
   <h3>5. Sequence Models — לתת למודל ללמוד את הסדר</h3>
   <div class="card">
-    <p>ב-BoW יצרנו את הסדר ידנית (n-grams = feature engineering). ב-sequence models נותנים למודל <strong>ללמוד את הסדר בעצמו</strong>: מייצגים כל מילה כמספר → ממפים כל מספר לוקטור → מזינים את רצף הוקטורים ל-RNN/Transformer. נדגים זאת עם BiLSTM על IMDB.</p>
+    <p>ב-BoW יצרנו את הסדר ידנית (n-grams = feature engineering). ב-sequence models נותנים למודל <strong>ללמוד את הסדר בעצמו</strong>: מייצגים כל מילה כמספר ← ממפים כל מספר לוקטור ← מזינים את רצף הוקטורים ל-RNN/Transformer. נדגים זאת עם BiLSTM על IMDB.</p>
 
     <h4>5.1 הכנת הנתונים — וקטוריזציה כ-<code>int</code> (שקף 35)</h4>
     <p>שלב ראשון, וקריטי: כאן <strong>לא</strong> משתמשים ב-multi_hot. רוצים לשמר את <em>סדר</em> המילים, אז מייצגים כל ביקורת כ-<strong>רצף של מספרים שלמים</strong> (כל מספר = אינדקס מילה במילון), באורך קבוע.</p>
@@ -5484,7 +5484,7 @@ outputs = layers.Dense(1, activation="sigmoid")(x)
   <!-- ========== 7. MASKING ========== -->
   <h3>7. Masking — לדלג על הריפוד</h3>
   <div class="card">
-    <p>בעיה: ביקורת קצרה רופדה ל-600 → ה-BiLSTM "מבזבז" מאות איטרציות על אפסים לפני שמגיע למידע. הפתרון — <strong>mask</strong> שאומר לרשת אילו מקומות אמיתיים ואילו ריפוד.</p>
+    <p>בעיה: ביקורת קצרה רופדה ל-600 ← ה-BiLSTM "מבזבז" מאות איטרציות על אפסים לפני שמגיע למידע. הפתרון — <strong>mask</strong> שאומר לרשת אילו מקומות אמיתיים ואילו ריפוד.</p>
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect10_masking.svg" alt="Masking" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
     </div>
@@ -5527,7 +5527,7 @@ embedding_layer = layers.Embedding(
     <details class="expand">
       <summary>הרחבה: למה Q, K, V? והאינטואיציה של context-aware</summary>
       <div class="body">
-        <p>השמות באים מעולם <strong>מנועי החיפוש</strong>: <strong>Query</strong> (שאילתה — מה אני מחפש), <strong>Key</strong> (מפתח — תווית של כל פריט), <strong>Value</strong> (הערך עצמו). מחשבים דמיון בין ה-Query לכל ה-Keys (dot product), עושים softmax → משקלים, ולוקחים סכום ממושקל של ה-Values.</p>
+        <p>השמות באים מעולם <strong>מנועי החיפוש</strong>: <strong>Query</strong> (שאילתה — מה אני מחפש), <strong>Key</strong> (מפתח — תווית של כל פריט), <strong>Value</strong> (הערך עצמו). מחשבים דמיון בין ה-Query לכל ה-Keys (dot product), עושים softmax ← משקלים, ולוקחים סכום ממושקל של ה-Values.</p>
         <p>ב-<strong>self</strong>-attention, Q=K=V מגיעים מאותו משפט — כל מילה "שואלת" את כל המילים האחרות.</p>
         <p><strong>למה זה כל כך חזק?</strong> ב-word embedding רגיל למילה יש משמעות קבועה. אבל מילה תלוית-הקשר: "date" ב-"go on a date" שונה מ-"a date jam". Self-attention יוצר embedding ש<em>משתנה לפי המילים סביבו</em> — בדיוק מה שצריך.</p>
         <div class="formula">Attention(Q, K, V) = softmax(Q·Kᵀ / √dₖ) · V</div>
@@ -5547,7 +5547,7 @@ embedding_layer = layers.Embedding(
     </div>
 
     <h4>9.4 בלוק ה-Encoder — והסיווג של IMDB</h4>
-    <p>מחברים הכל: Embedding+PE → Multi-Head Attention → Add&amp;Norm → Feed-Forward → Add&amp;Norm. חיבורי ה-residual (כמו ResNet) מייצבים את האימון.</p>
+    <p>מחברים הכל: Embedding+PE ← Multi-Head Attention ← Add&amp;Norm ← Feed-Forward ← Add&amp;Norm. חיבורי ה-residual (כמו ResNet) מייצבים את האימון.</p>
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect10_transformer_encoder.svg" alt="Transformer Encoder + classifier" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
     </div>
@@ -5577,7 +5577,7 @@ embedding_layer = layers.Embedding(
       <div class="body">
         <ul>
           <li><strong>Cross-Attention:</strong> ב-Decoder, ה-Query מגיע מהיעד אבל ה-Keys וה-Values מגיעים מפלט ה-Encoder — כך הדקודר "מסתכל" על משפט המקור.</li>
-          <li><strong>Masked Self-Attention:</strong> בדקודר, הפלט במיקום t תלוי רק במילים <em>קודמות</em>. מאפסים (∞−) את כל הערכים מעל האלכסון → המודל לא יכול "להציץ" למילים עתידיות.</li>
+          <li><strong>Masked Self-Attention:</strong> בדקודר, הפלט במיקום t תלוי רק במילים <em>קודמות</em>. מאפסים (∞−) את כל הערכים מעל האלכסון ← המודל לא יכול "להציץ" למילים עתידיות.</li>
           <li><strong>Inference אוטו-רגרסיבי:</strong> באימון הכל קורה בצעד אחד; ב-inference מייצרים מילה-מילה — בכל צעד מצרפים את הפלט הקודם כקלט, עד <code>&gt;EOS&gt;</code>. (כאן הוצגה אסטרטגיה "חמדנית" — תמיד המילה עם ההסתברות הגבוהה ביותר.)</li>
         </ul>
       </div>
@@ -5592,7 +5592,7 @@ embedding_layer = layers.Embedding(
       <img src="figures/lect10_bow_vs_seq_rule.svg" alt="כלל BoW מול Sequence" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 500px;"/>
     </div>
     <div class="callout success">
-      בדוגמת IMDB: <code>25,000 / 233 ≈ 85 ≪ 1500</code> → ולכן BoW (bigrams) עבד טוב יותר. זה בדיוק מה שראינו בגרף ההשוואה.
+      בדוגמת IMDB: <code>25,000 / 233 ≈ 85 ≪ 1500</code> ← ולכן BoW (bigrams) עבד טוב יותר. זה בדיוק מה שראינו בגרף ההשוואה.
     </div>
   </div>
 
@@ -5611,7 +5611,7 @@ embeddings = model.encode(sentences)                    # וקטור באורך 
   <div class="card">
     <ol>
       <li><strong>"Transformer הכי טוב" — מיתוס.</strong> כאן BoW bigram ניצח. תמיד תתחילו מ-baseline פשוט (BoW) לפני שתשקיעו במודל מורכב.</li>
-      <li><strong>one-hot לרצפים = אסון ביצועים.</strong> 600×20000 = 12M מספרים/ביקורת → אימון של דקות לכל epoch. embeddings פותרים זאת (פי ~78 קטן יותר) וגם נושאים משמעות.</li>
+      <li><strong>one-hot לרצפים = אסון ביצועים.</strong> 600×20000 = 12M מספרים/ביקורת ← אימון של דקות לכל epoch. embeddings פותרים זאת (פי ~78 קטן יותר) וגם נושאים משמעות.</li>
       <li><strong>pretrained embeddings עוזרים רק כשמעט דאטה.</strong> עם מספיק דגימות, embeddings ייעודיים שנלמדים מהמשימה טובים יותר (GloVe 87.4% &lt; embedding ייעודי + mask 88.0%).</li>
       <li><strong>masking חשוב לרצפים מרופדים.</strong> בלעדיו ה-RNN מבזבז איטרציות על אפסים. <code>mask_zero=True</code> פותר בחינם.</li>
       <li><strong>Self-attention = context-aware embeddings.</strong> זה הרעיון המהפכני: משמעות מילה משתנה לפי שכנותיה, במקום משמעות קבועה.</li>
