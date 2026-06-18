@@ -5468,7 +5468,7 @@ outputs = layers.Dense(1, activation="sigmoid")(x)        # חיובי / שלי�
           <li><strong>Cosine similarity</strong> (דמיון): טווח 1…0…−1. ‏<code>1</code> = אותו כיוון (זהה), <code>0</code> = אורתוגונליים (לא קשורים), <code>−1</code> = הפוכים.</li>
           <li><strong>Cosine distance</strong> (מרחק): פשוט <code>1 − cosine similarity</code> — קרוב = מרחק נמוך.</li>
         </ul>
-        <p><strong>דוגמה מספרית:</strong> ‏<code>movie=[0.82,−0.3,0.51,0.04]</code> ו-<code>film=[0.79,−0.28,0.55,0.02]</code> כמעט מקבילים → cosine ≈ <code>0.998</code> → cosine distance ≈ <code>0.002</code> (קרובים מאוד). ב-one-hot הם אורתוגונליים → cosine = 0 (מרחק מקסימלי).</p>
+        <p><strong>דוגמה מספרית:</strong> ‏<code>movie=[0.82,−0.3,0.51,0.04]</code> ו-<code>film=[0.79,−0.28,0.55,0.02]</code> כמעט מקבילים ← cosine ≈ <code>0.998</code> ← cosine distance ≈ <code>0.002</code> (קרובים מאוד). ב-one-hot הם אורתוגונליים ← cosine = 0 (מרחק מקסימלי).</p>
         <div class="callout info">
           <strong>למה cosine ולא מרחק אוקלידי?</strong> במרחק אוקלידי <em>אורך</em> הוקטור משפיע — שתי מילים יכולות להצביע לאותו כיוון (משמעות זהה) אך אם אחת "ארוכה" יותר, האוקלידי יראה אותן רחוקות ויטעה. cosine שומר רק על הכיוון, שזה מה שמקודד משמעות. <strong>הערה:</strong> אם מנרמלים את כל הוקטורים לאורך 1, cosine ואוקלידי הופכים שקולים (<code>מרחק² = 2(1 − cos)</code>).
         </div>
@@ -5567,12 +5567,12 @@ embedding_layer = layers.Embedding(
 
         <h4>שלב 1 · יוצרים Q, K, V</h4>
         <p>מתחילים מהקלט (embedding + positional), מטריצה בגודל <code>(7, 512)</code> — שורה לכל מילה, 512 מספרים לכל מילה. מכפילים אותו ב-3 מטריצות משקלים נלמדות:</p>
-        <div class="formula">Q = X·Wq    K = X·Wk    V = X·Wv     → כל אחת בגודל (7, 512)</div>
+        <div class="formula">Q = X·Wq    K = X·Wk    V = X·Wv     ← כל אחת בגודל (7, 512)</div>
         <p>(Q/K/V = "מה אני מחפש / תוויות / תוכן", מאנלוגיית מנוע החיפוש מ-§9.1.)</p>
 
         <h4>שלב 2 · מפצלים כל מטריצה ל-4 ראשים — מה זה אומר בדיוק</h4>
         <p>זה החלק המבלבל, אז לאט: לוקחים את מטריצת <code>Q</code> בגודל <code>(7, 512)</code> ו<strong>חותכים אותה לאורך מימד הפיצ'רים</strong> (ה-512) ל-4 פרוסות שוות של <code>512 / 4 = 128</code>:</p>
-        <div class="formula">Q → Q₁, Q₂, Q₃, Q₄     כל אחת בגודל (7, 128)</div>
+        <div class="formula">Q ← Q₁, Q₂, Q₃, Q₄     כל אחת בגודל (7, 128)</div>
         <p>ואותו דבר ל-<code>K</code> ול-<code>V</code>: מקבלים K₁…K₄ ו-V₁…V₄, כל אחת <code>(7, 128)</code>.</p>
         <div class="callout warning">
           <strong>הנקודה הקריטית — מה נחתך?</strong> חותכים את <strong>הפיצ'רים (512), לא את המילים</strong>. כל <strong>7 המילים נשארות שלמות בכל ראש</strong> — מה שמתחלק הוא הוקטור בן 512 המספרים של כל מילה. ראש מס' 1 מקבל את הפרוסה <code>[0:128]</code> של <em>כל</em> מילה, ראש 2 את <code>[128:256]</code>, וכן הלאה.
@@ -5588,16 +5588,16 @@ embedding_layer = layers.Embedding(
 
         <h4>שלב 3 · כל ראש מחשב attention בנפרד</h4>
         <p>כל ראש מריץ את נוסחת ה-self-attention על הפרוסה שלו (כאן <code>dₖ = 128</code>):</p>
-        <div class="formula">headᵢ = softmax(Qᵢ · Kᵢᵀ / √128) · Vᵢ     → בגודל (7, 128)</div>
+        <div class="formula">headᵢ = softmax(Qᵢ · Kᵢᵀ / √128) · Vᵢ     ← בגודל (7, 128)</div>
         <p>כיוון שלכל ראש פרוסה שונה ומשקלים שונים, <strong>כל ראש לומד "דפוס תשומת-לב" אחר</strong> — ראש אחד עשוי לעקוב אחרי קשר תחבירי, אחר אחרי הנושא, אחר אחרי זמן. זה היתרון: 4 מומחים במקום מומחה-כללי אחד.</p>
 
         <h4>שלב 4 · משרשרים (concat) בחזרה</h4>
-        <p>מדביקים את 4 פלטי הראשים זה לצד זה לאורך הפיצ'רים → חוזרים לגודל המלא:</p>
-        <div class="formula">concat(head₁, head₂, head₃, head₄)     → (7, 4×128) = (7, 512)</div>
+        <p>מדביקים את 4 פלטי הראשים זה לצד זה לאורך הפיצ'רים ← חוזרים לגודל המלא:</p>
+        <div class="formula">concat(head₁, head₂, head₃, head₄)     ← (7, 4×128) = (7, 512)</div>
 
         <h4>שלב 5 · הקרנה סופית (W₀)</h4>
         <p>מכפילים במטריצת משקלים אחרונה <code>W₀</code> (בגודל 512×512) שמערבבת את המידע מכל הראשים:</p>
-        <div class="formula">MultiHead(Q,K,V) = concat(head₁,…,head₄) · W₀     → (7, 512)</div>
+        <div class="formula">MultiHead(Q,K,V) = concat(head₁,…,head₄) · W₀     ← (7, 512)</div>
 
         <div class="callout success">
           <strong>למה בכלל לפצל, ולא ראש אחד גדול?</strong> ראש בודד בגודל 512 מחשב <em>דפוס תשומת-לב יחיד</em> (קבוצת משקלים אחת לכל זוג מילים). 4 ראשים של 128 מחשבים <strong>4 דפוסים שונים במקביל</strong> — 4 "דרכים לקשר מילים" — בערך באותה עלות חישוב. לכן מקבלים ייצוג עשיר בהרבה.
@@ -5638,7 +5638,7 @@ embedding_layer = layers.Embedding(
       <img src="figures/lect10_transformer_full.svg" alt="Transformer encoder-decoder + inference" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
     </div>
     <details class="expand">
-      <summary>הרחבה: סדר הפעולות Encoder → Decoder — איך ומתי פלט ה-Encoder נכנס</summary>
+      <summary>הרחבה: סדר הפעולות Encoder ← Decoder — איך ומתי פלט ה-Encoder נכנס</summary>
       <div class="body">
         <div class="callout warning">
           <strong>קודם נקודה שמבלבלת:</strong> פלט ה-Encoder <strong>לא "מונע"</strong> שום ניבוי — הוא <strong>מאפשר</strong> אותו (נותן את משמעות המקור). יש שני מנגנונים <em>נפרדים</em> בדקודר:
@@ -5651,7 +5651,7 @@ embedding_layer = layers.Embedding(
 
         <h4>שלב א' · ה-Encoder (רץ פעם אחת)</h4>
         <ol>
-          <li>"we love watermelons" → tokenization → token embeddings + positional encoding.</li>
+          <li>"we love watermelons" ← tokenization ← token embeddings + positional encoding.</li>
           <li>עובר דרך N בלוקי Encoder. ה-self-attention כאן <strong>לא מסוכך</strong> — כל מילת מקור רואה את כל מילות המקור (המקור ידוע במלואו).</li>
           <li>התוצאה: <strong>Encoder Output</strong> — וקטור מודע-הקשר לכל מילת מקור. מחושב <strong>פעם אחת</strong> ומשמש <strong>מחדש בכל צעד</strong> של הדקודר, בתפקיד ה-<strong>Keys וה-Values</strong> ל-cross-attention.</li>
         </ol>
@@ -5659,9 +5659,9 @@ embedding_layer = layers.Embedding(
         <h4>שלב ב' · ה-Decoder (רץ שוב ושוב, מילה-מילה)</h4>
         <p>כל בלוק Decoder עושה שלושה דברים בסדר:</p>
         <ol>
-          <li><strong>Masked self-attention</strong> — מילות היעד שכבר נוצרו מסתכלות זו על זו, אבל כל מיקום רואה רק את עצמו ומה שלפניו (ערכים מעל האלכסון → ∞− → softmax מאפס). הפלט = "מה כתבתי עד עכשיו" = ה-<strong>Query</strong>.</li>
+          <li><strong>Masked self-attention</strong> — מילות היעד שכבר נוצרו מסתכלות זו על זו, אבל כל מיקום רואה רק את עצמו ומה שלפניו (ערכים מעל האלכסון ← ∞− ← softmax מאפס). הפלט = "מה כתבתי עד עכשיו" = ה-<strong>Query</strong>.</li>
           <li><strong>Cross-attention</strong> — <strong>כאן נכנס פלט ה-Encoder</strong>: Query מהדקודר, Keys+Values מה-Encoder Output. הדקודר שואל "בהינתן מה שכתבתי, אילו מילות מקור רלוונטיות עכשיו?" ומושך מהן משמעות. לא מסוכך — כל המקור גלוי.</li>
-          <li><strong>Feed-Forward → Add&amp;Norm</strong>, ואז <strong>Linear → Softmax</strong> → התפלגות על המילון → בוחרים את המילה הבאה.</li>
+          <li><strong>Feed-Forward ← Add&amp;Norm</strong>, ואז <strong>Linear ← Softmax</strong> ← התפלגות על המילון ← בוחרים את המילה הבאה.</li>
         </ol>
 
         <h4>הלולאה — ה"מתי" (פלט ה-Encoder נכנס ל-cross-attention בכל צעד מחדש)</h4>
@@ -5671,7 +5671,7 @@ embedding_layer = layers.Embedding(
             <tr><td>1</td><td><code>&gt;SOS&gt;</code></td><td>we love watermelons</td><td>אנחנו</td></tr>
             <tr><td>2</td><td><code>&gt;SOS&gt;</code> אנחנו</td><td>we love watermelons</td><td>אוהבים</td></tr>
             <tr><td>3</td><td><code>&gt;SOS&gt;</code> אנחנו אוהבים</td><td>we love watermelons</td><td>אבטיחים</td></tr>
-            <tr><td>4</td><td><code>&gt;SOS&gt;</code> אנחנו אוהבים אבטיחים</td><td>we love watermelons</td><td><code>&gt;EOS&gt;</code> → עצור</td></tr>
+            <tr><td>4</td><td><code>&gt;SOS&gt;</code> אנחנו אוהבים אבטיחים</td><td>we love watermelons</td><td><code>&gt;EOS&gt;</code> ← עצור</td></tr>
           </tbody>
         </table>
 
