@@ -4755,7 +4755,7 @@ Test accuracy: 0.977  (= 97.7%)</code></pre>
 
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
       <img src="figures/lect9_sequence_task_types.svg" alt="סוגי בעיות סדרתיות" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
-      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">ארבעת הארכיטיפים. דוגמת הטמפרטורה היא many-to-one: 120 שעות נתונים ← טמפרטורה אחת.</div>
+      <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">ארבעת הסוגים. דוגמת הטמפרטורה היא many-to-one: 120 שעות נתונים ← טמפרטורה אחת.</div>
     </div>
 
     <ul>
@@ -8092,7 +8092,7 @@ train_dataset = image_dataset_from_directory(
     <div class="term-short">נתונים שבהם לסדר יש משמעות — רצף קלטים ו/או רצף פלטים (טקסט, אודיו, מדידות בזמן).</div>
     <div class="term-long">
       <strong>ההבדל מ-feedforward:</strong> ברשת רגילה הקלט והפלט יחידים ואין משמעות לזמן. בנתונים סדרתיים נקודה מקבלת משמעות מההקשר שלפניה (ולעיתים שאחריה).
-      <strong>ארכיטיפים:</strong> many-to-one (חיזוי טמפ', sentiment), one-to-many (חילול מנגינה), many-to-many (תרגום).
+      <strong>סוגי בעיות:</strong> many-to-one (חיזוי טמפ', sentiment), one-to-many (חילול מנגינה), many-to-many (תרגום).
       <strong>דוגמה בקורס:</strong> חיזוי טמפרטורה 24 שעות קדימה מ-120 שעות נתונים (many-to-one).
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
@@ -8389,14 +8389,14 @@ train_dataset = image_dataset_from_directory(
       <span class="chip outline">מחשבון מותר</span>
       <span class="chip">כל הקורס (יח' 1–11)</span>
     </div>
-    <p>שאלות התרגול נבנו לפי <strong>ניתוח שני המבחנים</strong> של ד"ר ענת גולדשטיין (מועד א תשפ"ב + מבחן לדוגמא). הן משחזרות את <strong>שבעת ארכיטיפי השאלות</strong> ואת הסגנון (עברית + מונחים באנגלית, תשובות קצרות), ומורחבות לכל נושאי הקורס — כולל CNN, RNN/LSTM, Transformer ו-HuggingFace שלא היו במבחני 2022.</p>
+    <p>שאלות התרגול נבנו לפי <strong>ניתוח שני המבחנים</strong> של ד"ר ענת גולדשטיין (מועד א תשפ"ב + מבחן לדוגמא). הן משחזרות את <strong>שבעת סוגי השאלות</strong> ואת הסגנון (עברית + מונחים באנגלית, תשובות קצרות), ומורחבות לכל נושאי הקורס — כולל CNN, RNN/LSTM, Transformer ו-HuggingFace שלא היו במבחני 2022.</p>
 
     <div class="callout info">
-      <strong>שבעת ארכיטיפי השאלות:</strong> (1) הגדרה/תיאור · (2) השוואה/ניגוד · (3) חישוב נומרי · (4) חוות דעת/ביקורת · (5) תרחיש יישומי · (6) ויזואלי/פרשנות · (7) "למה" רעיוני. כל שאלה למטה מתויגת בסוגה ובנושא.
+      <strong>שבעת סוגי השאלות:</strong> (1) הגדרה/תיאור · (2) השוואה/ניגוד · (3) חישוב נומרי · (4) חוות דעת/ביקורת · (5) תרחיש יישומי · (6) ויזואלי/פרשנות · (7) "למה" רעיוני. כל שאלה למטה מתויגת בסוג ובנושא.
     </div>
 
     <div class="callout warning">
-      <strong>איך להתאמן נכון:</strong> ענו בכתב <em>לפני</em> שאתם פותחים את התשובה (לחיצה על "הצג תשובה"). הקפידו על תשובה קצרה וממוקדת — במבחן האמיתי אורך השורות המוקצות הוא הרמז לאורך הרצוי.
+      <strong>איך להתאמן נכון:</strong> ענו בכתב <em>לפני</em> שאתם פותחים את התשובה (לחיצה על "הצג תשובה"). הקפידו על תשובה קצרה וממוקדת — ענו לעניין, בלי הקדמות מיותרות.
     </div>
   </div>
 
@@ -8651,7 +8651,7 @@ train_dataset = image_dataset_from_directory(
       <li>שלוט בנוסחאות החישוב (§0) בעל-פה — שאלות shape/פרמטרים הן "נקודות בטוחות".</li>
       <li>לכל מושג — דע גם <em>הגדרה</em> וגם <em>למה/מתי משתמשים</em> (שני סוגי שאלות נפוצים).</li>
       <li>בשאלות השוואה — ענה במבנה "X עושה ___, לעומת Y שעושה ___".</li>
-      <li>תשובה קצרה וממוקדת. אורך השורות במבחן = הרמז לאורך הרצוי.</li>
+      <li>תשובה קצרה וממוקדת — ענה לעניין, בלי מילים מיותרות.</li>
       <li>תרגל ציור perceptron/רשת על נייר, כולל קלט-משקלות-פלט.</li>
     </ul>
   </div>
