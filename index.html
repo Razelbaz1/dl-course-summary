@@ -5638,13 +5638,54 @@ embedding_layer = layers.Embedding(
       <img src="figures/lect10_transformer_full.svg" alt="Transformer encoder-decoder + inference" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
     </div>
     <details class="expand">
-      <summary>הרחבה: Cross-Attention, Masked Attention, ו-Inference אוטו-רגרסיבי</summary>
+      <summary>הרחבה: סדר הפעולות Encoder → Decoder — איך ומתי פלט ה-Encoder נכנס</summary>
       <div class="body">
+        <div class="callout warning">
+          <strong>קודם נקודה שמבלבלת:</strong> פלט ה-Encoder <strong>לא "מונע"</strong> שום ניבוי — הוא <strong>מאפשר</strong> אותו (נותן את משמעות המקור). יש שני מנגנונים <em>נפרדים</em> בדקודר:
+          <ul>
+            <li><strong>Masked self-attention</strong> — מונע הצצה לעתיד; רואה רק את מילות ה<strong>יעד</strong> שכבר נוצרו.</li>
+            <li><strong>Cross-attention</strong> — כאן נכנס פלט ה-Encoder; רואה את <strong>כל</strong> משפט המקור (לא מסוכך).</li>
+          </ul>
+          המסכה זה דבר אחד; כניסת פלט ה-Encoder זה דבר אחר.
+        </div>
+
+        <h4>שלב א' · ה-Encoder (רץ פעם אחת)</h4>
+        <ol>
+          <li>"we love watermelons" → tokenization → token embeddings + positional encoding.</li>
+          <li>עובר דרך N בלוקי Encoder. ה-self-attention כאן <strong>לא מסוכך</strong> — כל מילת מקור רואה את כל מילות המקור (המקור ידוע במלואו).</li>
+          <li>התוצאה: <strong>Encoder Output</strong> — וקטור מודע-הקשר לכל מילת מקור. מחושב <strong>פעם אחת</strong> ומשמש <strong>מחדש בכל צעד</strong> של הדקודר, בתפקיד ה-<strong>Keys וה-Values</strong> ל-cross-attention.</li>
+        </ol>
+
+        <h4>שלב ב' · ה-Decoder (רץ שוב ושוב, מילה-מילה)</h4>
+        <p>כל בלוק Decoder עושה שלושה דברים בסדר:</p>
+        <ol>
+          <li><strong>Masked self-attention</strong> — מילות היעד שכבר נוצרו מסתכלות זו על זו, אבל כל מיקום רואה רק את עצמו ומה שלפניו (ערכים מעל האלכסון → ∞− → softmax מאפס). הפלט = "מה כתבתי עד עכשיו" = ה-<strong>Query</strong>.</li>
+          <li><strong>Cross-attention</strong> — <strong>כאן נכנס פלט ה-Encoder</strong>: Query מהדקודר, Keys+Values מה-Encoder Output. הדקודר שואל "בהינתן מה שכתבתי, אילו מילות מקור רלוונטיות עכשיו?" ומושך מהן משמעות. לא מסוכך — כל המקור גלוי.</li>
+          <li><strong>Feed-Forward → Add&amp;Norm</strong>, ואז <strong>Linear → Softmax</strong> → התפלגות על המילון → בוחרים את המילה הבאה.</li>
+        </ol>
+
+        <h4>הלולאה — ה"מתי" (פלט ה-Encoder נכנס ל-cross-attention בכל צעד מחדש)</h4>
+        <table>
+          <thead><tr><th>צעד</th><th>קלט לדקודר</th><th>cross-attention רואה</th><th>פלט</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><code>&gt;SOS&gt;</code></td><td>we love watermelons</td><td>אנחנו</td></tr>
+            <tr><td>2</td><td><code>&gt;SOS&gt;</code> אנחנו</td><td>we love watermelons</td><td>אוהבים</td></tr>
+            <tr><td>3</td><td><code>&gt;SOS&gt;</code> אנחנו אוהבים</td><td>we love watermelons</td><td>אבטיחים</td></tr>
+            <tr><td>4</td><td><code>&gt;SOS&gt;</code> אנחנו אוהבים אבטיחים</td><td>we love watermelons</td><td><code>&gt;EOS&gt;</code> → עצור</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout info">
+          <strong>הדימוי:</strong> מתרגם שכותב את התרגום העברי מילה-מילה, ו<strong>כל הזמן מציץ במשפט האנגלי המקורי</strong> כדי להחליט מה הבא. ההצצה למקור = cross-attention (תמיד זמינה, כל המקור גלוי). "לא להציץ בהמשך התרגום שלי שעוד לא כתבתי" = masked self-attention.
+        </div>
+
+        <h4>אז למה בכלל צריך את המסכה?</h4>
+        <p>ההבחנה בין <strong>אימון</strong> ל-<strong>inference</strong>:</p>
         <ul>
-          <li><strong>Cross-Attention:</strong> ב-Decoder, ה-Query מגיע מהיעד אבל ה-Keys וה-Values מגיעים מפלט ה-Encoder — כך הדקודר "מסתכל" על משפט המקור.</li>
-          <li><strong>Masked Self-Attention:</strong> בדקודר, הפלט במיקום t תלוי רק במילים <em>קודמות</em>. מאפסים (∞−) את כל הערכים מעל האלכסון ← המודל לא יכול "להציץ" למילים עתידיות.</li>
-          <li><strong>Inference אוטו-רגרסיבי:</strong> באימון הכל קורה בצעד אחד; ב-inference מייצרים מילה-מילה — בכל צעד מצרפים את הפלט הקודם כקלט, עד <code>&gt;EOS&gt;</code>. (כאן הוצגה אסטרטגיה "חמדנית" — תמיד המילה עם ההסתברות הגבוהה ביותר.)</li>
+          <li><strong>inference:</strong> המילים העתידיות באמת לא קיימות (מייצרים אחת-אחת) — ממילא אין מה לראות.</li>
+          <li><strong>אימון:</strong> מזינים את כל משפט היעד בבת אחת ("teacher forcing", ליעילות). בלי מסכה, כשהמודל מנבא את "אוהבים" (מיקום 2) הוא היה יכול <strong>לרמות</strong> ולהציץ ב"אבטיחים" (מיקום 3) — התשובה. המסכה מכריחה כל מיקום לנבא רק לפי מה שלפניו, בדיוק כמו ב-inference.</li>
         </ul>
+        <p style="font-size:13px; color:var(--c-muted);">(ה-inference כאן הוא "חמדני" — בכל צעד בוחרים את המילה עם ההסתברות הגבוהה ביותר. יש אסטרטגיות מתוחכמות יותר כמו beam search.)</p>
       </div>
     </details>
   </div>
