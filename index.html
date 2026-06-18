@@ -5581,6 +5581,11 @@ embedding_layer = layers.Embedding(
           <strong>הדימוי:</strong> הייצוג של כל מילה הוא "פרופיל" של 512 מספרים. במקום שאנליסט אחד יקרא את כל ה-512, <strong>חותכים את הפרופיל ל-4 קטעים של 128</strong> ונותנים כל קטע לאנליסט אחר (ראש). כל אנליסט מקבל את הקטע שלו <em>מכל המילים</em>.
         </div>
 
+        <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
+          <img src="figures/lect10_head_split.svg" alt="חיתוך מטריצת Q ל-4 ראשים — שורות=מילים, עמודות=פיצ'רים" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
+          <div style="margin-top: 8px; font-size: 12px; color: var(--c-muted);">השורה האדומה (המילה "station") פרושה על כל 4 הראשים — המילה שלמה, רק 512 הפיצ'רים שלה נחתכו ל-4×128.</div>
+        </div>
+
         <h4>שלב 3 · כל ראש מחשב attention בנפרד</h4>
         <p>כל ראש מריץ את נוסחת ה-self-attention על הפרוסה שלו (כאן <code>dₖ = 128</code>):</p>
         <div class="formula">headᵢ = softmax(Qᵢ · Kᵢᵀ / √128) · Vᵢ     → בגודל (7, 128)</div>
