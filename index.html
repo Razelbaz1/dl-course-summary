@@ -6300,7 +6300,7 @@ reloaded = BertModel.from_pretrained("my_bert_model") # טעינה בחזרה</c
         <li>שכבת פלט סופית — אחרי Flatten בקצה CNN, או על vectors קטנים.</li>
         <li>בעיות סיווג / רגרסיה פשוטות.</li>
       </ul>
-      <strong>מתי לא:</strong> תמונות, רצפים — שם sparsely connected (CNN/RNN) חוסך פי עשרות בפרמטרים.
+      <strong>מתי לא:</strong> תמונות → CNN (<strong>sparsely connected</strong>); רצפים → RNN (<strong>weight sharing לאורך הזמן</strong>). שתיהן חוסכות פרמטרים מול FC — אבל בדרכים שונות: CNN דרך מקומיות, ו-RNN דרך שיתוף משקלים (ה-RNN עצמו <em>fully connected</em> בתוך כל צעד זמן).
       <strong>שמות נרדפים:</strong> Dense Layer · FC Layer · Linear Layer (ב-PyTorch).
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
@@ -6318,9 +6318,9 @@ reloaded = BertModel.from_pretrained("my_bert_model") # טעינה בחזרה</c
       <strong>דוגמאות בפועל:</strong>
       <ul>
         <li><strong>CNN — Conv2D:</strong> כל נוירון בפלט רואה רק חלון 3×3 בקלט. + Weight Sharing → מינימום פרמטרים.</li>
-        <li><strong>RNN:</strong> בכל צעד זמן, הנוירון רואה רק את הקלט הנוכחי + ה-state הקודם.</li>
         <li><strong>Sparse Transformer / Linformer:</strong> מגבילים את ה-attention לחלקים מסוימים מהרצף.</li>
       </ul>
+      <strong>⚠️ RNN הוא לא sparsely connected:</strong> בתוך כל צעד זמן ה-RNN <em>fully connected</em> (מטריצות צפופות <code>W_xh</code>, <code>W_hh</code>). מה שחוסך לו פרמטרים זה <strong>weight sharing לאורך הזמן</strong> (אותם משקלים בכל צעד) + רקורסיה — לא דלילות. קל להתבלבל כי שתי התכונות "חוסכות פרמטרים", אבל הן שונות: sparse = מקומיות מרחבית (CNN); weight sharing = שימוש חוזר במשקלים (CNN במרחב, RNN בזמן).
       <strong>למה זה עובד טוב לתמונות:</strong>
       <ul>
         <li>פיקסלים קרובים <em>קשורים סמנטית</em> (חלקי אותו אובייקט).</li>
