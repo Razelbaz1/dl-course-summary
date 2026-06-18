@@ -312,6 +312,19 @@
     padding: 10px 14px; margin: 10px 0; border-radius: 8px; color: #92400e;
   }
   .callout.info { background: #eff6ff; border-color: var(--c-accent); color: #1e40af; }
+  .callout.success { background: #f0fdf4; border-color: #22c55e; color: #166534; }
+  .callout.warning { background: #fff7ed; border-color: #f59e0b; color: #92400e; }
+
+  /* תגיות רמה: רעיוני (למבחן) מול פרקטי (קוד) — הרצאה 11 */
+  .lvl-badge {
+    display: inline-block; font-size: 12px; font-weight: 700;
+    padding: 3px 11px; border-radius: 999px; margin: 0 0 9px;
+    letter-spacing: .2px;
+  }
+  .lvl-badge.exam { background: #dcfce7; color: #166534; border: 1px solid #22c55e; }
+  .lvl-badge.code { background: #eef2f6; color: #475569; border: 1px solid #cbd5e1; }
+  .card.exam-card { border-right: 4px solid #22c55e; }
+  .card.code-card { border-right: 4px solid #94a3b8; background: #fcfdff; }
 
   footer.bottom {
     text-align: center; color: var(--c-muted); font-size: 13px;
@@ -504,6 +517,7 @@
   <button data-tab="lect8">8 · Cats vs Dogs</button>
   <button data-tab="lect9">9 · Sequence Models</button>
   <button data-tab="lect10">10 · Text · Transformer</button>
+  <button data-tab="lect11">11 · Hugging Face</button>
   <button data-tab="glossary">מילון מושגים</button>
   <button id="tabs-toggle" type="button" title="הסתר/הצג את שאר הלשוניות" aria-label="צמצום לשוניות"></button>
 </nav>
@@ -5800,6 +5814,375 @@ embeddings = model.encode(sentences)                    # וקטור באורך 
   </div>
 </section>
 
+<section id="lect11" class="tab-panel">
+  <h2 class="section">הרצאה 11 — Hugging Face: מדריך ראשוני</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">מצגת 11</span>
+      <span class="chip outline">29 שקפים</span>
+      <span class="chip outline">notebook אחד</span>
+      <span class="chip">Transformers · pipeline · Hub</span>
+      <span class="chip">ההרצאה האחרונה</span>
+    </div>
+    <p><strong>מטרת ההרצאה:</strong> להכיר את <strong>Hugging Face</strong> — האקוסיסטם שהפך מודלים מתקדמים (BERT, GPT ודומיהם) לנגישים בכמה שורות קוד ("Democratizing AI"). נראה איך פותרים משימות NLP מוכנות דרך <code>pipeline()</code>, מה קורה בתוך ה-pipeline (tokenizer → model → prediction), ואיך טוענים, מגדירים ושומרים מודלים מאומנים מראש.</p>
+
+    <div class="callout info" style="border-right-color:#22c55e; background:#f0fdf4; color:#166534;">
+      <strong>📖 מקרא הסימון בפרק הזה</strong> — ההרצאה היא <em>ברובה הדגמת קוד פרקטית</em> (מתוך הווידאו). כדי למקד את לימוד המבחן, כל בלוק מסומן:
+      <ul style="margin:6px 0 0;">
+        <li><span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span> — הרעיון/המושג. <strong>זה מה שלומדים למבחן.</strong></li>
+        <li><span class="lvl-badge code">💻 פרקטי · הדגמת קוד</span> — קוד מהווידאו, ברובו לא נבחן ישירות (לכל היותר ברמה רעיונית). הקוד מקופל — לחצו לפתיחה.</li>
+      </ul>
+      בסוף הפרק (§10) יש <strong>ריכוז מלא של "מה צריך לדעת למבחן"</strong>.
+    </div>
+
+    <h4>על מה נדבר בפרק הזה</h4>
+    <ol>
+      <li>מה זה Hugging Face — המטרה והשירותים (Transformers · Hub · ספריות נלוות).</li>
+      <li>טביעת רגל פחמנית של AI — ולמה pretrained + fine-tuning מצמצמים אותה.</li>
+      <li>טקסונומיית המשימות (NLP → גם ראייה ואודיו) והפלטפורמה (Models/Datasets/Spaces).</li>
+      <li>ה-Pipeline — שלושת השלבים (pre-processing → model → post-processing).</li>
+      <li>שמונה משימות NLP דרך <code>pipeline()</code> — בקוד.</li>
+      <li>מה קורה בתוך ה-pipeline: tokenizer → model (logits) → prediction (softmax).</li>
+      <li>Transfer learning ו-Auto classes · מה קורה כשטוענים מודל · שמירה ו-fine-tuning.</li>
+    </ol>
+  </div>
+
+  <!-- ========== 1. WHAT IS HF ========== -->
+  <h3>1. מה זה Hugging Face — "Democratizing AI"</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p><strong>אינטואיציה:</strong> פעם, כדי להשתמש במודל מתקדם היית צריך לאמן אותו בעצמך (דאטה ענק, GPU, ימים). Hugging Face הוא "ה-GitHub של מודלי AI" — פלטפורמה שבה אלפי מודלים <strong>מאומנים מראש</strong> זמינים להורדה ושימוש בכמה שורות. זו המשמעות של <strong>"Democratizing AI"</strong>: הנגשת AI לכולם.</p>
+    <p><strong>שלושת השירותים המרכזיים:</strong></p>
+    <ul>
+      <li><strong>Transformers Library</strong> — ספריית Python עם מימוש קוד-פתוח של מודלי transformer לטקסט, תמונה ואודיו. תואמת ל-<strong>PyTorch · TensorFlow · JAX</strong>, וכוללת מודלים מפורסמים כמו BERT ו-GPT-2.</li>
+      <li><strong>Hugging Face Hub</strong> — פלטפורמת אירוח מרכזית (כמו GitHub) ל: <em>מודלים</em> (עם בקרת גרסאות Git), <em>datasets</em> (טקסט/תמונה/אודיו), ו-<em>spaces</em> (אפליקציות הדגמה).</li>
+      <li><strong>ספריות נלוות</strong> — <code>Datasets</code> (טעינה/עיבוד דאטה), <code>Evaluate</code> (מדדי הערכה), <code>Simulate</code> (סימולציה), ו-<code>Gradio</code> (בניית ממשקי הדגמה).</li>
+    </ul>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_ecosystem.svg" alt="האקוסיסטם של Hugging Face" style="max-width:100%; height:auto; border-radius:6px; min-width:560px;"/>
+      <div style="margin-top:8px; font-size:12px; color:var(--c-muted);">ה-Hub במרכז, ומסביבו הספריות והשירותים.</div>
+    </div>
+  </div>
+
+  <!-- ========== 2. CARBON FOOTPRINT ========== -->
+  <h3>2. טביעת רגל פחמנית של AI (Green AI)</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p><strong>הרעיון:</strong> אימון מודלים עמוקים צורך הרבה חשמל ← פולט CO₂. זו סיבה <em>סביבתית</em> (ולא רק חישובית) להעדיף שימוש חוזר במודלים על פני אימון מאפס. Hugging Face שם דגש על המודעות הזו.</p>
+    <p><strong>איך מצמצמים את טביעת הרגל הפחמנית?</strong></p>
+    <ul>
+      <li>שימוש ב-GPU ידידותיים לסביבה.</li>
+      <li><strong>שימוש במודלים מאומנים מראש</strong> (pretrained) במקום אימון מאפס.</li>
+      <li><strong>fine-tuning</strong> במקום training from scratch.</li>
+      <li>להתחיל בניסויים קטנים ו-debugging לפני הרצה מלאה.</li>
+      <li>בחירת טווחי hyperparameters לפי סקירת ספרות (לא לנחש).</li>
+      <li><strong>Random search</strong> ל-hyperparameters במקום grid search (יעיל יותר).</li>
+    </ul>
+    <div class="callout info">
+      קיים כלי מעקב: <code>from codecarbon import EmissionsTracker</code> — מודד את פליטת ה-CO₂ של ריצת אימון.
+    </div>
+  </div>
+
+  <!-- ========== 3. TASKS + PLATFORM ========== -->
+  <h3>3. אילו משימות? והפלטפורמה</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>Hugging Face <strong>התחיל ממשימות NLP</strong>, והיום תומך גם בראייה ואודיו. סוגי משימות ה-NLP הקלאסיים:</p>
+    <ul>
+      <li>סיווג משפט שלם (sentiment, נושא).</li>
+      <li>סיווג כל מילה במשפט (חלקי דיבר, NER).</li>
+      <li>יצירת טקסט (השלמת משפט).</li>
+      <li>חילוץ תשובה מתוך טקסט (question answering).</li>
+      <li>יצירת משפט חדש מקלט (תרגום, סיכום).</li>
+    </ul>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_tasks_taxonomy.svg" alt="טקסונומיית משימות לפי מודאליות" style="max-width:100%; height:auto; border-radius:6px; min-width:640px;"/>
+      <div style="margin-top:8px; font-size:12px; color:var(--c-muted);">משימות מקובצות לפי מודאליות. ב-Hub כל משימה היא פילטר שמחזיר את המודלים המתאימים.</div>
+    </div>
+    <p><strong>הפלטפורמה כוללת שלושה אזורים מרכזיים:</strong> <strong>Models</strong> (אלפי מודלים, מסוננים לפי משימה) · <strong>Datasets</strong> (דאטהסטים) · <strong>Spaces</strong> (אפליקציות הדגמה אינטראקטיביות).</p>
+  </div>
+
+  <!-- ========== 4. THE PIPELINE ========== -->
+  <h3>4. ה-Pipeline — לב העניין</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>הפונקציה <code>pipeline()</code> היא הדרך הפשוטה ביותר להשתמש במודל. היא עוטפת <strong>שלושה שלבים</strong> ומחביאה את כל המורכבות:</p>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_pipeline.svg" alt="ה-Pipeline — שלושת השלבים" style="max-width:100%; height:auto; border-radius:6px; min-width:600px;"/>
+    </div>
+    <ol>
+      <li><strong>Pre-processing (Tokenizer):</strong> ממיר טקסט גולמי לוקטור מספרי שהמודל מבין.</li>
+      <li><strong>Model:</strong> המודל המאומן מקבל את המספרים ומחזיר <strong>logits</strong> (ציונים גולמיים).</li>
+      <li><strong>Post-processing:</strong> ממיר את ה-logits לתשובה קריאה (למשל הסתברויות + תווית).</li>
+    </ol>
+    <div class="callout success">
+      <strong>זרימת סוגי הנתונים (חשוב למבחן):</strong> <code>raw text → numerical vector → logits → predictions</code>. אם יודעים מה כל שלב מקבל ומחזיר — מבינים את כל ה-pipeline.
+    </div>
+  </div>
+
+  <!-- ========== 5. NLP TASKS VIA pipeline() ========== -->
+  <h3>5. שמונה משימות NLP דרך <code>pipeline()</code></h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>הרעיון שכדאי לזכור: <strong>אותה פונקציה אחת, <code>pipeline("&lt;task&gt;")</code>, פותרת משימות שונות</strong> — רק מחליפים את שם המשימה. אם לא מציינים מודל, HF בוחר ברירת מחדל מתאימה. הנה המשימות שהודגמו:</p>
+    <table>
+      <thead><tr><th>משימה</th><th>מה היא עושה</th><th>מודל ברירת מחדל</th></tr></thead>
+      <tbody>
+        <tr><td><code>sentiment-analysis</code></td><td>סיווג רגש: חיובי / שלילי</td><td>distilbert-…-sst-2</td></tr>
+        <tr><td><code>zero-shot-classification</code></td><td>סיווג לתוויות <em>שלא אומנו עליהן</em> (נותנים את התוויות בזמן ריצה)</td><td>bart-large-mnli</td></tr>
+        <tr><td><code>text-generation</code></td><td>השלמת/יצירת טקסט (עם אקראיות — פלט שונה כל פעם)</td><td>gpt2</td></tr>
+        <tr><td><code>fill-mask</code></td><td>השלמת מילה חסרה (<code>&lt;mask&gt;</code>) — Masked Language Model</td><td>distilroberta-base</td></tr>
+        <tr><td><code>ner</code></td><td>זיהוי ישויות: שם אדם (PER), ארגון (ORG), מקום (LOC)</td><td>bert-large-…-conll03</td></tr>
+        <tr><td><code>question-answering</code></td><td>חילוץ תשובה מתוך context נתון</td><td>distilbert-…-squad</td></tr>
+        <tr><td><code>summarization</code></td><td>סיכום טקסט ארוך לקצר</td><td>distilbart-cnn</td></tr>
+        <tr><td><code>translation</code></td><td>תרגום בין שפות (כאן אנגלית→גרמנית)</td><td>Helsinki-NLP/opus-mt</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card code-card">
+    <span class="lvl-badge code">💻 פרקטי · הדגמת קוד</span>
+    <p>הקוד שהודגם בווידאו לכל משימה. <strong>לא נדרש לשנן</strong> — שימו לב רק למבנה האחיד: <code>obj = pipeline("&lt;task&gt;"); obj(input)</code>.</p>
+    <details class="expand">
+      <summary>פתח/סגור — קוד 8 המשימות עם פלטים</summary>
+      <div class="body">
+<pre><code>from transformers import pipeline
+
+# 1 · Sentiment analysis
+classifier = pipeline("sentiment-analysis")
+classifier("I love learning deep-learning")
+# → [{'label': 'POSITIVE', 'score': 0.9998}]
+classifier(["I love learning deep-learning", "I hate doing homework"])
+# → POSITIVE 0.9998 · NEGATIVE 0.9995
+
+# 2 · Zero-shot classification (התוויות ניתנות בזמן ריצה!)
+classifier = pipeline("zero-shot-classification")
+classifier("This course is about deep-learning",
+           candidate_labels=["education", "sports", "politics"])
+# → education 0.95 · sports 0.027 · politics 0.022
+
+# 3 · Text generation (אקראי — פלט שונה כל הרצה)
+generator = pipeline("text-generation", model="distilgpt2")
+generator("In this course you will learn to", max_length=30)
+
+# 4 · Fill-mask
+unmasker = pipeline("fill-mask")
+unmasker("This course will &lt;mask&gt; you about deep-learning.", top_k=2)
+# → ' teach' 0.99 · ' educate' 0.002
+
+# 5 · Named Entity Recognition
+ner = pipeline("ner", grouped_entities=True)
+ner("My name is Anat and I am working at Ariel University in Israel")
+# → PER:'Anat' · ORG:'Ariel University' · LOC:'Israel'
+
+# 6 · Question answering
+qa = pipeline("question-answering")
+qa(question="where do I work?",
+   context="My name is Anat and I am working at Ariel University in Israel")
+# → answer:'Ariel University' (score 0.72)
+
+# 7 · Summarization
+summarizer = pipeline("summarization")
+summarizer(long_text)        # מחזיר תקציר קצר
+
+# 8 · Translation (en → de)
+translator = pipeline("translation", model="Helsinki-NLP/opus-mt-en-de")
+translator("The cat sat on the mat")
+# → 'Die Katze saß auf der Matte'</code></pre>
+      </div>
+    </details>
+  </div>
+
+  <!-- ========== 6. INSIDE THE PIPELINE ========== -->
+  <h3>6. מה קורה בתוך ה-pipeline?</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>נפרק את <code>sentiment-analysis</code> לשלושת השלבים הידניים שלו. <strong>זה החלק הכי "נבחן" בהרצאה</strong> — מה כל שלב מקבל ומחזיר:</p>
+
+    <h4>שלב 1 · Tokenizer (טקסט → מספרים)</h4>
+    <p>ה-tokenizer ממיר כל מילה ל-<strong>input_ids</strong> (מזהה מספרי), מוסיף אסימוני מסגרת (<code>[CLS]=101</code>, <code>[SEP]=102</code>), ומרפד (padding) משפטים קצרים ל-<strong>0</strong> כדי שכולם יהיו באותו אורך. ה-<strong>attention_mask</strong> מסמן 1=מילה אמיתית, 0=ריפוד (התעלם).</p>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_tokenization.svg" alt="Tokenization — input_ids ו-attention_mask" style="max-width:100%; height:auto; border-radius:6px; min-width:560px;"/>
+    </div>
+
+    <h4>שלב 2 · Model (מספרים → logits)</h4>
+    <p>המודל מקבל את ה-input_ids ומחזיר <strong>logits</strong> — ציונים גולמיים (לא הסתברויות!), אחד לכל מחלקה. לדוגמה <code>[-4.10, 4.38]</code>: ציון נמוך ל-NEGATIVE, גבוה ל-POSITIVE.</p>
+
+    <h4>שלב 3 · Prediction (logits → תשובה)</h4>
+    <p>מפעילים <strong>softmax</strong> על ה-logits כדי לקבל הסתברויות שמסתכמות ל-1, ומשתמשים ב-<code>id2label</code> כדי לתרגם אינדקס לשם מחלקה (<code>0→NEGATIVE, 1→POSITIVE</code>).</p>
+
+    <div class="callout success">
+      <strong>logits מול הסתברויות — שאלה קלאסית:</strong> המודל מחזיר logits (כל מספר ב-ℝ). רק אחרי <code>softmax</code> מקבלים הסתברויות. <code>[-4.10, 4.38] → softmax → [0.0002, 0.9998]</code>.
+    </div>
+  </div>
+
+  <div class="card code-card">
+    <span class="lvl-badge code">💻 פרקטי · הדגמת קוד</span>
+    <details class="expand">
+      <summary>פתח/סגור — שלושת השלבים בקוד (עם הפלטים האמיתיים)</summary>
+      <div class="body">
+<pre><code># ===== שלב 1: Tokenizer =====
+from transformers import AutoTokenizer
+raw_inputs = ["I love learning deep-learning", "I hate doing homework"]
+checkpoint = "distilbert-base-uncased-finetuned-sst-2-english"
+tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+inputs = tokenizer(raw_inputs, padding=True, truncation=True, return_tensors="pt")
+# input_ids:      [[101,1045,2293,4083,2784,1011,4083,102],
+#                  [101,1045,5223,2725,19453,102,0,0]]
+# attention_mask: [[1,1,1,1,1,1,1,1],[1,1,1,1,1,1,0,0]]
+
+# ===== שלב 2: Model =====
+from transformers import AutoModelForSequenceClassification
+model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
+outputs = model(**inputs)
+print(outputs.logits)
+# tensor([[-4.1056, 4.3837],   ← logits גולמיים
+#         [ 4.1587,-3.3525]])
+
+# ===== שלב 3: Prediction =====
+import torch
+predictions = torch.nn.functional.softmax(outputs.logits, dim=-1)
+# tensor([[2.06e-04, 9.998e-01],   ← POSITIVE
+#         [9.994e-01, 5.47e-04]])  ← NEGATIVE
+model.config.id2label              # {0:'NEGATIVE', 1:'POSITIVE'}</code></pre>
+      </div>
+    </details>
+  </div>
+
+  <!-- ========== 7. TRANSFER LEARNING ========== -->
+  <h3>7. Transfer Learning — הרעיון שמתחתית</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>למה בכלל מודלים מאומנים מראש עובדים כל-כך טוב? בזכות <strong>Transfer Learning</strong>: מאמנים מודל על משימה אחת עם <em>דאטה ענק</em> (Task A), ואז מעבירים את הידע (המשקלים) למשימה אחרת עם <em>מעט דאטה</em> (Task B).</p>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_transfer_learning.svg" alt="Transfer Learning" style="max-width:100%; height:auto; border-radius:6px; min-width:560px;"/>
+    </div>
+    <div class="callout info">
+      ראינו את זה כבר בהרצאה 8 (Cats vs Dogs — VGG16 כ-conv_base). כאן זה אותו רעיון בדיוק, אבל לטקסט: BERT/GPT אומנו על כמויות טקסט עצומות, ואנחנו רק מבצעים fine-tuning למשימה שלנו.
+    </div>
+  </div>
+
+  <!-- ========== 8. AUTO CLASSES + LOADING ========== -->
+  <h3>8. Auto classes ומה קורה כשטוענים מודל</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>ה-<strong>Auto classes</strong> (כמו <code>AutoModel</code>, <code>AutoTokenizer</code>, <code>AutoConfig</code>) הן "מפעל חכם": נותנים להן שם של <strong>checkpoint</strong> (מודל ב-Hub), והן מזהות אוטומטית מאיזו משפחה הוא (BERT? GPT? BART?) וטוענות את המחלקה הנכונה — בלי שתצטרכו לדעת מראש.</p>
+    <p>טעינת מודל היא צירוף של שני דברים: <strong>configuration</strong> (המבנה — כמה שכבות, גודל וכו') ו-<strong>weights</strong> (הערכים המאומנים):</p>
+    <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid var(--c-border); margin:10px 0; text-align:center; overflow-x:auto;">
+      <img src="figures/lect11_load_model.svg" alt="מה קורה כשטוענים מודל" style="max-width:100%; height:auto; border-radius:6px; min-width:600px;"/>
+    </div>
+    <p><strong>Instantiation — שלושה צעדים:</strong></p>
+    <ol>
+      <li>קוראים את ה-<strong>config file</strong> כדי לאתר את ה-config class המתאים.</li>
+      <li>ה-config class מגדיר את המודל ובוחר את ה-<strong>model class</strong> שממנו ייווצר ה-instance.</li>
+      <li>טוענים את ה-<strong>weights</strong> לתוך ה-instance → מתקבל <strong>pretrained model</strong> מוכן.</li>
+    </ol>
+    <div class="callout warning">
+      <strong>הבחנה חשובה:</strong> אם יוצרים מודל <em>מה-config בלבד</em> (<code>BertModel(config)</code>) — מקבלים מבנה נכון אבל <strong>משקלים אקראיים</strong> (לא מאומן!). רק <code>from_pretrained(...)</code> טוען גם את המשקלים המאומנים.
+    </div>
+  </div>
+
+  <div class="card code-card">
+    <span class="lvl-badge code">💻 פרקטי · הדגמת קוד</span>
+    <details class="expand">
+      <summary>פתח/סגור — AutoModel · AutoConfig · תוכן ה-config</summary>
+      <div class="body">
+<pre><code># AutoModel מזהה לבד את משפחת המודל מתוך ה-checkpoint:
+from transformers import AutoModel
+bert = AutoModel.from_pretrained("bert-base-cased")     # → BertModel
+gpt  = AutoModel.from_pretrained("gpt2")                # → GPT2Model
+bart = AutoModel.from_pretrained("facebook/bart-base")  # → BartModel
+
+# AutoConfig טוען רק את התצורה (בלי משקלים):
+from transformers import AutoConfig
+bert_config = AutoConfig.from_pretrained("bert-base-cased")  # → BertConfig</code></pre>
+        <p style="margin-top:8px;">תוכן ה-config מחזיק את כל מה שצריך כדי לבנות את המודל:</p>
+<pre><code>BertConfig {
+  "hidden_size": 768,            # גודל הייצוג הפנימי
+  "num_hidden_layers": 12,       # מספר שכבות
+  "num_attention_heads": 12,     # מספר ראשי attention
+  "max_position_embeddings": 512,
+  "vocab_size": 28996,
+  ...
+}</code></pre>
+      </div>
+    </details>
+  </div>
+
+  <!-- ========== 9. SAVE + FINE-TUNE ========== -->
+  <h3>9. שינוי תצורה · שמירה · Fine-tuning</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <ul>
+      <li>אפשר <strong>לשנות את התצורה</strong> בטעינה (למשל פחות שכבות) — שימושי לניסויים קלים יותר.</li>
+      <li><code>save_pretrained(folder)</code> שומר מודל לתיקייה מקומית; <code>from_pretrained(folder)</code> טוען אותו בחזרה — אותו ממשק בדיוק כמו טעינה מה-Hub.</li>
+      <li><strong>Fine-tuning</strong> = לקחת מודל מאומן מראש ולהמשיך לאמן אותו על הדאטה שלכם — הדרך המומלצת (חוסכת זמן, דאטה ו-CO₂).</li>
+    </ul>
+  </div>
+
+  <div class="card code-card">
+    <span class="lvl-badge code">💻 פרקטי · הדגמת קוד</span>
+    <details class="expand">
+      <summary>פתח/סגור — שינוי config · שמירה · טעינה</summary>
+      <div class="body">
+<pre><code>from transformers import BertConfig, BertModel
+
+# שינוי התצורה (10 שכבות במקום 12):
+bert_config = BertConfig.from_pretrained("bert-base-cased", num_hidden_layers=10)
+bert_model  = BertModel(bert_config)        # מבנה חדש, משקלים אקראיים
+
+# ... קוד אימון / fine-tuning ...
+
+bert_model.save_pretrained("my_bert_model")          # שמירה לתיקייה
+reloaded = BertModel.from_pretrained("my_bert_model") # טעינה בחזרה</code></pre>
+        <p style="margin-top:8px; color:var(--c-muted); font-size:13px;">טוטוריאל ה-fine-tuning הרשמי: <code>huggingface.co/docs/transformers/training</code></p>
+      </div>
+    </details>
+  </div>
+
+  <!-- ========== 10. EXAM SUMMARY ========== -->
+  <h3>10. 🎓 מה צריך לדעת למבחן — ריכוז</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 רעיוני · עלול להישאל במבחן</span>
+    <p>כל הנקודות הרעיוניות מהפרק במקום אחד — זה מספיק ללימוד למבחן (הקוד עצמו לא נבחן ישירות):</p>
+    <ol>
+      <li><strong>Hugging Face = "Democratizing AI"</strong> — הנגשת מודלים מאומנים מראש. שלושת השירותים: <em>Transformers Library</em> (קוד המודלים, תואם PyTorch/TF/JAX), <em>Hub</em> (אירוח מודלים/datasets/spaces), וספריות נלוות (Datasets/Evaluate/Gradio).</li>
+      <li><strong>Green AI:</strong> אימון = פליטת CO₂. מצמצמים ע"י pretrained models, fine-tuning (במקום from-scratch), ניסויים קטנים, random search.</li>
+      <li><strong>סוגי משימות:</strong> HF התחיל מ-NLP (סיווג משפט/מילה, יצירת טקסט, Q&amp;A, תרגום/סיכום) והתרחב לראייה ואודיו.</li>
+      <li><strong>ה-Pipeline = 3 שלבים:</strong> <code>pre-processing (tokenizer) → model → post-processing</code>. זרימת הנתונים: <code>raw text → numerical vector → logits → predictions</code>.</li>
+      <li><strong>Tokenizer:</strong> מפיק <code>input_ids</code> (מזהי מילים, עם [CLS]/[SEP]) + <code>attention_mask</code> (1=מילה, 0=ריפוד). <code>padding</code> משווה אורכים, <code>truncation</code> חותך ארוכים.</li>
+      <li><strong>logits ≠ הסתברויות:</strong> המודל מחזיר logits גולמיים; <code>softmax</code> הופך אותם להסתברויות, ו-<code>id2label</code> לשם המחלקה.</li>
+      <li><strong>Transfer Learning:</strong> Task A (דאטה ענק) → מעבירים משקלים → Task B (דאטה קטן). הבסיס לכל השימוש במודלים מאומנים מראש.</li>
+      <li><strong>Auto classes</strong> (AutoModel/AutoTokenizer/AutoConfig): מזהות אוטומטית את משפחת המודל מה-checkpoint.</li>
+      <li><strong>טעינת מודל = config + weights.</strong> <code>BertModel(config)</code> → מבנה עם משקלים אקראיים; <code>from_pretrained()</code> → גם המשקלים המאומנים.</li>
+      <li><strong>save_pretrained / from_pretrained:</strong> שמירה וטעינה — אותו ממשק לתיקייה מקומית ול-Hub.</li>
+    </ol>
+    <div class="callout info">
+      <strong>הקשר לקורס:</strong> זו ההרצאה האחרונה. Hugging Face הוא הכלי המעשי שמחבר את כל מה שלמדנו (CNN, RNN, Transformer, transfer learning) לשימוש אמיתי — ובסיס מצוין לפרויקט המסכם.
+    </div>
+  </div>
+
+  <!-- ========== 11. SLIDE MAP ========== -->
+  <h3>11. מיפוי שקף ← סעיף (לבדיקה מול ה-PDF)</h3>
+  <div class="card">
+    <table>
+      <thead><tr><th>שקפים ב-PDF</th><th>נושא</th><th>סעיף</th></tr></thead>
+      <tbody>
+        <tr><td>1–3</td><td>מבוא · Democratizing AI · שירותי HF</td><td>§1</td></tr>
+        <tr><td>4–5</td><td>טביעת רגל פחמנית · צמצום</td><td>§2</td></tr>
+        <tr><td>6–9</td><td>סוגי משימות · הפלטפורמה (Models/Datasets/Spaces)</td><td>§3</td></tr>
+        <tr><td>10</td><td>ה-Pipeline — 3 שלבים</td><td>§4</td></tr>
+        <tr><td>11–17</td><td>8 משימות NLP בקוד (sentiment…translation)</td><td>§5</td></tr>
+        <tr><td>19–22</td><td>בתוך ה-pipeline: tokenizer · model · prediction</td><td>§6</td></tr>
+        <tr><td>18</td><td>Transfer learning</td><td>§7</td></tr>
+        <tr><td>23–27</td><td>AutoModel/AutoConfig · טעינת מודל · config</td><td>§8</td></tr>
+        <tr><td>28–29</td><td>שמירה · fine-tuning</td><td>§9</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 <section id="glossary" class="tab-panel">
   <h2 class="section">מילון מושגים — חי ומתעדכן</h2>
 
@@ -7858,6 +8241,127 @@ train_dataset = image_dataset_from_directory(
         <li><code>output_sequence_length</code> — אורך קבוע (ריפוד/קיצוץ).</li>
       </ul>
       קוראים ל-<code>.adapt(dataset)</code> כדי ללמוד את ה-vocabulary מהנתונים. עובד על <code>tf.string</code>.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <!-- ===== הרצאה 11 — Hugging Face ===== -->
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Hugging Face</span><span class="term-he">— פלטפורמת מודלים</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">"ה-GitHub של מודלי AI" — אקוסיסטם שמנגיש מודלים מאומנים מראש לכולם ("Democratizing AI").</div>
+    <div class="term-long">
+      <strong>מה זה:</strong> חברה/פלטפורמה שמרכזת אלפי מודלים מאומנים מראש, datasets וכלים, וזמינים בכמה שורות קוד.
+      <strong>שלושה רכיבים:</strong> Transformers Library (קוד המודלים) · Hub (אירוח) · ספריות נלוות (Datasets, Evaluate, Gradio).
+      <strong>למה חשוב:</strong> במקום לאמן מאפס (יקר, איטי, פולט CO₂) — מורידים מודל מוכן ומבצעים fine-tuning.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Transformers Library</span><span class="term-he">— ספריית המודלים</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">ספריית Python (קוד פתוח) עם מימוש של מודלי transformer לטקסט, תמונה ואודיו.</div>
+    <div class="term-long">
+      <strong>תאימות:</strong> עובדת עם <strong>PyTorch · TensorFlow · JAX</strong>.
+      <strong>כוללת:</strong> מודלים מפורסמים כמו BERT, GPT-2 ועוד — מוכנים לטעינה דרך <code>from_pretrained()</code>.
+      <strong>הקשר:</strong> זו הספרייה שמאחורי <code>pipeline()</code> וה-Auto classes.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Hugging Face Hub</span><span class="term-he">— מאגר מרכזי</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">פלטפורמת אירוח (כמו GitHub) למודלים, datasets ו-spaces — עם בקרת גרסאות Git.</div>
+    <div class="term-long">
+      <strong>מה מאוחסן בו:</strong> <em>מודלים</em> (עם גרסאות Git, discussions, pull requests) · <em>datasets</em> (טקסט/תמונה/אודיו) · <em>spaces</em> (אפליקציות הדגמה ו-widgets).
+      <strong>checkpoint:</strong> שם של מודל ב-Hub (למשל <code>"bert-base-cased"</code>) שמשמש לטעינה.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">pipeline()</span><span class="term-he">— צינור משימה מוכן</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">הדרך הפשוטה ביותר ב-Transformers: עוטפת pre-processing → model → post-processing במשימה אחת.</div>
+    <div class="term-long">
+      <strong>שימוש:</strong> <code>pipe = pipeline("&lt;task&gt;"); pipe(input)</code>. אם לא מציינים מודל — HF בוחר ברירת מחדל.
+      <strong>משימות לדוגמה:</strong> <code>sentiment-analysis</code>, <code>zero-shot-classification</code>, <code>text-generation</code>, <code>fill-mask</code>, <code>ner</code>, <code>question-answering</code>, <code>summarization</code>, <code>translation</code>.
+      <strong>שלושת השלבים שמאחור:</strong> tokenizer → model (logits) → post-processing (softmax + label).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Auto Classes</span><span class="term-he">— AutoModel / AutoTokenizer / AutoConfig</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">מחלקות "חכמות" שמזהות אוטומטית את משפחת המודל מתוך ה-checkpoint וטוענות את המחלקה הנכונה.</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> <code>AutoModel.from_pretrained("gpt2")</code> מחזיר <code>GPT2Model</code>, ו-<code>"bert-base-cased"</code> מחזיר <code>BertModel</code> — בלי שתצטרכו לדעת מראש.
+      <strong>וריאנטים:</strong> <code>AutoModelForSequenceClassification</code> (לסיווג), <code>AutoTokenizer</code> (טוקניזציה), <code>AutoConfig</code> (תצורה בלבד).
+      <strong>למה:</strong> קוד גנרי שעובד עם כל מודל.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Checkpoint</span><span class="term-he">— מזהה מודל ב-Hub</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">שם המודל ב-Hub (או נתיב לתיקייה מקומית) שממנו טוענים תצורה ומשקלים.</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> <code>"distilbert-base-uncased-finetuned-sst-2-english"</code>.
+      <strong>מורכב משניים:</strong> <em>config file</em> (המבנה) + <em>model file</em> (weights).
+      <strong>שימוש:</strong> <code>from_pretrained(checkpoint)</code> — טוען גם תצורה וגם משקלים מאומנים. אם בונים מ-config בלבד → משקלים אקראיים.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="opt">
+    <div class="term-head"><span class="term-en">Logits</span><span class="term-he">— ציונים גולמיים</span><span class="term-cat">למידה ואופטימיזציה</span></div>
+    <div class="term-short">הפלט הגולמי של המודל לפני softmax — מספרים בכל הטווח (לא הסתברויות!).</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> <code>[-4.10, 4.38]</code> — ציון לכל מחלקה.
+      <strong>להסתברויות:</strong> מפעילים <code>softmax</code> → <code>[0.0002, 0.9998]</code> (מסתכם ל-1).
+      <strong>שאלה קלאסית:</strong> "מה המודל מחזיר?" — logits. "איך הופכים לתחזית?" — softmax + id2label.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head"><span class="term-en">Zero-Shot Classification</span><span class="term-he">— סיווג ללא אימון על התוויות</span><span class="term-cat">NLP</span></div>
+    <div class="term-short">סיווג טקסט לתוויות שהמודל מעולם לא אומן עליהן — נותנים את התוויות בזמן ריצה.</div>
+    <div class="term-long">
+      <strong>איך:</strong> <code>classifier(text, candidate_labels=["education","sports","politics"])</code> מחזיר ציון לכל תווית.
+      <strong>למה מגניב:</strong> אין צורך לאמן מודל ייעודי לכל קבוצת תוויות חדשה.
+      <strong>מודל ברירת מחדל:</strong> <code>bart-large-mnli</code> (מבוסס natural language inference).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head"><span class="term-en">NER — Named Entity Recognition</span><span class="term-he">— זיהוי ישויות</span><span class="term-cat">NLP</span></div>
+    <div class="term-short">זיהוי וסיווג ישויות בטקסט: שם אדם (PER), ארגון (ORG), מקום (LOC) ועוד.</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> "Anat works at Ariel University in Israel" → PER:Anat · ORG:Ariel University · LOC:Israel.
+      <strong>סיווג ברמת המילה</strong> (token classification) — בניגוד לסיווג משפט שלם.
+      <strong>אופציה:</strong> <code>grouped_entities=True</code> מאחד מילים של אותה ישות ("Ariel University" כיחידה אחת).
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="nlp">
+    <div class="term-head"><span class="term-en">Fill-Mask (MLM)</span><span class="term-he">— השלמת מילה חסרה</span><span class="term-cat">NLP</span></div>
+    <div class="term-short">השלמת מילה ממוסכת (<code>&lt;mask&gt;</code>) במשפט — מטרת האימון של מודלים כמו BERT (Masked Language Model).</div>
+    <div class="term-long">
+      <strong>דוגמה:</strong> "This course will &lt;mask&gt; you about DL." → ' teach' (0.99).
+      <strong>הקשר:</strong> זו משימת הקדם-אימון (pre-training) של BERT — חוזה מילים חסרות מתוך הקשר דו-כיווני.
+      <strong>פרמטר:</strong> <code>top_k</code> — כמה הצעות להחזיר.
+    </div>
+    <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
+  </div>
+
+  <div class="term-card" data-cat="tools">
+    <div class="term-head"><span class="term-en">Green AI / Carbon Footprint</span><span class="term-he">— טביעת רגל פחמנית</span><span class="term-cat">כלים וספריות</span></div>
+    <div class="term-short">המודעות לפליטת ה-CO₂ של אימון מודלים, והשאיפה לצמצם אותה.</div>
+    <div class="term-long">
+      <strong>בעיה:</strong> אימון עמוק צורך הרבה חשמל → פולט CO₂.
+      <strong>צמצום:</strong> מודלים מאומנים מראש · fine-tuning במקום from-scratch · ניסויים קטנים תחילה · random search · GPU ירוקים.
+      <strong>כלי מדידה:</strong> <code>from codecarbon import EmissionsTracker</code>.
     </div>
     <div class="toggle-hint">לחצו לפתיחה/סגירה</div>
   </div>

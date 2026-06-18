@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 430" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="tk11" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2563eb"/></marker>
+  </defs>
+
+  <text x="370" y="28" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a" direction="rtl">שלב 1: Tokenization — מטקסט למספרים</text>
+  <text x="370" y="49" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">ה-tokenizer ממיר כל מילה למזהה, מוסיף אסימוני מסגרת, ומרפד לאורך אחיד</text>
+
+  <!-- raw inputs -->
+  <rect x="150" y="64" width="440" height="56" rx="9" fill="#f1f5f9" stroke="#94a3b8"/>
+  <text x="370" y="86" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#0f172a">"I love learning deep-learning"</text>
+  <text x="370" y="108" text-anchor="middle" font-family="Consolas, monospace" font-size="13" fill="#0f172a">"I hate doing homework"</text>
+
+  <line x1="370" y1="120" x2="370" y2="150" stroke="#2563eb" stroke-width="2.2" marker-end="url(#tk11)"/>
+  <text x="385" y="140" text-anchor="start" font-family="Consolas, monospace" font-size="10.5" fill="#2563eb">tokenizer(padding=True, truncation=True)</text>
+
+  <!-- input_ids label -->
+  <text x="352" y="170" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a" direction="rtl">input_ids — מזהה מספרי לכל token</text>
+
+  <!-- input_ids matrix -->
+  <g font-family="Consolas, monospace" font-size="12.5" text-anchor="middle">
+    <!-- row 1 -->
+    <g>
+      <rect x="130" y="178" width="52" height="30" rx="5" fill="#1e3a8a"/><text x="156" y="198" fill="#fff">101</text>
+      <rect x="186" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="212" y="198" fill="#0f172a">1045</text>
+      <rect x="242" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="268" y="198" fill="#0f172a">2293</text>
+      <rect x="298" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="324" y="198" fill="#0f172a">4083</text>
+      <rect x="354" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="198" fill="#0f172a">2784</text>
+      <rect x="410" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="436" y="198" fill="#0f172a">1011</text>
+      <rect x="466" y="178" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="492" y="198" fill="#0f172a">4083</text>
+      <rect x="522" y="178" width="52" height="30" rx="5" fill="#1e3a8a"/><text x="548" y="198" fill="#fff">102</text>
+    </g>
+    <!-- row 2 -->
+    <g>
+      <rect x="130" y="210" width="52" height="30" rx="5" fill="#1e3a8a"/><text x="156" y="230" fill="#fff">101</text>
+      <rect x="186" y="210" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="212" y="230" fill="#0f172a">1045</text>
+      <rect x="242" y="210" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="268" y="230" fill="#0f172a">5223</text>
+      <rect x="298" y="210" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="324" y="230" fill="#0f172a">2725</text>
+      <rect x="354" y="210" width="52" height="30" rx="5" fill="#dbeafe" stroke="#2563eb"/><text x="380" y="230" fill="#0f172a">19453</text>
+      <rect x="410" y="210" width="52" height="30" rx="5" fill="#1e3a8a"/><text x="436" y="230" fill="#fff">102</text>
+      <rect x="466" y="210" width="52" height="30" rx="5" fill="#f8fafc" stroke="#d35400" stroke-dasharray="3,2"/><text x="492" y="230" fill="#d35400">0</text>
+      <rect x="522" y="210" width="52" height="30" rx="5" fill="#f8fafc" stroke="#d35400" stroke-dasharray="3,2"/><text x="548" y="230" fill="#d35400">0</text>
+    </g>
+  </g>
+
+  <!-- attention_mask label -->
+  <text x="352" y="288" text-anchor="middle" font-size="13" font-weight="700" fill="#1e3a8a" direction="rtl">attention_mask — 1=מילה אמיתית · 0=ריפוד (התעלם)</text>
+
+  <!-- attention_mask matrix -->
+  <g font-family="Consolas, monospace" font-size="12.5" text-anchor="middle" fill="#0f172a">
+    <g>
+      <rect x="130" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="156" y="315">1</text>
+      <rect x="186" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="212" y="315">1</text>
+      <rect x="242" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="268" y="315">1</text>
+      <rect x="298" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="324" y="315">1</text>
+      <rect x="354" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="380" y="315">1</text>
+      <rect x="410" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="436" y="315">1</text>
+      <rect x="466" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="492" y="315">1</text>
+      <rect x="522" y="296" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="548" y="315">1</text>
+    </g>
+    <g>
+      <rect x="130" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="156" y="345">1</text>
+      <rect x="186" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="212" y="345">1</text>
+      <rect x="242" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="268" y="345">1</text>
+      <rect x="298" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="324" y="345">1</text>
+      <rect x="354" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="380" y="345">1</text>
+      <rect x="410" y="326" width="52" height="28" rx="5" fill="#dcfce7" stroke="#27ae60"/><text x="436" y="345">1</text>
+      <rect x="466" y="326" width="52" height="28" rx="5" fill="#fee2e2" stroke="#dc2626"/><text x="492" y="345" fill="#dc2626">0</text>
+      <rect x="522" y="326" width="52" height="28" rx="5" fill="#fee2e2" stroke="#dc2626"/><text x="548" y="345" fill="#dc2626">0</text>
+    </g>
+  </g>
+
+  <!-- legend -->
+  <g font-size="11">
+    <rect x="130" y="378" width="16" height="16" rx="3" fill="#1e3a8a"/>
+    <text x="152" y="390" text-anchor="start" fill="#475569">101=[CLS] · 102=[SEP]</text>
+    <rect x="320" y="378" width="16" height="16" rx="3" fill="#f8fafc" stroke="#d35400" stroke-dasharray="3,2"/>
+    <text x="342" y="390" text-anchor="start" fill="#475569" direction="rtl">0 = ריפוד (padding)</text>
+    <rect x="520" y="378" width="16" height="16" rx="3" fill="#fee2e2" stroke="#dc2626"/>
+    <text x="542" y="390" text-anchor="start" fill="#475569" direction="rtl">mask=0 → המודל מתעלם</text>
+  </g>
+  <text x="370" y="418" text-anchor="middle" font-size="11" fill="#94a3b8" direction="rtl">המשפט הקצר רופד ב-0 כדי להשתוות באורך למשפט הארוך — וה-mask מסמן זאת</text>
+</svg>

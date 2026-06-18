@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="p11a" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="p11g" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#94a3b8"/></marker>
+  </defs>
+
+  <text x="430" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a" direction="rtl">ה-Pipeline — שלושת השלבים</text>
+  <text x="430" y="51" text-anchor="middle" font-size="12.5" fill="#475569" direction="rtl">מה ()pipeline עושה מאחורי הקלעים: מטקסט גולמי ועד תחזית קריאה</text>
+
+  <!-- ===== process boxes ===== -->
+  <!-- Box 1 -->
+  <rect x="40" y="90" width="200" height="92" rx="12" fill="#2563eb"/>
+  <text x="140" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">Pre-processing</text>
+  <text x="140" y="150" text-anchor="middle" font-size="13" fill="#dbeafe">(Tokenizer)</text>
+  <text x="140" y="172" text-anchor="middle" font-size="11" fill="#fff" direction="rtl">טקסט ← מספרים</text>
+
+  <!-- Box 2 -->
+  <rect x="330" y="90" width="200" height="92" rx="12" fill="#1e3a8a"/>
+  <text x="430" y="134" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">Model</text>
+  <text x="430" y="160" text-anchor="middle" font-size="11" fill="#dbeafe" direction="rtl">המודל המאומן מחשב</text>
+
+  <!-- Box 3 -->
+  <rect x="620" y="90" width="200" height="92" rx="12" fill="#2563eb"/>
+  <text x="720" y="128" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">Post-processing</text>
+  <text x="720" y="158" text-anchor="middle" font-size="11" fill="#fff" direction="rtl">מספרים ← תשובה קריאה</text>
+
+  <!-- arrows between boxes -->
+  <line x1="246" y1="136" x2="324" y2="136" stroke="#2563eb" stroke-width="2.4" marker-end="url(#p11a)"/>
+  <line x1="536" y1="136" x2="614" y2="136" stroke="#2563eb" stroke-width="2.4" marker-end="url(#p11a)"/>
+
+  <!-- ===== data-type flow row ===== -->
+  <text x="430" y="232" text-anchor="middle" font-size="12" fill="#475569" direction="rtl">מה זורם בכל שלב (סוג הנתון):</text>
+
+  <g font-family="Consolas, monospace" font-size="13">
+    <!-- Raw text -->
+    <rect x="22" y="252" width="120" height="34" rx="8" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="82" y="274" text-anchor="middle" fill="#0f172a">Raw text</text>
+    <line x1="146" y1="269" x2="214" y2="269" stroke="#94a3b8" stroke-width="2" marker-end="url(#p11g)"/>
+    <!-- Numerical vector -->
+    <rect x="218" y="252" width="170" height="34" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="303" y="274" text-anchor="middle" fill="#0f172a">Numerical vector</text>
+    <line x1="392" y1="269" x2="460" y2="269" stroke="#94a3b8" stroke-width="2" marker-end="url(#p11g)"/>
+    <!-- logits -->
+    <rect x="464" y="252" width="110" height="34" rx="8" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="519" y="274" text-anchor="middle" fill="#0f172a">logits</text>
+    <line x1="578" y1="269" x2="646" y2="269" stroke="#94a3b8" stroke-width="2" marker-end="url(#p11g)"/>
+    <!-- predictions -->
+    <rect x="650" y="252" width="160" height="34" rx="8" fill="#dcfce7" stroke="#27ae60"/>
+    <text x="730" y="274" text-anchor="middle" fill="#0f172a">predictions</text>
+  </g>
+
+  <text x="430" y="318" text-anchor="middle" font-size="11.5" fill="#475569" direction="rtl">דוגמה (Sentiment): "I love DL" ← [0.0002, 0.9998] ← POSITIVE (99.98%)</text>
+</svg>

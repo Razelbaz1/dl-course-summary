@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 440" font-family="Segoe UI, Arial, sans-serif">
+  <text x="430" y="30" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a" direction="rtl">משימות ב-Hugging Face — לפי מודאליות</text>
+  <text x="430" y="51" text-anchor="middle" font-size="12.5" fill="#475569" direction="rtl">התחיל מ-NLP (מודגש) — היום תומך גם בראייה, אודיו, מולטימודלי וטבלאי</text>
+
+  <!-- ===== NLP (highlighted) ===== -->
+  <rect x="20" y="72" width="148" height="40" rx="8" fill="#1e3a8a"/>
+  <text x="94" y="90" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">NLP</text>
+  <text x="94" y="106" text-anchor="middle" font-size="9.5" fill="#dbeafe" direction="rtl">עיבוד שפה (מוקד השיעור)</text>
+  <rect x="20" y="118" width="148" height="296" rx="8" fill="#eff6ff" stroke="#2563eb"/>
+  <g font-size="10.5" text-anchor="middle" fill="#1e3a8a">
+    <text x="94" y="142">Text Classification</text>
+    <text x="94" y="166">Token Class. (NER)</text>
+    <text x="94" y="190">Question Answering</text>
+    <text x="94" y="214">Zero-Shot Class.</text>
+    <text x="94" y="238">Translation</text>
+    <text x="94" y="262">Summarization</text>
+    <text x="94" y="286">Text Generation</text>
+    <text x="94" y="310">Fill-Mask</text>
+    <text x="94" y="334">Sentence Similarity</text>
+  </g>
+
+  <!-- ===== Computer Vision ===== -->
+  <rect x="188" y="72" width="148" height="40" rx="8" fill="#2563eb"/>
+  <text x="262" y="90" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">Computer Vision</text>
+  <text x="262" y="106" text-anchor="middle" font-size="9.5" fill="#dbeafe" direction="rtl">ראייה ממוחשבת</text>
+  <rect x="188" y="118" width="148" height="296" rx="8" fill="#fff" stroke="#60a5fa"/>
+  <g font-size="10.5" text-anchor="middle" fill="#334155">
+    <text x="262" y="142">Image Classification</text>
+    <text x="262" y="166">Object Detection</text>
+    <text x="262" y="190">Image Segmentation</text>
+    <text x="262" y="214">Depth Estimation</text>
+    <text x="262" y="238">Text-to-Image</text>
+    <text x="262" y="262">Image-to-Image</text>
+  </g>
+
+  <!-- ===== Audio ===== -->
+  <rect x="356" y="72" width="148" height="40" rx="8" fill="#2563eb"/>
+  <text x="430" y="90" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">Audio</text>
+  <text x="430" y="106" text-anchor="middle" font-size="9.5" fill="#dbeafe" direction="rtl">שמע</text>
+  <rect x="356" y="118" width="148" height="296" rx="8" fill="#fff" stroke="#60a5fa"/>
+  <g font-size="10.5" text-anchor="middle" fill="#334155">
+    <text x="430" y="142">Speech Recognition</text>
+    <text x="430" y="166">Text-to-Speech</text>
+    <text x="430" y="190">Audio Classification</text>
+    <text x="430" y="214">Voice Activity Detect.</text>
+  </g>
+
+  <!-- ===== Multimodal ===== -->
+  <rect x="524" y="72" width="148" height="40" rx="8" fill="#2563eb"/>
+  <text x="598" y="90" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">Multimodal</text>
+  <text x="598" y="106" text-anchor="middle" font-size="9.5" fill="#dbeafe" direction="rtl">רב-מודאלי</text>
+  <rect x="524" y="118" width="148" height="296" rx="8" fill="#fff" stroke="#60a5fa"/>
+  <g font-size="10.5" text-anchor="middle" fill="#334155">
+    <text x="598" y="142">Visual QA</text>
+    <text x="598" y="166">Document QA</text>
+    <text x="598" y="190">Image-Text-to-Text</text>
+    <text x="598" y="214">Image-to-3D</text>
+  </g>
+
+  <!-- ===== Tabular ===== -->
+  <rect x="692" y="72" width="148" height="40" rx="8" fill="#2563eb"/>
+  <text x="766" y="90" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff">Tabular</text>
+  <text x="766" y="106" text-anchor="middle" font-size="9.5" fill="#dbeafe" direction="rtl">נתונים טבלאיים</text>
+  <rect x="692" y="118" width="148" height="296" rx="8" fill="#fff" stroke="#60a5fa"/>
+  <g font-size="10.5" text-anchor="middle" fill="#334155">
+    <text x="766" y="142">Tabular Classification</text>
+    <text x="766" y="166">Tabular Regression</text>
+  </g>
+
+  <text x="430" y="432" text-anchor="middle" font-size="10.5" fill="#94a3b8" direction="rtl">כל משימה = פילטר ב-Hub: בוחרים task ← מקבלים רשימת מודלים מתאימים</text>
+</svg>
