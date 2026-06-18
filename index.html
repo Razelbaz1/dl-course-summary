@@ -5560,6 +5560,46 @@ embedding_layer = layers.Embedding(
       <img src="figures/lect10_multihead_attention.svg" alt="Multi-Head Attention" style="max-width: 100%; height: auto; border-radius: 6px; min-width: 600px;"/>
     </div>
 
+    <details class="expand">
+      <summary>הרחבה: התהליך צעד-אחר-צעד — ומה זה "מפצלים כל מטריצה ל-4 ראשים"</summary>
+      <div class="body">
+        <p>נעבוד עם מספרים קונקרטיים: משפט של <strong>7 מילים</strong>, וגודל embedding ‏<code>d_model = 512</code>, עם <code>h = 4</code> ראשים. (באיור ובמצגת h=4 להמחשה; בקוד של IMDB השתמשו ב-<code>num_heads=2</code>.)</p>
+
+        <h4>שלב 1 · יוצרים Q, K, V</h4>
+        <p>מתחילים מהקלט (embedding + positional), מטריצה בגודל <code>(7, 512)</code> — שורה לכל מילה, 512 מספרים לכל מילה. מכפילים אותו ב-3 מטריצות משקלים נלמדות:</p>
+        <div class="formula">Q = X·Wq    K = X·Wk    V = X·Wv     → כל אחת בגודל (7, 512)</div>
+        <p>(Q/K/V = "מה אני מחפש / תוויות / תוכן", מאנלוגיית מנוע החיפוש מ-§9.1.)</p>
+
+        <h4>שלב 2 · מפצלים כל מטריצה ל-4 ראשים — מה זה אומר בדיוק</h4>
+        <p>זה החלק המבלבל, אז לאט: לוקחים את מטריצת <code>Q</code> בגודל <code>(7, 512)</code> ו<strong>חותכים אותה לאורך מימד הפיצ'רים</strong> (ה-512) ל-4 פרוסות שוות של <code>512 / 4 = 128</code>:</p>
+        <div class="formula">Q → Q₁, Q₂, Q₃, Q₄     כל אחת בגודל (7, 128)</div>
+        <p>ואותו דבר ל-<code>K</code> ול-<code>V</code>: מקבלים K₁…K₄ ו-V₁…V₄, כל אחת <code>(7, 128)</code>.</p>
+        <div class="callout warning">
+          <strong>הנקודה הקריטית — מה נחתך?</strong> חותכים את <strong>הפיצ'רים (512), לא את המילים</strong>. כל <strong>7 המילים נשארות שלמות בכל ראש</strong> — מה שמתחלק הוא הוקטור בן 512 המספרים של כל מילה. ראש מס' 1 מקבל את הפרוסה <code>[0:128]</code> של <em>כל</em> מילה, ראש 2 את <code>[128:256]</code>, וכן הלאה.
+        </div>
+        <div class="callout info">
+          <strong>הדימוי:</strong> הייצוג של כל מילה הוא "פרופיל" של 512 מספרים. במקום שאנליסט אחד יקרא את כל ה-512, <strong>חותכים את הפרופיל ל-4 קטעים של 128</strong> ונותנים כל קטע לאנליסט אחר (ראש). כל אנליסט מקבל את הקטע שלו <em>מכל המילים</em>.
+        </div>
+
+        <h4>שלב 3 · כל ראש מחשב attention בנפרד</h4>
+        <p>כל ראש מריץ את נוסחת ה-self-attention על הפרוסה שלו (כאן <code>dₖ = 128</code>):</p>
+        <div class="formula">headᵢ = softmax(Qᵢ · Kᵢᵀ / √128) · Vᵢ     → בגודל (7, 128)</div>
+        <p>כיוון שלכל ראש פרוסה שונה ומשקלים שונים, <strong>כל ראש לומד "דפוס תשומת-לב" אחר</strong> — ראש אחד עשוי לעקוב אחרי קשר תחבירי, אחר אחרי הנושא, אחר אחרי זמן. זה היתרון: 4 מומחים במקום מומחה-כללי אחד.</p>
+
+        <h4>שלב 4 · משרשרים (concat) בחזרה</h4>
+        <p>מדביקים את 4 פלטי הראשים זה לצד זה לאורך הפיצ'רים → חוזרים לגודל המלא:</p>
+        <div class="formula">concat(head₁, head₂, head₃, head₄)     → (7, 4×128) = (7, 512)</div>
+
+        <h4>שלב 5 · הקרנה סופית (W₀)</h4>
+        <p>מכפילים במטריצת משקלים אחרונה <code>W₀</code> (בגודל 512×512) שמערבבת את המידע מכל הראשים:</p>
+        <div class="formula">MultiHead(Q,K,V) = concat(head₁,…,head₄) · W₀     → (7, 512)</div>
+
+        <div class="callout success">
+          <strong>למה בכלל לפצל, ולא ראש אחד גדול?</strong> ראש בודד בגודל 512 מחשב <em>דפוס תשומת-לב יחיד</em> (קבוצת משקלים אחת לכל זוג מילים). 4 ראשים של 128 מחשבים <strong>4 דפוסים שונים במקביל</strong> — 4 "דרכים לקשר מילים" — בערך באותה עלות חישוב. לכן מקבלים ייצוג עשיר בהרבה.
+        </div>
+      </div>
+    </details>
+
     <h4>9.3 Positional Encoding</h4>
     <p>self-attention לבדו "עיוור לסדר" (מסתכל על כל המילים בו-זמנית). מחזירים את מידע המיקום ע"י הוספת <strong>וקטור מיקום</strong> לכל מילה.</p>
     <div style="background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--c-border); margin: 10px 0; text-align: center; overflow-x: auto;">
