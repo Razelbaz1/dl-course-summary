@@ -5688,6 +5688,55 @@ embedding_layer = layers.Embedding(
         <p style="font-size:13px; color:var(--c-muted);">(ה-inference כאן הוא "חמדני" — בכל צעד בוחרים את המילה עם ההסתברות הגבוהה ביותר. יש אסטרטגיות מתוחכמות יותר כמו beam search.)</p>
       </div>
     </details>
+
+    <details class="expand">
+      <summary>הרחבה: כל הצינור צעד-צעד + "צעד אחד" מול "מילה-מילה"</summary>
+      <div class="body">
+        <h4>חלק א' · ENCODER — מעבד את המקור (פעם אחת)</h4>
+        <ol>
+          <li><strong>Tokenization:</strong> "we love watermelons" ← מפרקים למילים ← כל מילה הופכת למספר (אינדקס במילון).</li>
+          <li><strong>Input Embedding:</strong> כל אינדקס ← וקטור נלמד באורך <code>d_model</code> (512). כל מילה היא עכשיו וקטור של 512 מספרים.</li>
+          <li><strong>Positional Encoding:</strong> מוסיפים לכל וקטור-מילה וקטור מיקום ← המודל יודע את <strong>סדר</strong> המילים. התוצאה = Encoder Input (משמעות + מיקום).</li>
+          <li><strong>בלוק Encoder ×N</strong> (כאן N=6), כל בלוק ברצף: Multi-Head Self-Attention (<strong>לא מסוכך</strong>) ← Add &amp; Norm ← Feed-Forward ← Add &amp; Norm.</li>
+          <li><strong>Encoder Output:</strong> וקטור מודע-הקשר לכל מילת מקור. <strong>מחושב פעם אחת</strong> ומשמש כ-Keys+Values לדקודר.</li>
+        </ol>
+
+        <h4>חלק ב' · DECODER — מייצר את היעד</h4>
+        <ol start="6">
+          <li><strong>Output Embedding + Positional</strong> של מילות היעד שכבר נוצרו (מוסטות ב-<code>&gt;SOS&gt;</code>).</li>
+          <li><strong>בלוק Decoder ×N</strong>, שלוש תת-שכבות ברצף:
+            <ul>
+              <li><strong>Masked Self-Attention</strong> — רואה רק מילות יעד קודמות ← ה-Query ("מה כתבתי עד עכשיו").</li>
+              <li><strong>Add &amp; Norm</strong>.</li>
+              <li><strong>Cross-Attention</strong> — <strong>כאן נכנס פלט ה-Encoder</strong>: Query מהדקודר, Keys+Values מה-Encoder Output ← מושכים משמעות מהמקור.</li>
+              <li><strong>Add &amp; Norm</strong> ← <strong>Feed-Forward</strong> ← <strong>Add &amp; Norm</strong>.</li>
+            </ul>
+          </li>
+          <li><strong>Linear:</strong> מקרינים את פלט הדקודר לגודל ה-vocabulary ← <code>logits</code> (ציון לכל מילה במילון).</li>
+          <li><strong>Softmax:</strong> <code>logits</code> ← הסתברויות (סכום 1) על כל המילון.</li>
+          <li><strong>בחירה:</strong> המילה עם ההסתברות הגבוהה ביותר (greedy / argmax).</li>
+        </ol>
+
+        <h4>חלק ג' · "צעד אחד" מול "מילה-מילה" (אימון מול inference)</h4>
+        <table>
+          <thead><tr><th></th><th>אימון (training)</th><th>חיזוי (inference)</th></tr></thead>
+          <tbody>
+            <tr><td>משפט היעד ידוע?</td><td><strong>כן</strong> (יש לנו אותו)</td><td><strong>לא</strong> (צריך לייצר)</td></tr>
+            <tr><td>כמה מעברים?</td><td><strong>מעבר אחד</strong> (במקביל)</td><td><strong>N צעדים</strong> (מילה-מילה)</td></tr>
+            <tr><td>שקף</td><td>77 ("הכל בצעד אחד!")</td><td>78–82</td></tr>
+          </tbody>
+        </table>
+        <div class="callout success">
+          <strong>"צעד אחד" (אימון):</strong> משפט היעד ידוע, אז מזינים את כולו בבת אחת. ה-masked self-attention מבטיח שכל מיקום רואה רק אחורה — אז כל התחזיות (<code>&gt;SOS&gt;</code>←אנחנו, אנחנו←אוהבים, אוהבים←אבטיחים, אבטיחים←<code>&gt;EOS&gt;</code>) מחושבות <strong>במקביל, במעבר אחד</strong>, עם loss אחד.
+        </div>
+        <div class="callout info">
+          <strong>למה זה חזק מ-RNN:</strong> ב-RNN <em>גם באימון</em> חייבים לולאה רציפה (<code>h_t</code> תלוי ב-<code>h_(t−1)</code>). בטרנספורמר ה-self-attention מחשב את כל המילים בבת אחת (כפל מטריצות אחד) ← <strong>מקבילי</strong> (מנצל GPU, מהיר) ו<strong>מדויק</strong> (כל מילה מחוברת ישירות לכל מילה, בלי דעיכת מידע על מרחק).
+        </div>
+        <div class="callout warning">
+          <strong>"מילה-מילה" (inference):</strong> היעד לא ידוע, אז מייצרים מילה-מילה (N צעדים), כל צעד מזין את הפלט הקודם בחזרה, עד <code>&gt;EOS&gt;</code>. <em>כל צעד בודד הוא בעצמו מעבר מקבילי מלא — פשוט צריך N כאלה.</em>
+        </div>
+      </div>
+    </details>
   </div>
 
   <!-- ========== 10. WHEN TO USE WHAT ========== -->
