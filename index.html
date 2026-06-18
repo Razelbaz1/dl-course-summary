@@ -519,6 +519,7 @@
   <button data-tab="lect10">10 · Text · Transformer</button>
   <button data-tab="lect11">11 · Hugging Face</button>
   <button data-tab="glossary">מילון מושגים</button>
+  <button data-tab="exam-prep">📝 תרגול למבחן</button>
   <button id="tabs-toggle" type="button" title="הסתר/הצג את שאר הלשוניות" aria-label="צמצום לשוניות"></button>
 </nav>
 
@@ -8374,6 +8375,284 @@ train_dataset = image_dataset_from_directory(
       <li>שבוע לפני המבחן — עברו על המילון לפי קטגוריות (חברו אותם לקבוצות הגיוניות).</li>
       <li>נסו "להקריא" כל מושג בקול: שם → הגדרה במשפט → מתי משתמשים → דוגמה.</li>
       <li>אם אתם לא יכולים להסביר אותו לעצמכם — לא מבינים אותו עדיין.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="exam-prep" class="tab-panel">
+  <h2 class="section">📝 תרגול למבחן — שאלות בסגנון המבחן</h2>
+
+  <div class="card">
+    <div class="meta-row">
+      <span class="chip">10 שאלות · 10 נק'</span>
+      <span class="chip outline">שעה וחצי</span>
+      <span class="chip outline">מחשבון מותר</span>
+      <span class="chip">כל הקורס (יח' 1–11)</span>
+    </div>
+    <p>שאלות התרגול נבנו לפי <strong>ניתוח שני המבחנים</strong> של ד"ר ענת גולדשטיין (מועד א תשפ"ב + מבחן לדוגמא). הן משחזרות את <strong>שבעת ארכיטיפי השאלות</strong> ואת הסגנון (עברית + מונחים באנגלית, תשובות קצרות), ומורחבות לכל נושאי הקורס — כולל CNN, RNN/LSTM, Transformer ו-HuggingFace שלא היו במבחני 2022.</p>
+
+    <div class="callout info">
+      <strong>שבעת ארכיטיפי השאלות:</strong> (1) הגדרה/תיאור · (2) השוואה/ניגוד · (3) חישוב נומרי · (4) חוות דעת/ביקורת · (5) תרחיש יישומי · (6) ויזואלי/פרשנות · (7) "למה" רעיוני. כל שאלה למטה מתויגת בסוגה ובנושא.
+    </div>
+
+    <div class="callout warning">
+      <strong>איך להתאמן נכון:</strong> ענו בכתב <em>לפני</em> שאתם פותחים את התשובה (לחיצה על "הצג תשובה"). הקפידו על תשובה קצרה וממוקדת — במבחן האמיתי אורך השורות המוקצות הוא הרמז לאורך הרצוי.
+    </div>
+  </div>
+
+  <!-- ===== נוסחאות עזר לחישוב ===== -->
+  <h3>0. דף נוסחאות מהיר (לשאלות החישוב)</h3>
+  <div class="card exam-card">
+    <span class="lvl-badge exam">🎓 חובה לזכור</span>
+    <table>
+      <thead><tr><th>מה מחשבים</th><th>נוסחה</th></tr></thead>
+      <tbody>
+        <tr><td>פרמטרים בשכבת Dense</td><td><code>(n_in + 1) × n_out</code> &nbsp;(ה-1 = bias)</td></tr>
+        <tr><td>פרמטרים בשכבת Conv2D</td><td><code>(k_h × k_w × c_in + 1) × n_filters</code></td></tr>
+        <tr><td>גודל פלט קונבולוציה (padding='valid')</td><td><code>(W − k)/s + 1</code> &nbsp;(W=גודל קלט, k=kernel, s=stride)</td></tr>
+        <tr><td>גודל פלט עם padding='same'</td><td><code>⌈W / s⌉</code> &nbsp;(שומר על המימד כש-s=1)</td></tr>
+        <tr><td>פרמטרים ב-Pooling / Flatten / Dropout</td><td><strong>0</strong> (אין משקלים נלמדים)</td></tr>
+        <tr><td>תמונות בכל epoch</td><td><code>= N</code> (כל סט האימון)</td></tr>
+        <tr><td>איטרציות (steps) בכל epoch</td><td><code>N / batch_size</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================
+       מבחן סימולציה מלא
+       ============================================================ -->
+  <h3>1. מבחן סימולציה מלא (10 שאלות · כל הקורס)</h3>
+  <div class="card">
+    <p>מבחן מדומה בסגנון מועד א — ספרד של נושאים וסוגי שאלות. נסו לפתור ברצף תוך שעה וחצי, ואז בדקו.</p>
+
+    <div class="quiz-q">
+      <div class="q">ש1. <span class="chip outline">יסודות · השוואה</span> הסבר את ההבדל בין <strong>Batch GD</strong>, <strong>Mini-batch GD</strong> ו-<strong>SGD</strong>, ותן יתרון מרכזי אחד לכל אחד.</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>Batch GD</strong> — מחשב את הגרדיאנט על <em>כל</em> סט האימון לפני עדכון אחד. יתרון: גרדיאנט מדויק ויציב. <strong>SGD</strong> — מעדכן אחרי <em>כל דגימה בודדת</em>. יתרון: עדכונים מהירים, והרעש עוזר לברוח ממינימום מקומי. <strong>Mini-batch</strong> — מחשב על אצווה קטנה (32/64/256). יתרון: מנצל וקטוריזציה של GPU + יציבות סבירה — זה הסטנדרט בפועל.</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש2. <span class="chip outline">אקטיבציות · הגדרה</span> מהי פונקציית <strong>ReLU</strong>? תן יתרון אחד וחיסרון אחד.</div>
+      <details><summary>הצג תשובה</summary><div class="a"><code>ReLU(x) = max(0, x)</code>. <strong>יתרון:</strong> נגזרת = 1 לערכים חיוביים → מקילה משמעותית על vanishing gradient ומאיצה אימון של רשתות עמוקות. <strong>חיסרון:</strong> "dying ReLU" — נוירון שמקבל תמיד קלט שלילי תקוע על פלט 0 וגרדיאנט 0, ולא מתעדכן יותר (פתרון: Leaky ReLU).</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש3. <span class="chip outline">ארכיטקטורה · חישוב</span> נתונה הרשת: קלט תמונה <code>32×32×3</code> → <code>Conv2D(32 filters, 3×3, padding='valid')</code> → <code>MaxPooling2D(2×2)</code> → <code>Flatten</code> → <code>Dense(64)</code> → <code>Dense(10, softmax)</code>. חשב את <strong>צורת הפלט</strong> ואת <strong>מספר הפרמטרים</strong> בכל שכבה.</div>
+      <details><summary>הצג תשובה</summary><div class="a">
+        <strong>Conv2D:</strong> פלט <code>30×30×32</code> (כי 32−3+1=30). פרמטרים: <code>(3·3·3 + 1)·32 = 28·32 = 896</code>.<br>
+        <strong>MaxPooling 2×2:</strong> פלט <code>15×15×32</code>. פרמטרים: <strong>0</strong>.<br>
+        <strong>Flatten:</strong> פלט <code>(7200)</code> (15·15·32). פרמטרים: <strong>0</strong>.<br>
+        <strong>Dense(64):</strong> פלט <code>(64)</code>. פרמטרים: <code>(7200+1)·64 = 460,864</code>.<br>
+        <strong>Dense(10):</strong> פלט <code>(10)</code>. פרמטרים: <code>(64+1)·10 = 650</code>.<br>
+        <strong>סה"כ:</strong> 896 + 460,864 + 650 = <strong>462,410</strong>. (שימו לב: רוב הפרמטרים בשכבת ה-Dense הראשונה!)
+      </div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש4. <span class="chip outline">אופטימיזציה · למה</span> מהי בעיית ה-<strong>vanishing gradient</strong>, וכיצד ReLU ואתחול משקלים נכון מסייעים?</div>
+      <details><summary>הצג תשובה</summary><div class="a">ב-backpropagation הגרדיאנטים מוכפלים שכבה-אחר-שכבה (chain rule). עם אקטיבציות רוויות (sigmoid/tanh) הנגזרת קטנה מ-1, וכפל של הרבה ערכים כאלה → הגרדיאנט שואף ל-0 בשכבות הראשונות, והן כמעט לא לומדות. <strong>ReLU</strong> (נגזרת 1 לחיובי) מונעת את הדעיכה הזו; <strong>אתחול חכם</strong> (He/Xavier) שומר על שונות הגרדיאנט סבירה לאורך השכבות. (גם BatchNorm ו-skip connections עוזרים.)</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש5. <span class="chip outline">הכנת נתונים · תרחיש</span> ברצונך לאמן רשת על נתונים טבלאיים. אילו פעולות הכנה נדרשות, ו<strong>מדוע מפצלים train/val/test לפני הנרמול</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>הכנה:</strong> נרמול/סטנדרטיזציה של הפיצ'רים (לטווח דומה), טיפול בערכים חסרים (השלמה או הסרה), קידוד משתנים קטגוריאליים (one-hot). <strong>למה לפצל לפני נרמול:</strong> כדי למנוע <strong>data leakage</strong> — אם מחשבים ממוצע/סטיית-תקן על כל הנתונים כולל ה-test, מידע מה-test "מדליף" לאימון ומטה את ההערכה כלפי מעלה. מחשבים את הסטטיסטיקות על ה-train בלבד ומיישמים אותן על val/test.</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש6. <span class="chip outline">CNN · למה</span> מה תפקיד שכבת <strong>Max-Pooling</strong>? ציין שתי תועלות.</div>
+      <details><summary>הצג תשובה</summary><div class="a">ממצה אזור (למשל 2×2) לערך המקסימלי שבו. <strong>תועלת 1 — הקטנת ממדים:</strong> פחות חישוב ופחות פרמטרים בהמשך → גם פחות overfitting. <strong>תועלת 2 — translation invariance:</strong> זיהוי התכונה כמעט לא תלוי במיקומה המדויק בתמונה, וגם מופחתת רגישות לרעש/הזזות קטנות.</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש7. <span class="chip outline">RNN · למה</span> מהי בעיית ה-vanishing gradient ב-<strong>RNN</strong>, וכיצד <strong>LSTM</strong> פותרת אותה?</div>
+      <details><summary>הצג תשובה</summary><div class="a">ב-RNN, ה-backprop-through-time מכפיל גרדיאנטים לאורך כל הרצף → תלויות ארוכות-טווח "נעלמות" וה-RNN שוכח מידע ישן. <strong>LSTM</strong> מוסיף <strong>cell state</strong> (carry) עם חיבורים <em>אדיטיביים</em>, ושלושה <strong>שערים</strong> (forget / input / output) ששולטים מה לשמר, להוסיף ולהוציא. כך מידע יכול לזרום לאורך זמן בלי דעיכה מולטיפליקטיבית.</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש8. <span class="chip outline">NLP · חישוב/השוואה</span> מדוע ייצוג <strong>one-hot</strong> לרצף ארוך בעייתי, ומה <strong>embedding</strong> פותר?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>one-hot:</strong> כל מילה = וקטור באורך ה-vocabulary (למשל 20,000), דליל וענק. ביקורת באורך 600 מילים → 600×20,000 = 12M ערכים לדגימה אחת → איטי וזולל זיכרון; בנוסף כל הווקטורים אורתוגונליים (אפס משמעות סמנטית). <strong>embedding:</strong> וקטור צפוף וקצר (למשל 256) שנלמד מהנתונים — קטן פי ~78, וגם מילים דומות קרובות במרחב (משמעות).</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש9. <span class="chip outline">Transformer · רעיוני</span> מהו <strong>self-attention</strong> ומה יתרונו על RNN? מדוע נדרש <strong>positional encoding</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>self-attention:</strong> כל מילה "מסתכלת" על כל שאר המילים ומשקללת אותן (Query·Key → משקלים → ממוצע משוקלל של Value) → ייצוג <em>תלוי-הקשר</em>. <strong>יתרון על RNN:</strong> (1) מקבילי — מחשב את כל המילים בבת אחת (מנצל GPU), בניגוד ללולאה הרציפה של RNN; (2) מחבר ישירות מילים רחוקות, בלי דעיכת מידע על מרחק. <strong>positional encoding:</strong> attention סימטרי ו"עיוור לסדר", לכן מזריקים וקטורי מיקום (sin/cos) כדי שהמודל יידע מה הסדר של המילים.</div></details>
+    </div>
+
+    <div class="quiz-q">
+      <div class="q">ש10. <span class="chip outline">HuggingFace · יישומי</span> תאר את <strong>שלושת שלבי ה-pipeline</strong>. מהם <strong>logits</strong>, ומה ההבדל בינם לבין הסתברויות?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>שלושה שלבים:</strong> (1) pre-processing — ה-tokenizer ממיר טקסט ל-<code>input_ids</code> + <code>attention_mask</code>; (2) model — מחזיר <code>logits</code>; (3) post-processing — <code>softmax</code> הופך ל-הסתברויות ו-<code>id2label</code> לתווית. <strong>logits</strong> = ציונים גולמיים בכל טווח ℝ, שלא מסתכמים ל-1. <strong>softmax</strong> הופך אותם להסתברויות חיוביות שסכומן 1. למשל <code>[-4.1, 4.4] → [0.0002, 0.9998]</code>.</div></details>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       בנק שאלות לפי נושא
+       ============================================================ -->
+  <h3>2. בנק שאלות לפי נושא</h3>
+  <div class="card"><p>תרגול ממוקד לפי נושא — לחיזוק נקודות תורפה. כל שאלה עם תשובה מתקפלת.</p></div>
+
+  <!-- A · יסודות -->
+  <h4>א · יסודות: perceptron, forward/backprop, loss</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מהו <strong>perceptron</strong>, ומה המגבלה המרכזית של perceptron יחיד?</div>
+      <details><summary>הצג תשובה</summary><div class="a">אבן הבניין הבסיסית של רשת נוירונים: מקבל קלט <code>x</code>, מחשב סכום משוקלל <code>Wx + b</code> ומפעיל פונקציית סף → פלט. <strong>מגבלה:</strong> perceptron יחיד לומד רק הפרדה <em>לינארית</em> (קו ישר) — לא יכול לפתור XOR. הפתרון: שכבות נסתרות.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">חישוב</span> מצא <code>w1, w2, b</code> שיהפכו perceptron לשער <strong>OR</strong> (מחזיר 1 אם לפחות אחד מהקלטים 1).</div>
+      <details><summary>הצג תשובה</summary><div class="a">לדוגמה <code>w1 = 1, w2 = 1, b = -0.5</code>: עבור (0,0): −0.5 &lt; 0 → 0. עבור (1,0)/(0,1): 0.5 ≥ 0 → 1. עבור (1,1): 1.5 ≥ 0 → 1. ✓ (יש מספר תשובות נכונות — כל קו מפריד תקין.)</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">השוואה</span> תאר 2 הבדלים מרכזיים בין אלגוריתם <strong>Gradient Descent</strong> לאלגוריתם ה-<strong>perceptron</strong>.</div>
+      <details><summary>הצג תשובה</summary><div class="a">(1) ה-perceptron מתקן רק על סמך נקודות שסווגו <em>שגוי</em>; GD לומד מ<em>כל</em> הנקודות (גם מאלו שסווגו נכון). (2) ב-perceptron העדכון הוא <code>± α·xi</code> (תלוי רק אם הסיווג נכון/שגוי); ב-GD העדכון הוא <code>α·(y − ŷ)·xi</code> — תלוי בגודל השגיאה ובפונקציית האקטיבציה.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מה תפקידה של פונקציית <strong>cross-entropy</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a">זו פונקציית <strong>loss</strong> (שגיאה) לסיווג, המבוססת על <code>−log likelihood</code>. היא מודדת כמה התחזיות רחוקות מהאמת: כשהמודל בטוח ונכון → loss קטן; כשהוא בטוח וטועה → loss גדול. מטרת האימון (דרך GD) למזער אותה — ערך קרוב ל-0 = מודל מצוין.</div></details>
+    </div>
+  </div>
+
+  <!-- B · אקטיבציות -->
+  <h4>ב · פונקציות אקטיבציה</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">השוואה</span> מה היתרון של <strong>sigmoid</strong> על פני <strong>step function</strong> כאקטיבציה?</div>
+      <details><summary>הצג תשובה</summary><div class="a">sigmoid <em>רציפה וגזירה</em> ומחזירה ערך בין 0 ל-1 (הסתברות). בזכות הגזירות אפשר להפעיל Gradient Descent — לגזור את ה-loss ולדעת לאן להתקדם כדי למזער שגיאה. ל-step function נגזרת 0 כמעט בכל מקום → לא ניתן ללמוד איתה ב-GD.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מתי משתמשים ב-<strong>softmax</strong> ומה היא עושה?</div>
+      <details><summary>הצג תשובה</summary><div class="a">בשכבת הפלט של סיווג <em>רב-מחלקתי</em>. היא הופכת וקטור logits לוקטור הסתברויות חיוביות שסכומן 1 — כל איבר = ההסתברות למחלקה. (סיווג בינארי → לרוב sigmoid יחיד.)</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מדוע <strong>tanh</strong> לעיתים עדיפה על sigmoid בשכבות נסתרות?</div>
+      <details><summary>הצג תשובה</summary><div class="a">tanh מרכזת סביב 0 (טווח −1..1) במקום 0..1, כך שהפלט הממוצע קרוב ל-0 → גרדיאנטים "מאוזנים" יותר והתכנסות מהירה יותר. (שתיהן עדיין סובלות מרוויה → ReLU נפוצה יותר בשכבות נסתרות עמוקות.)</div></details>
+    </div>
+  </div>
+
+  <!-- C · אופטימיזציה ו-overfitting -->
+  <h4>ג · אופטימיזציה ו-Overfitting</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מתי כדאי להשתמש ב-<strong>Dropout</strong>, ומה מטרתו?</div>
+      <details><summary>הצג תשובה</summary><div class="a">כשיש <strong>overfitting</strong>. בכל איטרציה "מכבים" באקראי חלק מהנוירונים (לפי <code>dropout probability</code>, למשל 0.2 = 20% סיכוי לכיבוי) → הרשת לא יכולה להישען על נוירון בודד, נאלצת ללמוד ייצוגים עמידים יותר, ומפחיתה overfitting. (בזמן inference כל הנוירונים פעילים.)</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">ביקורת</span> "עדיף להתחיל מרשת גדולה שמגיעה ל-overfitting ואז לטפל בו, מאשר מרשת קטנה שלא מגיעה ל-overfitting". חווה דעתך.</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>הטענה נכונה.</strong> אם המודל לא מגיע ל-overfitting כלל, ייתכן שהוא קטן מדי ולא מימש את הפוטנציאל ללמוד את הקשרים שבנתונים (underfitting). עדיף קודם להגיע ליכולת ייצוג גבוהה (רשת גדולה שמצליחה לשנן את ה-train), ואז לרסן עם רגולריזציה/dropout/early-stopping כדי להחזיר הכללה.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> הסבר את הרעיון של <strong>Learning Rate Decay</strong>.</div>
+      <details><summary>הצג תשובה</summary><div class="a">LR גבוה → צעדים גדולים שעלולים לדלג מעל המינימום; LR נמוך → התכנסות איטית. הפתרון: קצב למידה <em>שמשתנה</em> — מתחילים בצעדים גדולים (כששיפוע תלול) ומקטינים את <code>α</code> ככל שמתקרבים למינימום → גם מהיר וגם מדויק.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">חישוב</span> סט אימון 50,000 תמונות, <code>batch_size=100</code>, 20 epochs. כמה תמונות בכל epoch? כמה איטרציות (steps) בכל epoch? כמה סה"כ?</div>
+      <details><summary>הצג תשובה</summary><div class="a">תמונות בכל epoch = <strong>50,000</strong> (כל הסט). איטרציות בכל epoch = 50,000 / 100 = <strong>500</strong>. סה"כ איטרציות = 500 × 20 = <strong>10,000</strong>.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מה ההבדל בין <strong>L1 (Lasso)</strong> ל-<strong>L2 (Ridge)</strong> regularization?</div>
+      <details><summary>הצג תשובה</summary><div class="a">שתיהן מוסיפות עונש על משקלים גדולים ל-loss. <strong>L2</strong> מענישה את ריבוע המשקלים → מקטינה משקלים בצורה חלקה (לא בהכרח ל-0). <strong>L1</strong> מענישה את הערך המוחלט → דוחפת משקלים ל-<em>אפס מדויק</em> (feature selection / sparsity).</div></details>
+    </div>
+  </div>
+
+  <!-- D · Keras -->
+  <h4>ד · Keras ו-Frameworks</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">השוואה</span> מה ההבדל בין <strong>Sequential</strong> ל-<strong>Functional API</strong> ב-Keras?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>Sequential</strong> — ה-API הפשוט: רצף לינארי של שכבות, קלט אחד ופלט אחד. <strong>Functional API</strong> — לגמיש/מורכב: מאפשר מספר קלטים/פלטים, הסתעפויות ו-skip connections (לא חייב רצף). משתמשים בו כשהארכיטקטורה אינה שרשרת פשוטה.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מה תפקיד ה-callbacks <strong>EarlyStopping</strong> ו-<strong>ModelCheckpoint</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>EarlyStopping</strong> — עוצר את האימון כש-<code>val_loss</code> מפסיק להשתפר (לפי <code>patience</code>) → מונע overfitting ובזבוז זמן. <strong>ModelCheckpoint</strong> — שומר את משקלי המודל הטוב ביותר במהלך האימון, כך שמקבלים את הגרסה עם ה-val הטוב ביותר ולא את האחרונה.</div></details>
+    </div>
+  </div>
+
+  <!-- E · shape ופרמטרים -->
+  <h4>ה · חישובי Shape ופרמטרים (drill)</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">חישוב</span> MLP: קלט וקטור 784 → <code>Dense(128)</code> → <code>Dense(64)</code> → <code>Dense(10)</code>. כמה פרמטרים בכל שכבה?</div>
+      <details><summary>הצג תשובה</summary><div class="a">Dense(128): <code>(784+1)·128 = 100,480</code>. Dense(64): <code>(128+1)·64 = 8,256</code>. Dense(10): <code>(64+1)·10 = 650</code>. <strong>סה"כ = 109,386.</strong></div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">חישוב</span> <code>Conv2D(64 filters, 5×5)</code> על קלט בעל 3 ערוצים. כמה פרמטרים? ומה הפלט על קלט <code>28×28×3</code> עם <code>padding='same', stride=1</code>?</div>
+      <details><summary>הצג תשובה</summary><div class="a">פרמטרים: <code>(5·5·3 + 1)·64 = (75+1)·64 = 4,864</code>. פלט עם <code>same</code> ו-stride=1 שומר על המימד המרחבי → <strong>28×28×64</strong>.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">חישוב</span> קלט <code>10×10</code>, קונבולוציה <code>3×3</code>, <code>stride=1</code>, <code>padding='valid'</code>. מה גודל הפלט?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><code>(10 − 3)/1 + 1 = 8</code> → פלט <strong>8×8</strong>.</div></details>
+    </div>
+  </div>
+
+  <!-- F · CNN -->
+  <h4>ו · CNN</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מדוע <strong>CNN</strong> מתאימה יותר לעיבוד תמונות מאשר <strong>MLP</strong>? (בנקודות)</div>
+      <details><summary>הצג תשובה</summary><div class="a">(1) שכבות קונבולוציה הן <strong>locally connected</strong> — לומדות תבניות מקומיות מתוך אזורים בתמונה (מקבלות מטריצה), בעוד MLP משתחה את התמונה לוקטור ומאבדת מידע מרחבי. (2) <strong>שיתוף משקלים</strong> (אותו פילטר על כל התמונה) → הרבה פחות פרמטרים. (3) <strong>translation invariance</strong> — מזהה תכונה בכל מיקום. (4) למידה היררכית: קצוות → צורות → אובייקטים.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">פרשנות</span> פילטר עם שורה עליונה <code>[1,1,1]</code>, אמצע <code>[0,0,0]</code>, תחתונה <code>[-1,-1,-1]</code> (Sobel). מה הוא מדגיש?</div>
+      <details><summary>הצג תשובה</summary><div class="a">קווי מתאר <strong>אופקיים</strong> — הפילטר מגיב למעברי-בהירות בכיוון אנכי (בין שורה עליונה לתחתונה). (הטרנספוז שלו — עם עמודות במקום שורות — מדגיש קווים אנכיים.)</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">השוואה</span> ב-<strong>Transfer Learning</strong> עם VGG16 — מה ההבדל בין <em>Feature Extraction</em> ל-<em>Fine-Tuning</em>?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><strong>Feature Extraction:</strong> מקפיאים את כל ה-conv_base (<code>trainable=False</code>) ומאמנים רק classifier חדש מעל. <strong>Fine-Tuning:</strong> "משחררים" את השכבות העליונות של ה-conv_base ומאמנים אותן יחד עם ה-classifier ב-LR נמוך → התאמה עדינה לדאטה הספציפי. Fine-tuning בד"כ מדויק יותר אך דורש זהירות (LR נמוך, אחרי שה-classifier כבר התייצב).</div></details>
+    </div>
+  </div>
+
+  <!-- G · RNN/LSTM -->
+  <h4>ז · RNN · LSTM · Sequence</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מדוע רשתות <strong>LSTM</strong> מתאימות יותר לריצה על <strong>CPU</strong> מאשר על <strong>GPU</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a">LSTM משתמשת ב<strong>לולאה רציפה</strong> כדי לעבור על הרצף (כל צעד תלוי בקודם) → היא לא מנצלת את יכולת העיבוד הווקטורי-המקבילי של ה-GPU. לכן לעיתים יעיל יותר CPU מרובה-ליבות. (זו בדיוק המוטיבציה ל-Transformer — מחשב הכול במקביל.)</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מה ההבדל בין <code>return_sequences=True</code> ל-<code>False</code> ב-LSTM?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><code>False</code> (ברירת מחדל) → מחזיר רק את הפלט של <em>הצעד האחרון</em> (וקטור אחד) — מתאים לסיווג. <code>True</code> → מחזיר פלט לכל צעד בזמן (רצף שלם) — נדרש כשמערימים שכבת LSTM נוספת מעל, או למשימת sequence-to-sequence.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מה היתרון של <strong>BiLSTM</strong> (דו-כיוונית) על LSTM רגילה בניתוח טקסט?</div>
+      <details><summary>הצג תשובה</summary><div class="a">BiLSTM קוראת את הרצף בשני הכיוונים (קדימה ואחורה) ומשרשרת את שני הייצוגים → כל מילה מקבלת הקשר גם מהמילים שלפניה וגם שאחריה. מועיל בטקסט שבו המשמעות תלויה בהמשך המשפט (לא ישים כשהעתיד לא ידוע, כמו חיזוי בזמן אמת).</div></details>
+    </div>
+  </div>
+
+  <!-- H · NLP / Transformer / HuggingFace -->
+  <h4>ח · NLP · Transformer · Hugging Face</h4>
+  <div class="card">
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">תרחיש</span> תאר את שלבי ה-<strong>vectorization</strong> שיש לבצע בתחילת עיבוד טקסט.</div>
+      <details><summary>הצג תשובה</summary><div class="a">(1) <strong>Standardization</strong> — lowercase, הסרת פיסוק, החלפת אותיות מיוחדות, לעיתים stemming. (2) <strong>Tokenization</strong> — חלוקת המשפט ל-tokens (מילה / n-gram / תו). (3) <strong>Vocabulary indexing</strong> — כל token מקבל מספר (עם [0]=mask, [1]=OOV). (4) ייצוג כווקטור: <code>one-hot</code> / <code>multi-hot</code> / <code>embedding</code>.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">פרשנות</span> נתונים embeddings של "מלך, מלכה, איש, אישה". בהינתן שמימד מסוים מבדיל זכר/נקבה ואחר מלכותי/רגיל — איך מזהים איזה וקטור שייך למי?</div>
+      <details><summary>הצג תשובה</summary><div class="a">מחפשים את הצירים שמשתנים יחד: "מלך" ו"מלכה" חולקים את ערכי ה"מלכותיות" ונבדלים בציר המגדר; "איש" ו"אישה" חולקים "רגילוּת". מתקיים הקשר הסמנטי <code>מלך − איש + אישה ≈ מלכה</code>. כך, אם שני וקטורים זהים בכל המימדים חוץ מאחד — אותו מימד הוא "המגדר" או "המלכותיות".</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">השוואה</span> לפי כלל האצבע מהקורס — מתי עדיף <strong>Bag-of-Words</strong> ומתי <strong>Sequence model</strong>?</div>
+      <details><summary>הצג תשובה</summary><div class="a">לפי היחס <code>מספר דגימות / אורך טקסט ממוצע</code>: אם היחס <strong>&lt; 1500</strong> → BoW לרוב עדיף (פשוט, מהיר); אם גבוה → Sequence/Transformer. דוגמת IMDB: 25,000/233 ≈ 85 ≪ 1500 → BoW (bigram) ניצח. המסקנה: לא תמיד המודל המתוחכם הוא הטוב ביותר — תמיד מתחילים מ-baseline פשוט.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">הגדרה</span> מהו <strong>Multi-Head Attention</strong> ולמה הוא עדיף על head בודד?</div>
+      <details><summary>הצג תשובה</summary><div class="a">מריצים כמה מנגנוני self-attention ("ראשים") במקביל, כל אחד עם מטריצות Q/K/V משלו, ומשרשרים את הפלטים. כל ראש יכול ללמוד <em>סוג קשר אחר</em> (תחבירי, סמנטי, מרחק...) → ייצוג עשיר יותר ממה ש-head בודד היה תופס.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">יישומי</span> ב-Hugging Face, מה ההבדל בין <code>BertModel(config)</code> ל-<code>BertModel.from_pretrained(checkpoint)</code>?</div>
+      <details><summary>הצג תשובה</summary><div class="a"><code>BertModel(config)</code> בונה את <em>המבנה</em> בלבד עם <strong>משקלים אקראיים</strong> (לא מאומן). <code>from_pretrained(checkpoint)</code> טוען גם את התצורה וגם את <strong>המשקלים המאומנים</strong> מה-Hub/תיקייה → מודל מוכן לשימוש או ל-fine-tuning.</div></details>
+    </div>
+    <div class="quiz-q">
+      <div class="q"><span class="chip outline">למה</span> מדוע עדיף <strong>fine-tuning</strong> על אימון from-scratch — גם מבחינה סביבתית?</div>
+      <details><summary>הצג תשובה</summary><div class="a">המודל המאומן מראש כבר "יודע" ייצוגים כלליים (transfer learning), אז fine-tuning דורש פחות דאטה, פחות זמן, ומגיע לדיוק גבוה יותר עם מעט דגימות. <strong>סביבתית:</strong> פחות חישוב = פחות פליטת CO₂ (Green AI) — אחת מההמלצות המרכזיות של Hugging Face.</div></details>
+    </div>
+  </div>
+
+  <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: var(--c-accent);">
+    <h3 style="margin-top:0">טיפים אחרונים לפני המבחן</h3>
+    <ul class="checklist">
+      <li>שלוט בנוסחאות החישוב (§0) בעל-פה — שאלות shape/פרמטרים הן "נקודות בטוחות".</li>
+      <li>לכל מושג — דע גם <em>הגדרה</em> וגם <em>למה/מתי משתמשים</em> (שני סוגי שאלות נפוצים).</li>
+      <li>בשאלות השוואה — ענה במבנה "X עושה ___, לעומת Y שעושה ___".</li>
+      <li>תשובה קצרה וממוקדת. אורך השורות במבחן = הרמז לאורך הרצוי.</li>
+      <li>תרגל ציור perceptron/רשת על נייר, כולל קלט-משקלות-פלט.</li>
     </ul>
   </div>
 </section>
